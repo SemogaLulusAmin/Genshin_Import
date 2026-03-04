@@ -59,12 +59,3 @@ Push your branch.
 ## Rules of Thumb
 1.  **One Feature per Branch:** Don't fix a bug in the navbar while working on the database. Create a separate branch.
 2.  **Delete after Merge:** Once your PR is merged, delete the branch to keep the repo clean.
-
-
-# Flutter
-
-## Flutter Run
-```bash
-    cd froentend
-    flutter run
-```
