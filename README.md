@@ -5,18 +5,11 @@ To keep our repository clean and minimize merge conflicts, please follow this st
 ## 1. Branch Naming Convention
 We use the **`type/description`** format.
 
-### **Prefixes:**
-* `feat/` = A new feature (e.g., adding a new page, API endpoint).
-* `fix/` = A bug fix (e.g., fixing a crash, style error).
-* `chore/` = Maintenance (e.g., updating npm packages, setting up configs).
-* `docs/` = Documentation changes only.
+### **Format:**
+`{Frontend/Backend}/{nama panggilan}/Feature`
 
 ### **Examples:**
-✅ `feat/auth-login-page`  
-✅ `fix/match-score-calculation`  
-✅ `chore/setup-express`  
-❌ `login-page` (Missing prefix)  
-❌ `jason/fix` (Not descriptive)  
+`Frontend/Jojo/Login`
 
 ---
 
