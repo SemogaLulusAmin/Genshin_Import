@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/login_page.dart';
 import 'pages/main_page.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Genshin Import',
-      home: const MainPage(),
+      home: const LoginPage(),
     );
   }
 }
