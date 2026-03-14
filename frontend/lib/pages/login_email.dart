@@ -10,6 +10,27 @@ class LoginEmailPage extends StatefulWidget {
 class _LoginEmailPageState extends State<LoginEmailPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(title: const Text("Genshin Import")),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Text("Login"),
+            Form(
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Enter your email",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
