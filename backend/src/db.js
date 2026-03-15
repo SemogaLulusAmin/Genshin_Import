@@ -3,13 +3,10 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: join(__dirname, '../.env') }); // Load environment variables from backend/.env
+config({ path: join(__dirname, '../.env') });
 
 import mysql from 'mysql2/promise';
 
-console.log("Cek User DB:", process.env.DB_USER); // Tambahkan ini buat ngetes
-
-// Create the connection pool
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
