@@ -1,5 +1,13 @@
+import { config } from 'dotenv';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: join(__dirname, '../.env') }); // Load environment variables from backend/.env
+
 import mysql from 'mysql2/promise';
-import 'dotenv/config'; 
+
+console.log("Cek User DB:", process.env.DB_USER); // Tambahkan ini buat ngetes
 
 // Create the connection pool
 const pool = mysql.createPool({
