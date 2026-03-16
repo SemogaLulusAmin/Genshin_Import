@@ -19,11 +19,16 @@ async function initDB() {
         
         await pool.query(`
             CREATE TABLE Item (
-                itemID VARCHAR(36) PRIMARY KEY,
+                itemID VARCHAR(100) PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                image VARCHAR(255) NOT NULL,
+                type VARCHAR(100) NOT NULL,
+                rarity VARCHAR(50) NOT NULL,
+                baseAttack VARCHAR(50) NOT NULL,
+                subStat VARCHAR(100) NOT NULL,
+                passiveName VARCHAR(255) NOT NULL,
+                passiveDesc TEXT NOT NULL,
+                image_url VARCHAR(255) NOT NULL,
                 price DECIMAL(15, 4) NOT NULL,
-                quantity INT NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )    
@@ -33,13 +38,11 @@ async function initDB() {
 
         await pool.query(`
             CREATE TABLE Transaction (
-                transactionID VARCHAR(36) PRIMARY KEY,
                 userID VARCHAR(36) NOT NULL,
                 itemID VARCHAR(36) NOT NULL,
-                quantity INT NOT NULL,
-                totalPrice DECIMAL(15, 4) NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (userID, itemID),
                 FOREIGN KEY (userID) REFERENCES User(userID),
                 FOREIGN KEY (itemID) REFERENCES Item(itemID)
             )
