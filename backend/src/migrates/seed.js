@@ -1,20 +1,22 @@
-import pool from "./db.js";
+import pool from "../db.js";
 import axios from 'axios';
+import crypto from 'crypto';
 
 async function seedDB() {
     try {
         const {data: weaponsID} = await axios.get('https://genshin.jmp.blue/weapons');
         for (const weaponID of weaponsID) {
             const { data: w } = await axios.get(`https://genshin.jmp.blue/weapons/${weaponID}`);
+            const itemID = crypto.randomUUID();
 
             const query = `
                 INSERT IGNORE INTO Item 
-                (itemID, name, type, rarity, baseAttack, subStat, passiveName, passiveDesc, image_url, price) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (itemID, name, type, rarity, baseAttack, subStat, passiveName, passiveDesc, image_url, price, stock) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const values = [
-                weaponID,                              
+                itemID,                              
                 w.name,                   
                 w.type,                              
                 w.rarity ? w.rarity.toString() : '0',  
@@ -23,7 +25,8 @@ async function seedDB() {
                 w.passiveName || 'No Passive',         
                 w.passiveDesc || 'No Description',     
                 `https://genshin.jmp.blue/weapons/${weaponID}/icon.png`, 
-                1000.00                                 
+                1000.00,
+                1000 
             ];
 
             await pool.query(query, values);

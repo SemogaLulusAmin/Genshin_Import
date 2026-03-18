@@ -1,14 +1,15 @@
-import pool from "./db.js";
+import pool from "../db.js";
 
 async function initDB() {
     try {
         await pool.query(`
-            CREATE TABLE  User (
+            CREATE TABLE User (
                 userID VARCHAR(36) PRIMARY KEY,
                 username VARCHAR(100) NOT NULL,
                 email VARCHAR(200) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL,
-                provider VARCHAR(50) NOT NULL,
+                password VARCHAR(255),
+                provider ENUM('local','google') NOT NULL,
+                bearer_token VARCHAR(255),
                 money DECIMAL(15, 4) DEFAULT 0,
                 roles ENUM('user', 'admin') DEFAULT 'user',
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -19,7 +20,7 @@ async function initDB() {
         
         await pool.query(`
             CREATE TABLE Item (
-                itemID VARCHAR(100) PRIMARY KEY,
+                itemID VARCHAR(36) PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(100) NOT NULL,
                 rarity VARCHAR(50) NOT NULL,
@@ -29,6 +30,7 @@ async function initDB() {
                 passiveDesc TEXT NOT NULL,
                 image_url VARCHAR(255) NOT NULL,
                 price DECIMAL(15, 4) NOT NULL,
+                stock INTEGER NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )    
@@ -40,6 +42,7 @@ async function initDB() {
             CREATE TABLE Transaction (
                 userID VARCHAR(36) NOT NULL,
                 itemID VARCHAR(36) NOT NULL,
+                stock INTEGER NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (userID, itemID),
