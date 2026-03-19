@@ -19,8 +19,8 @@ async function initDB() {
         console.log("Create User Table Success");
         
         await pool.query(`
-            CREATE TABLE Item (
-                itemID VARCHAR(36) PRIMARY KEY,
+            CREATE TABLE Weapon (
+                weaponID VARCHAR(36) PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 type VARCHAR(100) NOT NULL,
                 rarity VARCHAR(50) NOT NULL,
@@ -36,22 +36,53 @@ async function initDB() {
             )    
         `)
 
-        console.log("Create Item Table Success");
+        console.log("Create Weapon Table Success");
 
         await pool.query(`
-            CREATE TABLE Transaction (
+            CREATE TABLE WeaponTransaction (
                 userID VARCHAR(36) NOT NULL,
-                itemID VARCHAR(36) NOT NULL,
+                weaponID VARCHAR(36) NOT NULL,
                 stock INTEGER NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (userID, itemID),
+                PRIMARY KEY (userID, weaponID),
                 FOREIGN KEY (userID) REFERENCES User(userID),
-                FOREIGN KEY (itemID) REFERENCES Item(itemID)
+                FOREIGN KEY (weaponID) REFERENCES Item(weaponID)
             )
         `)
 
-        console.log("Create Transaction Table Success");
+        console.log("Create WeaponTransaction Table Success");
+
+        await pool.query(`
+            CREATE TABLE Artifact (
+                artifactID VARCHAR(36) NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                set_name VARCHAR(100) NOT NULL,
+                max_rarity VARCHAR(5) NOT NULL,
+                stock INTEGER NOT NULL, 
+                image_url VARCHAR(255) NOT NULL,
+                price DECIMAL(15,4) NOT NULL,
+                2-piece_bonus TEXT,
+                4-piece_bonus TEXT
+            )
+        `)
+
+        console.log("Create Artifact Table Success");
+
+        await pool.query(`
+            CREATE TABLE ArtifactTransaction (
+                userID VARCHAR(36) NOT NULL,
+                artifactID VARCHAR(36) NOT NULL,
+                stock INTEGER NOT NULL,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (userID, artifactID),
+                FOREIGN KEY (userID) REFERENCES User(userID),
+                FOREIGN KEY (artifactID) REFERENCES Item(artifactID)
+            )
+        `)
+
+        console.log("Create ArtifactTransaction Table Success");
 
     } catch (error) {
         console.error("Error on creating table", error);

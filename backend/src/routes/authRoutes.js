@@ -152,4 +152,15 @@ router.post('/login', async (req, res) => {
 
 })
 
+router.post('/logout', async (req, res) => {
+    try {
+        const { userID } = req.body;
+        await pool.query("UPDATE User SET bearer_token = NULL WHERE userID = ?", [userID]);
+        res.json({ message: "Logged out!" });
+    } catch (error){
+        console.error(error.message);
+        res.status(503).json({message: "Server error to log out"});
+    }
+});
+
 export default router
