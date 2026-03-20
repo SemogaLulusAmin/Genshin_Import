@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/pages/register_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -191,7 +192,14 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
                                 Colors.transparent,
                               ),
                             ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterPage(),
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: const EdgeInsets.only(bottom: 2),
                           decoration: const BoxDecoration(
