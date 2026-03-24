@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:frontend/pages/register_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginEmailPage extends StatefulWidget {
   const LoginEmailPage({super.key});
@@ -17,6 +18,7 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isObscurePassword = true;
+  final _storage = const FlutterSecureStorage();
 
   @override
   void dispose() {
@@ -48,6 +50,12 @@ class _LoginEmailPageState extends State<LoginEmailPage> {
       );
 
       if (response.statusCode == 200) {
+
+        final data = jsonDecode(response.body);
+        final String token = data['token']; 
+
+        await _storage.write(key: 'jwt_token', value: token);
+
         if (mounted) {
           ScaffoldMessenger.of(
             context,
