@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
             "user"
         ]
 
-        await pool.query(query, values);
+        await pool.execute(query, values);
 
         console.log('Success insert a new user!');
 
@@ -51,13 +51,13 @@ router.post('/register/google', async (req, res) => {
 
     try {
         
-        const [rows] = await pool.query("SELECT * FROM User WHERE email = ?", [email]);
+        const [rows] = await pool.execute("SELECT * FROM User WHERE email = ?", [email]);
         let user = rows[0];
 
         const newBearerToken = crypto.randomBytes(20).toString('hex');
 
         if(user){
-            await pool.query("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
+            await pool.execute("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
             user.bearer_token = newBearerToken; 
         } else {
             const userID = crypto.randomUUID();
@@ -78,9 +78,9 @@ router.post('/register/google', async (req, res) => {
                 newBearerToken
             ]
 
-            await pool.query(query, values);
+            await pool.execute(query, values);
 
-            const [newUser] = await pool.query("SELECT * FROM User WHERE userID = ?", [userID]);
+            const [newUser] = await pool.execute("SELECT * FROM User WHERE userID = ?", [userID]);
             user = newUser[0];
         }
 
@@ -110,7 +110,7 @@ router.post('/login', async (req, res) => {
     const {email, password} = req.body;
 
     try {
-        const [rows] = await pool.query("SELECT * FROM User WHERE email = ?", [email]);
+        const [rows] = await pool.execute("SELECT * FROM User WHERE email = ?", [email]);
         const user = rows[0];
 
         if (!user) {
@@ -135,7 +135,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '7d' } 
         );
 
-        await pool.query("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
+        await pool.execute("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
 
         res.status(200).json({
             token: tokenJWT,       
@@ -155,7 +155,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', async (req, res) => {
     try {
         const { userID } = req.body;
-        await pool.query("UPDATE User SET bearer_token = NULL WHERE userID = ?", [userID]);
+        await pool.execute("UPDATE User SET bearer_token = NULL WHERE userID = ?", [userID]);
         res.json({ message: "Logged out!" });
     } catch (error){
         console.error(error.message);

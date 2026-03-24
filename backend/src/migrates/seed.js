@@ -29,7 +29,7 @@ async function seedDB() {
                 1000 
             ];
 
-            await pool.query(query, values);
+            await pool.execute(query, values);
             console.log(`Inserted weapon: ${w.name} (ID: ${weaponID})`);
         }
 
@@ -62,7 +62,7 @@ async function seedDB() {
                     1000                   
                 ];
 
-                await pool.query(query, values);
+                await pool.execute(query, values);
                 console.log(`Inserted artifacts: ${artifactPiece}`);
             }
         }

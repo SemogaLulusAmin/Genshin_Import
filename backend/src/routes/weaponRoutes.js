@@ -17,18 +17,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// weaponID VARCHAR(36) PRIMARY KEY,
-//                 name VARCHAR(255) NOT NULL,
-//                 type VARCHAR(100) NOT NULL,
-//                 rarity VARCHAR(50) NOT NULL,
-//                 baseAttack VARCHAR(50) NOT NULL,
-//                 subStat VARCHAR(100) NOT NULL,
-//                 passiveName VARCHAR(255) NOT NULL,
-//                 passiveDesc TEXT NOT NULL,
-//                 image_url VARCHAR(255) NOT NULL,
-//                 price DECIMAL(15, 4) NOT NULL,
-//                 stock INTEGER NOT NULL,
-
 router.get('/', authenticateToken, isAdmin, async (req, res) => {
     try {
         const [rows] = await pool.execute(`SELECT * FROM Weapon`);
@@ -44,7 +32,7 @@ router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,r
 
         const {name, type, rarity, baseAttack, subStat, passiveName, passiveDesc, price, stock} = req.body;
 
-        if (!req.file) return res.status(400).json({message : "No image"});
+        if (!req.file) return res.status(400).json({message : "No image was uploaded!"});
 
         const imageUrl = `/assets/${req.file.filename}`;
 
@@ -81,8 +69,54 @@ router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,r
     }
 });
 
-router.put('/:weaponID', authenticateToken, isAdmin, (req,res) => {
+router.put('/:weaponID', authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
+    const { weaponID } = req.params;
+    const {name, type, rarity, baseAttack, subStat, passiveName, passiveDesc, price, stock} = req.body;
 
+    try {
+        const [rows] = await pool.execute(`SELECT image_url FROM Weapon WHERE weaponID = ?`, [weaponID]);
+
+        if(rows.length === 0) return res.status(400).json({message: "Data is not found"});
+
+        const oldImageUrl = rows[0].image_url;
+        let newImageUrl = oldImageUrl;
+
+        if(req.file){
+            newImageUrl = `/assets/${req.file.filename}`;
+
+            const oldPath = `/public${oldImageUrl}`;
+
+            if(fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+
+        }
+
+        const query = `
+            UPDATE Weapon
+            SET name = ?, type = ?, rarity = ?, baseAttack = ?, subStat = ?, passiveName = ?, passiveDesc = ?, price = ?, stock = ?
+            WHERE weaponID = ? 
+        `;
+
+        const values = [
+            name, 
+            type,
+            rarity,
+            baseAttack, 
+            subStat, 
+            passiveName,
+            passiveDesc,
+            price,
+            stock,
+            weaponID
+        ]
+
+        await pool.execute(query, values);
+
+        res.status(200);
+
+    } catch (error){
+        console.log(error.message);
+        res.status(500);
+    }
 });
 
 router.delete('/:weaponID', authenticateToken, isAdmin, async (req,res) => {
