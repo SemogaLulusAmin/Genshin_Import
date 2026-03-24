@@ -10,7 +10,7 @@ router.get('/purchased-weapons/:userID',authenticateToken, async (req, res) => {
         if (!userID) return res.status(400).json({ error: 'User ID is required' });
 
         const query = `
-            SELECT w.*
+            SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, w.stock
             FROM Weapon w
             JOIN WeaponTransaction t ON w.weaponID = t.weaponID
             WHERE t.userID = ?
@@ -33,12 +33,12 @@ router.get('not-purchased-weapons/:userID', authenticateToken, async (req, res) 
         if (!userID) return res.status(400).json({ error: 'User ID is required' });
 
         const query = `
-            SELECT w.*
+            SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, w.stock
             FROM Weapon w
             WHERE NOT EXISTS (
                 SELECT 1 
                 FROM WeaponTransaction t 
-                WHERE t.itemID = w.itemID 
+                WHERE t.weaponID = w.weaponID 
                 AND t.userID = ?
             )
         `;

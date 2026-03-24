@@ -3,14 +3,14 @@ import pool from './db.js';
 import 'dotenv/config';
 import authRoutes from './routes/authRoutes.js';
 import itemRoutes from './routes/weaponRoutes.js';
-import userItemRoutes from './routes/userWeaponRoutes.js';
+import userweapon from './routes/userWeaponRoutes.js';
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 app.use('/auth', authRoutes);
-app.use('/userWeapon', userItemRoutes);
+app.use('/userWeapon', userweapon);
 app.use('/weapon', itemRoutes);
 
 app.listen(PORT, () => {
