@@ -18,7 +18,7 @@ router.get('/purchased-weapons/:userID',authenticateToken, async (req, res) => {
 
         const [rows] = await pool.execute(query, [userID]);
 
-        res.json(rows);
+        res.status(200).json(rows);
 
     } catch (error) {
         console.error("Error fetching purchased items", error);
@@ -45,7 +45,7 @@ router.get('not-purchased-weapons/:userID', authenticateToken, async (req, res) 
 
         const [rows] = await pool.execute(query, [userID || null]);
 
-        res.json(rows);
+        res.status(200).json(rows);
 
     } catch (error) {
         console.error("Error fetching not purchased items", error);

@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
         })
     } catch (error){
         console.log(error.message);
-        res.status(503).json({message: "Error insert a new user"});
+        res.status(503);
     }
 
 });
@@ -90,7 +90,7 @@ router.post('/register/google', async (req, res) => {
             { expiresIn: '7d' }
         );
 
-        res.status(201).json({
+        res.status(200).json({
             message: 'Success insert a new user!',
             token: tokenJWT,
             user: {
@@ -101,7 +101,7 @@ router.post('/register/google', async (req, res) => {
 
     } catch (error){
         console.error(error.message);
-        res.status(503).json({message: "Error insert a new user"});        
+        res.status(503);        
     }
 
 })
@@ -147,7 +147,7 @@ router.post('/login', async (req, res) => {
 
     } catch (error){
         console.error(error.message);
-        res.status(503).json({message: "Error login"});        
+        res.status(503);        
     }
 
 })
@@ -159,7 +159,7 @@ router.post('/logout', async (req, res) => {
         res.json({ message: "Logged out!" });
     } catch (error){
         console.error(error.message);
-        res.status(503).json({message: "Server error to log out"});
+        res.status(503);
     }
 });
 

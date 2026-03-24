@@ -9,6 +9,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
+app.use('/assets', express.static('public/assets'));
 app.use('/auth', authRoutes);
 app.use('/userWeapon', userweapon);
 app.use('/weapon', itemRoutes);

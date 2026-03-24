@@ -24,7 +24,7 @@ const authenticateToken = async (req, res, next) => {
         const user = rows[0];
 
         if (!user || !user.bearer_token) {
-            return res.status(401).json({ message: "Sesi telah berakhir, silakan login ulang" });
+            return res.status(401).json({ message: "Your session has ended, please re-login"});
         }
 
         req.user = user;
