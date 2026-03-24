@@ -84,7 +84,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
 
         filled: true,
-        fillColor: isDark ? AppColors.bgDark : AppColors.fieldBackground,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.fieldBackground,
         contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
 
         border: OutlineInputBorder(

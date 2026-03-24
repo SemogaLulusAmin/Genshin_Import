@@ -11,8 +11,8 @@ class AppColors {
   static const Color textSecondaryLight = Color(0xFFA1A1AD);
 
   // Dark Mode Colors
-  static const Color bgDark = Color.fromARGB(255, 17, 20, 36);
-  static const Color surfaceDark = Color.fromARGB(255, 24, 27, 51);
+  static const Color bgDark = Color(0xFF18191B);
+  static const Color surfaceDark = Color(0xFF2B2D32);
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B3B8);
 

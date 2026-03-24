@@ -22,233 +22,183 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // Menggunakan resizeToAvoidBottomInset agar keyboard tidak merusak background
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          // LAYER 1: Gambar Background
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                // KUNCI: Pilih gambar berdasarkan status isDark
-                image: AssetImage(
-                  isDark
-                      ? 'images/Background_Dark.jpg' // Gambar untuk mode gelap
-                      : 'images/Background_Light.jpg', // Gambar untuk mode terang
-                ),
-                fit: BoxFit.cover,
-
-                // Opsional: Tetap gunakan colorFilter agar teks form tetap terbaca jelas
-                colorFilter: ColorFilter.mode(
-                  (isDark ? Colors.black : Colors.white).withOpacity(0.3),
-                  BlendMode.dstATop,
-                ),
-              ),
-            ),
-          ),
-
-          // LAYER 2: Overlay semi-transparan (Opsional, agar gambar tidak terlalu kontras)
-          Container(color: Colors.black.withOpacity(isDark ? 0.3 : 0.0)),
-
-          // LAYER 3: Container Form
-          Center(
-            child: SingleChildScrollView(
-              // Agar aman di layar kecil
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 32.0,
-                    horizontal: 20.0,
+      // 1. Set background full mengikuti tema surface
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
+      resizeToAvoidBottomInset: true, // Biar pas ngetik tidak ketutup keyboard
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Logo SVG
+                  SvgPicture.asset(
+                    'images/Genshin_Import_logo.svg',
+                    height: 40,
+                    colorFilter: ColorFilter.mode(
+                      isDark ? Colors.white : AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    // Mengambil warna surface sesuai tema
-                    color: isDark
-                        ? AppColors.surfaceDark
-                        : AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                  const SizedBox(height: 24),
+
+                  // Welcome Text
+                  Text(
+                    "Account Log In",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Form Fields
+                  CustomTextField(
+                    label: "Email",
+                    placeholder: "example@gmail.com",
+                    controller: _emailController,
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    label: "Password",
+                    placeholder: "at least 8 characters",
+                    controller: _passwordController,
+                    isPassword: true,
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Main Button
+                  CustomButton(
+                    text: "Log In",
+                    onPressed: () {
+                      // Aksi Login
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Divider OR
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: isDark ? Colors.white12 : Colors.grey.shade300,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "or you could",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: isDark ? Colors.white12 : Colors.grey.shade300,
+                        ),
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min, // Container akan menyesuaikan isi
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'images/Genshin_Import_logo.svg',
-                        height: 30,
-                        // Kamu juga bisa menambahkan colorFilter jika ingin
-                        // mengubah warna SVG secara dinamis berdasarkan tema
-                        colorFilter: ColorFilter.mode(
-                          isDark ? Colors.white : AppColors.primary,
-                          BlendMode.srcIn,
+
+                  const SizedBox(height: 24),
+
+                  // TOMBOL GOOGLE
+                  SizedBox(
+                    width: double.infinity,
+
+                    height: 52, // Sesuaikan dengan tinggi CustomButton kamu
+
+                    child: OutlinedButton(
+                      onPressed: () {
+                        // Aksi Sign In Google
+                      },
+
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: isDark ? Colors.white10 : Colors.grey.shade300,
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        "Account Log In",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: isDark
-                              ? AppColors.textPrimaryDark
-                              : AppColors.textPrimaryLight,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      const SizedBox(height: 32),
 
-                      CustomTextField(
-                        label: "Email",
-                        placeholder: "example@gmail.com",
-                        controller: _emailController,
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        label: "Password",
-                        placeholder: "at least 8 characters",
-                        controller: _passwordController,
-                        isPassword: true,
+                        backgroundColor: isDark
+                            ? Colors.white.withOpacity(0.05)
+                            : Colors.white.withOpacity(0.5),
                       ),
 
-                      const SizedBox(height: 32),
-
-                      CustomButton(
-                        text: "Log In",
-                        onPressed: () {
-                          // Aksi Login
-                        },
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // PEMISAH "OR"
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: isDark
-                                  ? Colors.white24
-                                  : Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "or you could",
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: isDark
-                                        ? AppColors.textSecondaryDark
-                                        : AppColors.textSecondaryLight,
-                                  ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: isDark
-                                  ? Colors.white24
-                                  : Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // TOMBOL GOOGLE
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52, // Sesuaikan dengan tinggi CustomButton kamu
-                        child: OutlinedButton(
-                          onPressed: () {
-                            // Aksi Sign In Google
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.white10
-                                  : Colors.grey.shade300,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            backgroundColor: isDark
-                                ? Colors.white.withOpacity(0.05)
-                                : Colors.grey.shade50,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Pastikan kamu punya logo google di assets
-                              Image.asset('images/google_logo.png', height: 20),
-                              const SizedBox(width: 12),
-                              Text(
-                                "Sign in with Google",
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.textPrimaryDark
-                                      : Colors.grey.shade600,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Footer
-                      Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+
                         children: [
+                          // Pastikan kamu punya logo google di assets
+                          Image.asset('images/google_logo.png', height: 20),
+
+                          const SizedBox(width: 12),
+
                           Text(
-                            "Don't have an account? ",
+                            "Sign in with Google",
+
                             style: TextStyle(
                               color: isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondaryLight,
-                              fontSize: 14,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const RegisterScreen(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              "Register",
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
+                                  ? AppColors.textPrimaryDark
+                                  : Colors.grey.shade600,
+
+                              fontWeight: FontWeight.w500,
+
+                              fontSize: 16,
                             ),
                           ),
                         ],
                       ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Footer Nav
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Register",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
