@@ -35,12 +35,13 @@ class AppTheme {
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           color: AppColors.textPrimaryLight,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ), // Properti 3: Color
         bodyMedium: TextStyle(
           color: AppColors.textSecondaryLight,
-          fontSize: 14,
+          fontSize: 16,
         ), // Properti 4: Size
+        bodySmall: TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
       ),
     );
   }
