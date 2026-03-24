@@ -3,16 +3,16 @@ import pool from '../db.js';
 
 const router = express.Router();
 
-router.get('/purchased-items/:userID',authenticateToken, async (req, res) => {
+router.get('/purchased-weapons/:userID',authenticateToken, async (req, res) => {
     try {
         const {userID} = req.params;
 
         if (!userID) return res.status(400).json({ error: 'User ID is required' });
 
         const query = `
-            SELECT i.*
-            FROM Item i
-            JOIN Transaction t ON i.itemID = t.itemID
+            SELECT w.*
+            FROM Weapon w
+            JOIN WeaponTransaction t ON w.weaponID = t.weaponID
             WHERE t.userID = ?
         `;
 
@@ -26,19 +26,19 @@ router.get('/purchased-items/:userID',authenticateToken, async (req, res) => {
     }
 });
 
-router.get('not-purchased-items/:userID', authenticateToken, async (req, res) => {
+router.get('not-purchased-weapons/:userID', authenticateToken, async (req, res) => {
     try {
         const {userID} = req.params;
 
         if (!userID) return res.status(400).json({ error: 'User ID is required' });
 
         const query = `
-            SELECT i.*
-            FROM Item i
+            SELECT w.*
+            FROM Weapon w
             WHERE NOT EXISTS (
                 SELECT 1 
-                FROM Transaction t 
-                WHERE t.itemID = i.itemID 
+                FROM WeaponTransaction t 
+                WHERE t.itemID = w.itemID 
                 AND t.userID = ?
             )
         `;

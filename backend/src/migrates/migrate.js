@@ -62,8 +62,8 @@ async function initDB() {
                 stock INTEGER NOT NULL, 
                 image_url VARCHAR(255) NOT NULL,
                 price DECIMAL(15,4) NOT NULL,
-                2-piece_bonus TEXT,
-                4-piece_bonus TEXT
+                piece_bonus_2 TEXT,
+                piece_bonus_4 TEXT
             )
         `)
 

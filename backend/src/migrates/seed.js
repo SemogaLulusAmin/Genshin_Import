@@ -46,7 +46,7 @@ async function seedDB() {
 
                 const query = `
                     INSERT IGNORE INTO Artifacts 
-                    (artifactID, name, set_name, max_rarity, \`2-piece_bonus\`, \`4-piece_bonus\`, image_url, price, stock) 
+                    (artifactID, name, set_name, max_rarity, piece_bonus_2 , piece_bonus_4 , image_url, price, stock) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
 
