@@ -37,23 +37,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Logo SVG
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 40,
+                    height: 48,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
                   // Welcome Text
                   Text(
-                    "Account Log In",
+                    "Welcome Back",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Log in to your account to continue",
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 32),

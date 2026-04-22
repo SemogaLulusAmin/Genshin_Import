@@ -39,21 +39,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 40,
+                    height: 48,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   Text(
-                    "Register Account",
+                    "Create Your Account",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Please fill this form to sign up",
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 32),
