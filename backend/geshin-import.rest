@@ -1,7 +1,0 @@
-GET http://localhost:3000/artifact
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImY5YWViMjY4LTA0Y2MtNGFhZC04ZTE2LTJkNWFiNzdiMzY1ZSIsImVtYWlsIjoidHJhdmVsZXJAdGV5dmF0LmNvbSIsImlhdCI6MTc3NjkyMDE4MCwiZXhwIjoxNzc3NTI0OTgwfQ.n-aDofVpphUv_dRcf3kolBXRH-8Se5kUm2bIqbktHyc
-
-{
-   "quantity": 5
-}
