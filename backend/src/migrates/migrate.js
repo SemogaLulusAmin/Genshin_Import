@@ -45,9 +45,9 @@ async function initDB() {
                 stock INTEGER NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (userID, weaponID),
+                PRIMARY KEY (userID, weaponID, createdAt),
                 FOREIGN KEY (userID) REFERENCES User(userID),
-                FOREIGN KEY (weaponID) REFERENCES Item(weaponID)
+                FOREIGN KEY (weaponID) REFERENCES Weapon(weaponID)
             )
         `)
 
@@ -55,7 +55,7 @@ async function initDB() {
 
         await pool.query(`
             CREATE TABLE Artifact (
-                artifactID VARCHAR(36) NOT NULL,
+                artifactID VARCHAR(36) PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 set_name VARCHAR(100) NOT NULL,
                 max_rarity VARCHAR(5) NOT NULL,
@@ -76,16 +76,19 @@ async function initDB() {
                 stock INTEGER NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY (userID, artifactID),
+                PRIMARY KEY (userID, artifactID, createdAt),
                 FOREIGN KEY (userID) REFERENCES User(userID),
-                FOREIGN KEY (artifactID) REFERENCES Item(artifactID)
+                FOREIGN KEY (artifactID) REFERENCES Artifact(artifactID)
             )
         `)
 
         console.log("Create ArtifactTransaction Table Success");
-
+        
     } catch (error) {
         console.error("Error on creating table", error);
+    } finally{
+        await pool.end();
+        process.exit(0);
     }
 }
 

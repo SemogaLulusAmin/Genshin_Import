@@ -5,9 +5,10 @@ import { authenticateToken } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/buy/:weaponID',authenticateToken, async (req,res) => {
-    const userID = req.user.id;
+    const userID = req.user.userID;
 
-    const {weaponID, quantity, price} = req.body;
+    const {weaponID} = req.params;
+    const {quantity} = req.body;
 
     const connection = await pool.getConnection();
 
@@ -25,7 +26,7 @@ router.post('/buy/:weaponID',authenticateToken, async (req,res) => {
             [userID]
         )
 
-        if (weapon.length === 0) throw new Error("There's no such product!");
+        if (weapon.length === 0) throw new Error("There's no such weapon!");
         if (weapon[0].stock < quantity) throw new Error("Quantity over stock!");
         const totalPrice = weapon[0].price * quantity;
         if (totalPrice > user[0].money) throw new Error("Not enough money!");
@@ -38,7 +39,7 @@ router.post('/buy/:weaponID',authenticateToken, async (req,res) => {
 
         await connection.commit();
 
-        res.status(200);
+        res.status(200).json({message: "Successful buy a weapon"});
 
     } catch (error){
         await connection.rollback();
@@ -50,36 +51,26 @@ router.post('/buy/:weaponID',authenticateToken, async (req,res) => {
 
 })
 
-router.get('/purchased-weapons/',authenticateToken, async (req, res) => {
+router.get('/',authenticateToken, async (req, res) => {
+
     try {
-        const userID = req.user.id;
+        const userID = req.user.userID;
 
         if (!userID) return res.status(400).json({ error: 'User ID is required' });
 
-        const query = `
-            SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, w.stock
-            FROM Weapon w
-            JOIN WeaponTransaction t ON w.weaponID = t.weaponID
-            WHERE t.userID = ?
-        `;
+        const {status} = req.query;
 
-        const [rows] = await pool.execute(query, [userID]);
-
-        res.status(200).json(rows);
-
-    } catch (error) {
-        console.error("Error fetching purchased items", error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-router.get('not-purchased-weapons/', authenticateToken, async (req, res) => {
-    try {
-        const userID = req.user.id;
-
-        if (!userID) return res.status(400).json({ error: 'User ID is required' });
-
-        const query = `
+        let query = "";
+        if(status === "purchased"){    
+            query = `
+                SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, SUM(t.stock) AS totalOwned
+                FROM Weapon w
+                JOIN WeaponTransaction t ON w.weaponID = t.weaponID
+                WHERE t.userID = ?
+                GROUP BY w.weaponID
+            `;
+        } else if(status === "not-purchased"){
+            query = `
             SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, w.stock
             FROM Weapon w
             WHERE NOT EXISTS (
@@ -88,14 +79,17 @@ router.get('not-purchased-weapons/', authenticateToken, async (req, res) => {
                 WHERE t.weaponID = w.weaponID 
                 AND t.userID = ?
             )
-        `;
+            `;
+        } else {
+            return res.status(400).json({error: "Status is between purchased or not-purchased"});
+        }
 
-        const [rows] = await pool.execute(query, [userID || null]);
+        const [rows] = await pool.execute(query, [userID]);
 
         res.status(200).json(rows);
 
     } catch (error) {
-        console.error("Error fetching not purchased items", error);
+        console.error("Error fetching purchased items", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
