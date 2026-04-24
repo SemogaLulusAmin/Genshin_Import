@@ -17,9 +17,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', authenticateToken, isAdmin, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
-        const [rows] = await pool.execute(`SELECT * FROM Artifact`);
+        let rows = []
+        const {status} = req.query;
+
+        if(status === "not-available"){
+            const [result] = await pool.query(`SELECT * FROM Artifact WHERE stock = 0`);
+            rows = result;
+        } else if(status === 'available'){
+            const [result] = await pool.query(`SELECT * FROM Artifact WHERE stock > 0`);
+            rows = result;
+        } else {
+            const [result] = await pool.query(`SELECT * FROM Artifact`)
+            rows = result;
+        }
+
         res.status(200).json(rows);
     } catch (error){
         console.log(error.message); 
