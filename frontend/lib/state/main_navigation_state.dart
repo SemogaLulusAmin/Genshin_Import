@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/home/gallery_shop_screen.dart';
 import 'package:frontend/widgets/main_navigation_bar.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   // Placeholder untuk 5 halaman wajib sesuai dokumen
   final List<Widget> _pages = [
-    const Center(child: Text('Gallery & Shop Screen')),
+    const GalleryShopScreen(),
     const Center(child: Text('Inventory Screen')),
     const Center(child: Text('Delivery Package Screen')),
     const Center(child: Text('Profile Screen')),
