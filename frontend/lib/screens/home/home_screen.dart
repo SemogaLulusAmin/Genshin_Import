@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +11,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            color: AppColors.primary,
+            height: 60,
+            child: const Center(child: Text('Poin: ')),
+          ),
+          SingleChildScrollView(child: Text('Welcome to Genshin Import!')),
+        ],
+      ),
+    );
   }
 }
