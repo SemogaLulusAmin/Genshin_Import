@@ -17,7 +17,7 @@ class _GalleryShopScreenState extends State<GalleryShopScreen> {
           Container(
             color: AppColors.primary,
             height: 60,
-            child: const Center(child: Text('Poin: ')),
+            child: const Center(child: Text('Coin: ')),
           ),
           SingleChildScrollView(child: Text('Welcome to Genshin Import!')),
         ],
