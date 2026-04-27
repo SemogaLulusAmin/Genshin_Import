@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Logo SVG
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 48,
+                    height: 52,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Welcome Text
                   Text(
-                    "Welcome Back",
+                    "Welcome back",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : AppColors.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     "Log in to your account to continue",
                     style: TextStyle(
@@ -120,55 +120,53 @@ class _LoginScreenState extends State<LoginScreen> {
                   // TOMBOL GOOGLE
                   SizedBox(
                     width: double.infinity,
-
-                    height: 52, // Sesuaikan dengan tinggi CustomButton kamu
-
+                    height: 52,
                     child: OutlinedButton(
                       onPressed: () {
-                        // Aksi Sign In Google
+                        // TODO: Google Sign In
                       },
-
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: isDark ? Colors.white10 : Colors.grey.shade300,
-                        ),
-
+                        side: BorderSide(color: AppColors.border),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(60),
                         ),
-
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.05)
-                            : Colors.white.withOpacity(0.5),
                       ),
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          // Pastikan kamu punya logo google di assets
-                          Image.asset('images/google_logo.png', height: 20),
+                          /// 🔹 TEXT (CENTER BENERAN)
+                          Center(
+                            child: Text(
+                              "Sign in with Google",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimaryLight.withOpacity(
+                                        0.8,
+                                      ),
+                              ),
+                            ),
+                          ),
 
-                          const SizedBox(width: 12),
-
-                          Text(
-                            "Sign in with Google",
-
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.textPrimaryDark
-                                  : Colors.grey.shade600,
-
-                              fontWeight: FontWeight.w500,
-
-                              fontSize: 16,
+                          /// 🔹 ICON (KIRI)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google_logo.png',
+                                  height: 32,
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 32),
 
                   // Footer Nav
@@ -192,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: const Text(
-                          "Register",
+                          "Sign up here",
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,

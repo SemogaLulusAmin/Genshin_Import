@@ -15,25 +15,38 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Mengecek apakah tema saat ini gelap atau terang
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          // LOGIKA PERUBAHAN WARNA DISINI
+          backgroundColor: isDark
+              ? AppColors
+                    .primary // Light button untuk Dark Theme
+              : AppColors.surfaceDark, // Dark button untuk Light Theme
+
+          foregroundColor:
+              AppColors.textPrimaryDark, // Teks putih jika tombol gelap
+
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(
+              4,
+            ), // Mengikuti style login sebelumnya
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  // Progress indicator juga ikut berubah warna
+                  color: isDark ? Colors.black : Colors.white,
                   strokeWidth: 2,
                 ),
               )
