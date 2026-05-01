@@ -1,22 +1,3 @@
-// await pool.query(`
-//             CREATE TABLE Weapon (
-//                 weaponID VARCHAR(36) PRIMARY KEY,
-//                 name VARCHAR(255) NOT NULL,
-//                 type VARCHAR(100) NOT NULL,
-//                 rarity VARCHAR(50) NOT NULL,
-//                 baseAttack VARCHAR(50) NOT NULL,
-//                 subStat VARCHAR(100) NOT NULL,
-//                 passiveName VARCHAR(255) NOT NULL,
-//                 passiveDesc TEXT NOT NULL,
-//                 image_url VARCHAR(255) NOT NULL,
-//                 price DECIMAL(15, 4) NOT NULL,
-//                 stock INTEGER NOT NULL,
-//                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//                 updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-//             )    
-//         `)
-
-
 class Weapon {
   final String weaponID;
   final String name;
@@ -56,8 +37,8 @@ class Weapon {
       passiveDesc: json['passiveDesc'] ?? '',
       imageUrl: json['image_url'] ?? '',
       stock: json['stock'] ?? 0,
-      price: json['price'] != null 
-          ? double.parse(json['price'].toString()) 
+      price: json['price'] != null
+          ? double.parse(json['price'].toString())
           : 0.0,
     );
   }
