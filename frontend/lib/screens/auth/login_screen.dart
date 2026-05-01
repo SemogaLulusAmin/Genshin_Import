@@ -45,7 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (result['success'] == true) {
-      _showMessage("Login Berhasil! Token: ${result['token']}", Colors.green);
+      _showMessage("Login Success!", Colors.green);
+
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
+      // );
     } else {
       _showMessage(result['message'], Colors.red);
     }
