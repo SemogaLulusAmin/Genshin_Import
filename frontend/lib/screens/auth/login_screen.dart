@@ -20,16 +20,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Authservice authService = Authservice();
 
   bool _isLoading = false;
-  final _formKey = GlobalKey<FormState>();
+  final _emailKey = GlobalKey<FormState>();
+  final _passwordKey = GlobalKey<FormState>();
 
   Future<void> _handleLogin() async {
     print(
       "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
     );
-    if (!_formKey.currentState!.validate()) return;
-    print(
-      "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
-    );
+
+    if (!_emailKey.currentState!.validate()) return;
+    if (!_passwordKey.currentState!.validate()) return;
 
     setState(() {
       _isLoading = true;
@@ -107,18 +107,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Form Fields
-                  CustomTextField(
-                    label: "Email",
-                    placeholder: "example@gmail.com",
-                    controller: _emailController,
+                  Form(
+                    key: _emailKey,
+                    child:
+                        // Form Fields
+                        CustomTextField(
+                          label: "Email",
+                          placeholder: "example@gmail.com",
+                          controller: _emailController,
+                        ),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    label: "Password",
-                    placeholder: "at least 8 characters",
-                    controller: _passwordController,
-                    isPassword: true,
+                  Form(
+                    key: _passwordKey,
+                    child: CustomTextField(
+                      label: "Password",
+                      placeholder: "at least 8 characters",
+                      controller: _passwordController,
+                      isPassword: true,
+                    ),
                   ),
 
                   const SizedBox(height: 32),
