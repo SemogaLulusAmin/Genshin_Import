@@ -5,6 +5,7 @@ import '../../widgets/custom_button.dart';
 import '../../core/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'register_screen.dart';
+import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,46 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  Authservice authService = Authservice();
+
+  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+
+  Future<void> _handleLogin() async {
+    print(
+      "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
+    );
+    if (!_formKey.currentState!.validate()) return;
+    print(
+      "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
+    );
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final result = await authService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    // Mengurus respons dari AuthService
+    if (result['success'] == true) {
+      _showMessage("Login Berhasil! Token: ${result['token']}", Colors.green);
+    } else {
+      _showMessage(result['message'], Colors.red);
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 32),
 
                   // Main Button
-                  CustomButton(text: "Log In", onPressed: () {}),
+                  CustomButton(text: "Log In", onPressed: _handleLogin),
 
                   const SizedBox(height: 24),
 
