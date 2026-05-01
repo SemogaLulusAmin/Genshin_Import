@@ -44,13 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
-    // Mengurus respons dari AuthService
     if (result['success'] == true) {
       _showMessage("Login Berhasil! Token: ${result['token']}", Colors.green);
     } else {
       _showMessage(result['message'], Colors.red);
     }
   }
+
+  Future<void> _handleRegister() async {}
 
   void _showMessage(String message, Color color) {
     ScaffoldMessenger.of(
