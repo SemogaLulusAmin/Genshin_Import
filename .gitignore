@@ -1,3 +1,7 @@
 .continue/
 .kilo/
 .vscode/
+.idea/
+*.log
+*.tmp
+.gitignore
