@@ -46,7 +46,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ? AppColors.primary
         : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight);
 
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       focusNode: _focusNode, // 3. Pasang FocusNode-nya
       obscureText: widget.isPassword,
@@ -105,6 +105,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         alignLabelWithHint: true,
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter ${widget.label.toLowerCase()}';
+        }
+
+        if (widget.label.toLowerCase() == "email") {
+          final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+          if (!emailRegex.hasMatch(value)) {
+            return 'Please enter a valid email address';
+          }
+        }
+
+        return null;
+      },
     );
   }
 }
