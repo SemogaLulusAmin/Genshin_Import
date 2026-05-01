@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+final ValueNotifier<bool> isLoggedIn = ValueNotifier<bool>(false);
+
+void main() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('jwt_token');
+  isLoggedIn.value = (token != null);
+
   runApp(const GenshinImportApp());
 }
 
@@ -21,7 +28,16 @@ class GenshinImportApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
 
-      home: const LoginScreen(),
+      home: ValueListenableBuilder<bool>(
+        valueListenable: isLoggedIn,
+        builder: (context, loggedIn, child) {
+          if (loggedIn) {
+            return const MainNavigationScreen();
+          } else {
+            return const LoginScreen();
+          }
+        },
+      ),
     );
   }
 }
