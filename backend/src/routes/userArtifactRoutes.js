@@ -27,7 +27,7 @@ router.post('/buy/:artifactID',authenticateToken, async (req,res) => {
         )
 
         if (artifact.length === 0) throw new Error("There's no such artifact!");
-        if (artifact[0].stock < quantity) throw new Error("artifact over stock!");
+        if (artifact[0].stock < quantity) throw new Error("Artifact over stock!");
         const totalPrice = artifact[0].price * quantity;
         if (totalPrice > user[0].money) throw new Error("Not enough money!");
 

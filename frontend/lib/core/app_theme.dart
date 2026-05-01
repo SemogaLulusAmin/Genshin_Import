@@ -34,8 +34,10 @@ class AppTheme {
 
       textTheme: const TextTheme(
         titleLarge: TextStyle(
-          color: AppColors.textPrimaryLight,
+          fontFamily: 'Alexandria',
           fontWeight: FontWeight.w600,
+          fontSize: 24,
+          color: AppColors.textPrimaryLight,
         ), // Properti 3: Color
         bodyMedium: TextStyle(
           color: AppColors.textSecondaryLight,

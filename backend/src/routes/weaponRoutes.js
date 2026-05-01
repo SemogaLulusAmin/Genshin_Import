@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import multer from 'multer';
 import pool from '../db.js';
+import path from 'path';
 import { authenticateToken, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -36,7 +37,7 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(200).json(rows);
     } catch (error){
         console.log(error.message); 
-        res.status(500).json({message: "Failed to fetch the data!"});
+        res.status(400).json({message: "Failed to fetch the data!"});
     }
 })
 

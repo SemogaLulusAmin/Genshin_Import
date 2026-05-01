@@ -1,6 +1,7 @@
 // lib/screens/auth/register_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
 import '../../core/app_colors.dart';
@@ -16,10 +17,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  Authservice authService = Authservice();
 
   // State untuk Checkbox
   bool _isTermsAgreed = false;
   bool _isNewsletterAgreed = false;
+
+  final _usernameKey = GlobalKey<FormState>();
+  final _emailKey = GlobalKey<FormState>();
+  final _passwordKey = GlobalKey<FormState>();
+
+  Future<void> _handleRegister() async {
+    if (!_usernameKey.currentState!.validate() ||
+        !_emailKey.currentState!.validate() ||
+        !_passwordKey.currentState!.validate()) {
+      return;
+    }
+
+    if (!_isTermsAgreed) {
+      _showMessage("You must agree to the Terms and Conditions", Colors.red);
+      return;
+    }
+
+    final result = await authService.register(
+      _nameController.text,
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessage("Registration Success!", Colors.green);
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) Navigator.pop(context);
+      });
+    } else {
+      _showMessage(result['message'], Colors.red);
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 48,
+                    height: 52,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
@@ -47,44 +87,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    "Create Your Account",
+                    "Create account",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Please fill this form to sign up",
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                      fontSize: 16,
-                    ),
-                  ),
+
                   const SizedBox(height: 32),
 
-                  CustomTextField(
-                    label: "Username",
-                    placeholder: "enter your username",
-                    controller: _nameController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: "Email",
-                    placeholder: "example@gmail.com",
-                    controller: _emailController,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    label: "Password",
-                    placeholder: "at least 8 characters",
-                    controller: _passwordController,
-                    isPassword: true,
+                  Form(
+                    key: _usernameKey,
+                    child: CustomTextField(
+                      label: "Username",
+                      placeholder: "enter your username",
+                      controller: _nameController,
+                    ),
                   ),
 
+                  const SizedBox(height: 20),
+
+                  Form(
+                    key: _emailKey,
+                    child: CustomTextField(
+                      label: "Email",
+                      placeholder: "example@gmail.com",
+                      controller: _emailController,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Form(
+                    key: _passwordKey,
+                    child: CustomTextField(
+                      label: "Password",
+                      placeholder: "at least 8 characters",
+                      controller: _passwordController,
+                      isPassword: true,
+                    ),
+                  ),
                   const SizedBox(height: 24),
 
                   // CHECKBOX 1: Terms & Conditions (Required)
@@ -104,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              6,
+                              4,
                             ), // Semakin besar angka, semakin bulat
                           ),
                           onChanged: (value) =>
@@ -133,7 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           activeColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              6,
+                              4,
                             ), // Semakin besar angka, semakin bulat
                           ),
                           side: BorderSide(
@@ -162,19 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   CustomButton(
                     text: "Sign Up",
                     onPressed: () {
-                      if (!_isTermsAgreed) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "You must agree to the Terms and Conditions",
-                            ),
-                            backgroundColor: Colors.redAccent,
-                          ),
-                        );
-                        return;
-                      }
-                      // Jalankan aksi register di sini (misal ke Supabase)
-                      print("Registering process...");
+                      _handleRegister();
                     },
                   ),
 
@@ -190,7 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: const Text(
-                          "Log In",
+                          "Log in here",
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
