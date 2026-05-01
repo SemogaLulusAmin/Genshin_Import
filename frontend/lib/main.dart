@@ -4,7 +4,7 @@ import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final ValueNotifier<bool> isLoggedIn = ValueNotifier<bool>(false);
+import 'states/auth_state.dart';
 
 void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
