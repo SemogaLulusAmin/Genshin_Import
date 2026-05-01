@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import pool from './db.js';
 import 'dotenv/config';
 import authRoutes from './routes/authRoutes.js';
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json())
-
+app.use(cors())
 app.use('/assets', express.static('public/assets'));
 
 app.use('/auth', authRoutes);
