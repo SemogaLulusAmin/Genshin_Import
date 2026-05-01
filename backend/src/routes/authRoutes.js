@@ -141,7 +141,9 @@ router.post('/login', async (req, res) => {
             token: tokenJWT,       
             user: {
                 id: user.userID,
-                username: user.username
+                username: user.username,
+                money: user.money,
+                roles: user.roles
             }
         });
 

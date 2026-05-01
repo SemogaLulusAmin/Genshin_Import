@@ -5,6 +5,8 @@ import '../../widgets/custom_button.dart';
 import '../../core/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'register_screen.dart';
+import '../../services/auth_service.dart';
+import '../../states/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +18,36 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  Authservice authService = Authservice();
+
+  final _emailKey = GlobalKey<FormState>();
+  final _passwordKey = GlobalKey<FormState>();
+
+  Future<void> _handleLogin() async {
+    if (!_emailKey.currentState!.validate() ||
+        !_passwordKey.currentState!.validate()) {
+      return;
+    }
+
+    final result = await authService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessage("Login Success!", Colors.green);
+
+      isLoggedIn.value = true;
+    } else {
+      _showMessage(result['message'], Colors.red);
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,29 +96,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Form Fields
-                  CustomTextField(
-                    label: "Email",
-                    placeholder: "example@gmail.com",
-                    controller: _emailController,
+                  Form(
+                    key: _emailKey,
+                    child:
+                        // Form Fields
+                        CustomTextField(
+                          label: "Email",
+                          placeholder: "example@gmail.com",
+                          controller: _emailController,
+                        ),
                   ),
                   const SizedBox(height: 20),
-                  CustomTextField(
-                    label: "Password",
-                    placeholder: "at least 8 characters",
-                    controller: _passwordController,
-                    isPassword: true,
+                  Form(
+                    key: _passwordKey,
+                    child: CustomTextField(
+                      label: "Password",
+                      placeholder: "at least 8 characters",
+                      controller: _passwordController,
+                      isPassword: true,
+                    ),
                   ),
 
                   const SizedBox(height: 32),
 
                   // Main Button
-                  CustomButton(
-                    text: "Log In",
-                    onPressed: () {
-                      // Aksi Login
-                    },
-                  ),
+                  CustomButton(text: "Log In", onPressed: _handleLogin),
 
                   const SizedBox(height: 24),
 
