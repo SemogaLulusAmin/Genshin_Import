@@ -22,9 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // 1. Set background full mengikuti tema surface
       backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
-      resizeToAvoidBottomInset: true, // Biar pas ngetik tidak ketutup keyboard
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -49,19 +48,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     "Welcome back",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     "Log in to your account to continue",
                     style: TextStyle(
                       color: isDark ? Colors.white70 : Colors.black54,
-                      fontSize: 16,
+                      fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -72,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     placeholder: "example@gmail.com",
                     controller: _emailController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Password",
                     placeholder: "at least 8 characters",
@@ -104,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           "or you could",
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Colors.grey, fontSize: 15),
                         ),
                       ),
                       Expanded(
@@ -126,7 +124,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         // TODO: Google Sign In
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColors.border),
+                        side: BorderSide(
+                          color: isDark
+                              ? AppColors.textSecondaryLight
+                              : AppColors.border,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(60),
                         ),
@@ -139,12 +141,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               "Sign in with Google",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
                                 color: isDark
                                     ? AppColors.textPrimaryDark
                                     : AppColors.textPrimaryLight.withOpacity(
-                                        0.8,
+                                        0.6,
                                       ),
                               ),
                             ),
@@ -158,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 Image.asset(
                                   'assets/images/google_logo.png',
-                                  height: 32,
+                                  height: 28,
                                 ),
                               ],
                             ),

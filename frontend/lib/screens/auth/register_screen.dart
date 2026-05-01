@@ -47,9 +47,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    "Create your account",
+                    "Create account",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
@@ -64,13 +63,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     placeholder: "enter your username",
                     controller: _nameController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Email",
                     placeholder: "example@gmail.com",
                     controller: _emailController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Password",
                     placeholder: "at least 8 characters",

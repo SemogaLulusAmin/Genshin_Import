@@ -25,10 +25,7 @@ class CustomButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           // LOGIKA PERUBAHAN WARNA DISINI
-          backgroundColor: isDark
-              ? AppColors
-                    .primary // Light button untuk Dark Theme
-              : AppColors.surfaceDark, // Dark button untuk Light Theme
+          backgroundColor: AppColors.primary,
 
           foregroundColor:
               AppColors.textPrimaryDark, // Teks putih jika tombol gelap
@@ -36,7 +33,7 @@ class CustomButton extends StatelessWidget {
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
-              4,
+              12,
             ), // Mengikuti style login sebelumnya
           ),
         ),
@@ -53,8 +50,8 @@ class CustomButton extends StatelessWidget {
             : Text(
                 text,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
       ),
