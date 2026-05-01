@@ -33,7 +33,32 @@ class _GalleryShopScreenState extends State<GalleryShopScreen> {
         child: Column(
           children: [
             Header(),
-            SingleChildScrollView(child: Column(children: [SearchBarWdiget()])),
+            SingleChildScrollView(
+              child: Column(children: [SearchBarWdidget()]),
+            ),
+            Expanded(
+              child: FutureBuilder<List<Weapon>>(
+                future: _weaponFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return WeaponCard(weapon: snapshot.data![index]);
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -41,8 +66,52 @@ class _GalleryShopScreenState extends State<GalleryShopScreen> {
   }
 }
 
-class SearchBarWdiget extends StatelessWidget {
-  const SearchBarWdiget({super.key});
+class WeaponCard extends StatelessWidget {
+  final Weapon weapon;
+
+  const WeaponCard({super.key, required this.weapon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          Image.network(weapon.imageUrl, height: 150, fit: BoxFit.cover),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  weapon.name,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Text('Type: ${weapon.type}'),
+                Text('Rarity: ${weapon.rarity}'),
+                Text('Base Attack: ${weapon.baseAttack}'),
+                Text('Sub Stat: ${weapon.subStat}'),
+                Text('Passive: ${weapon.passiveName} - ${weapon.passiveDesc}'),
+                SizedBox(height: 8),
+                Text(
+                  'Price: ${weapon.price}',
+                  style: TextStyle(color: Colors.green),
+                ),
+                Text(
+                  'Stock: ${weapon.stock}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SearchBarWdidget extends StatelessWidget {
+  const SearchBarWdidget({super.key});
 
   @override
   Widget build(BuildContext context) {
