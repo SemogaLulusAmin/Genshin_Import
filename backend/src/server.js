@@ -6,11 +6,13 @@ import itemRoutes from './routes/weaponRoutes.js';
 import userweapon from './routes/userWeaponRoutes.js';
 import userartifact from './routes/userArtifactRoutes.js';
 import artifactRoutes from './routes/ArtifactRoutes.js';
+import cors from 'cors';
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 app.use('/assets', express.static('public/assets'));
 
