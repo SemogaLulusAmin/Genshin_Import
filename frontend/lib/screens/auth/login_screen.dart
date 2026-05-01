@@ -83,12 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 32),
 
                   // Main Button
-                  CustomButton(
-                    text: "Log In",
-                    onPressed: () {
-                      // Aksi Login
-                    },
-                  ),
+                  CustomButton(text: "Log In", onPressed: () {}),
 
                   const SizedBox(height: 24),
 
