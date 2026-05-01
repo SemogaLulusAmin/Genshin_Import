@@ -13,7 +13,6 @@ class WeaponService {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        print("Hello it's me you looking for");
         return jsonResponse.map((data) => Weapon.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load weapons');
