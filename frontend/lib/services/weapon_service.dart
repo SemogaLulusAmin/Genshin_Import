@@ -3,9 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/weapon_model.dart';
 
 class WeaponService {
-  // Jadikan base URL konstanta agar mudah diubah saat naik ke Production
-  static const String baseUrl = 'http://10.0.2.2:3000';
-  // static const String baseUrl = 'http://localhost:3000';
+  // static const String baseUrl = 'http://10.0.2.2:3000';
+  static const String baseUrl = 'http://localhost:3000/';
 
   Future<List<Weapon>> getWeapons() async {
     try {
