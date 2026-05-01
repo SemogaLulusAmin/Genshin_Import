@@ -6,6 +6,7 @@ import '../../core/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'register_screen.dart';
 import '../../services/auth_service.dart';
+import '../../states/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   Authservice authService = Authservice();
 
-  bool _isLoading = false;
   final _emailKey = GlobalKey<FormState>();
   final _passwordKey = GlobalKey<FormState>();
 
@@ -28,29 +28,19 @@ class _LoginScreenState extends State<LoginScreen> {
       "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
     );
 
-    if (!_emailKey.currentState!.validate()) return;
-    if (!_passwordKey.currentState!.validate()) return;
-
-    setState(() {
-      _isLoading = true;
-    });
+    if (!_emailKey.currentState!.validate() ||
+        !_passwordKey.currentState!.validate())
+      return;
 
     final result = await authService.login(
       _emailController.text,
       _passwordController.text,
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
     if (result['success'] == true) {
       _showMessage("Login Success!", Colors.green);
 
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
-      // );
+      isLoggedIn.value = true;
     } else {
       _showMessage(result['message'], Colors.red);
     }
