@@ -52,7 +52,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       obscureText: widget.isPassword,
       style: TextStyle(
         color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-        fontSize: 16,
+        fontSize: 15,
       ),
       decoration: InputDecoration(
         labelText: widget.label,
@@ -62,7 +62,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           color: isDark
               ? AppColors.textSecondaryDark
               : AppColors.textSecondaryLight,
-          fontSize: 16,
+          fontSize: 15,
         ),
 
         // 4. KUNCI: Warna label saat melayang (Floating)
@@ -70,12 +70,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
           color:
               activeLabelColor, // Menggunakan warna dinamis hasil deteksi FocusNode
           fontWeight: _focusNode.hasFocus ? FontWeight.w600 : FontWeight.w500,
-          fontSize: 18,
+          fontSize: 15,
         ),
 
         hintText: widget.placeholder.toLowerCase(),
         hintStyle: TextStyle(
-          fontSize: 16,
+          fontSize: 15,
           color:
               (isDark
                       ? AppColors.textSecondaryDark

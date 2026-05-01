@@ -22,9 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // 1. Set background full mengikuti tema surface
       backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
-      resizeToAvoidBottomInset: true, // Biar pas ngetik tidak ketutup keyboard
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -37,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Logo SVG
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 48,
+                    height: 52,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
@@ -47,21 +46,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Welcome Text
                   Text(
-                    "Welcome Back",
+                    "Welcome back",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     "Log in to your account to continue",
                     style: TextStyle(
                       color: isDark ? Colors.white70 : Colors.black54,
-                      fontSize: 16,
+                      fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -72,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     placeholder: "example@gmail.com",
                     controller: _emailController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Password",
                     placeholder: "at least 8 characters",
@@ -104,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           "or you could",
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Colors.grey, fontSize: 15),
                         ),
                       ),
                       Expanded(
@@ -120,55 +118,57 @@ class _LoginScreenState extends State<LoginScreen> {
                   // TOMBOL GOOGLE
                   SizedBox(
                     width: double.infinity,
-
-                    height: 52, // Sesuaikan dengan tinggi CustomButton kamu
-
+                    height: 52,
                     child: OutlinedButton(
                       onPressed: () {
-                        // Aksi Sign In Google
+                        // TODO: Google Sign In
                       },
-
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                          color: isDark ? Colors.white10 : Colors.grey.shade300,
+                          color: isDark
+                              ? AppColors.textSecondaryLight
+                              : AppColors.border,
                         ),
-
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(60),
                         ),
-
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.05)
-                            : Colors.white.withOpacity(0.5),
                       ),
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          // Pastikan kamu punya logo google di assets
-                          Image.asset('images/google_logo.png', height: 20),
+                          /// 🔹 TEXT (CENTER BENERAN)
+                          Center(
+                            child: Text(
+                              "Sign in with Google",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimaryLight.withOpacity(
+                                        0.6,
+                                      ),
+                              ),
+                            ),
+                          ),
 
-                          const SizedBox(width: 12),
-
-                          Text(
-                            "Sign in with Google",
-
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.textPrimaryDark
-                                  : Colors.grey.shade600,
-
-                              fontWeight: FontWeight.w500,
-
-                              fontSize: 16,
+                          /// 🔹 ICON (KIRI)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google_logo.png',
+                                  height: 28,
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 32),
 
                   // Footer Nav
@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: const Text(
-                          "Register",
+                          "Sign up here",
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,

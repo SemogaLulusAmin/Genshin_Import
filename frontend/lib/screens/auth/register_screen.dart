@@ -39,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   SvgPicture.asset(
                     'images/Genshin_Import_logo.svg',
-                    height: 48,
+                    height: 52,
                     colorFilter: ColorFilter.mode(
                       isDark ? Colors.white : AppColors.primary,
                       BlendMode.srcIn,
@@ -47,23 +47,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    "Create Your Account",
+                    "Create account",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: isDark
                           ? AppColors.textPrimaryDark
                           : AppColors.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Please fill this form to sign up",
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                      fontSize: 16,
-                    ),
-                  ),
+
                   const SizedBox(height: 32),
 
                   CustomTextField(
@@ -71,13 +63,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     placeholder: "enter your username",
                     controller: _nameController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Email",
                     placeholder: "example@gmail.com",
                     controller: _emailController,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   CustomTextField(
                     label: "Password",
                     placeholder: "at least 8 characters",
@@ -104,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              6,
+                              4,
                             ), // Semakin besar angka, semakin bulat
                           ),
                           onChanged: (value) =>
@@ -133,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           activeColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
-                              6,
+                              4,
                             ), // Semakin besar angka, semakin bulat
                           ),
                           side: BorderSide(
@@ -190,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: const Text(
-                          "Log In",
+                          "Log in here",
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,

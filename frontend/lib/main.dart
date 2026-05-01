@@ -21,7 +21,7 @@ class GenshinImportApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
 
-      home: const LoginScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }
