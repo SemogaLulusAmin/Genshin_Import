@@ -24,13 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordKey = GlobalKey<FormState>();
 
   Future<void> _handleLogin() async {
-    print(
-      "Attempting login with email: ${_emailController.text} and password: ${_passwordController.text}",
-    );
-
     if (!_emailKey.currentState!.validate() ||
-        !_passwordKey.currentState!.validate())
+        !_passwordKey.currentState!.validate()) {
       return;
+    }
 
     final result = await authService.login(
       _emailController.text,
@@ -45,8 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _showMessage(result['message'], Colors.red);
     }
   }
-
-  Future<void> _handleRegister() async {}
 
   void _showMessage(String message, Color color) {
     ScaffoldMessenger.of(
