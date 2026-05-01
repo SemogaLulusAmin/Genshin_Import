@@ -7,14 +7,14 @@ import '../../core/app_colors.dart';
 import '../../models/weapon_model.dart';
 import '../../services/weapon_service.dart';
 
-class GalleryShopScreen extends StatefulWidget {
-  const GalleryShopScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<GalleryShopScreen> createState() => _GalleryShopScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _GalleryShopScreenState extends State<GalleryShopScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final WeaponService _weaponService = WeaponService();
   late Future<List<Weapon>> _weaponFuture;
 
