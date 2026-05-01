@@ -12,9 +12,7 @@ class Authservice {
         body: jsonEncode({"email": email, "password": password}),
       );
 
-      print("Raw login response: ${response.body}");
       final data = json.decode(response.body);
-      print("Login response: $data");
 
       if (response.statusCode == 200) {
         return {"success": true, "token": data['token'], "user": data['user']};
