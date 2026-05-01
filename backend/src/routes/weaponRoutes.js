@@ -17,7 +17,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', authenticateToken, async (req, res) => {
+// router.get('/', authenticateToken, async (req, res) => {
+//     try {
+//         let rows = []
+//         const { status } = req.query; 
+
+//         if(status === "not-available"){
+//             const [result] = await pool.execute(`SELECT * FROM Weapon WHERE stock = 0`);
+//             rows = result;
+//         } else if(status === "available"){
+//             const [result] = await pool.execute(`SELECT * FROM Weapon WHERE stock > 0`);
+//             rows = result;
+//         } else {
+//             const [result] = await pool.execute(`SELECT * FROM Weapon`);
+//             rows = result;
+//         }
+
+//         res.status(200).json(rows);
+//     } catch (error){
+//         console.log(error.message); 
+//         res.status(500).json({message: "Failed to fetch the data!"});
+//     }
+// })
+
+router.get('/', async (req, res) => {
     try {
         let rows = []
         const { status } = req.query; 
@@ -39,6 +62,7 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(500).json({message: "Failed to fetch the data!"});
     }
 })
+
 
 router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
     try {
