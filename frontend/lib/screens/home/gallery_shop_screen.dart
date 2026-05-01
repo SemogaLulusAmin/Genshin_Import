@@ -24,6 +24,7 @@ class _GalleryShopScreenState extends State<GalleryShopScreen> {
   void initState() {
     super.initState();
     _weaponFuture = _weaponService.getWeapons();
+    print(_weaponFuture.toString());
   }
 
   @override
