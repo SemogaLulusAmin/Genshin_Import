@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/state/main_navigation_state.dart';
+import 'package:frontend/states/main_navigation_state.dart';
 import 'core/app_theme.dart';
 import 'screens/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
