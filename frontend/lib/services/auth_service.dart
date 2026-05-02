@@ -23,7 +23,7 @@ class Authservice {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setString('username', data['user']['username']);
-        await prefs.setString('email', data['user']['money']);
+        await prefs.setString('money', data['user']['money'].toString());
         await prefs.setString('roles', data['user']['roles']);
         return {"success": true, "token": data['token'], "user": data['user']};
       } else if (response.statusCode == 401) {
