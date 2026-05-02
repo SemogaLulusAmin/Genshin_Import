@@ -61,6 +61,8 @@ class Authservice {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {"success": true, "message": data['message']};
+      } else if (response.statusCode == 400) {
+        return {"success": false, "message": data['message']};
       } else {
         return {
           "success": false,
