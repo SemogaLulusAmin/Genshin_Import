@@ -12,6 +12,12 @@ router.post('/register', async (req, res) => {
     const hashPassword = bcrypt.hashSync(password, 7);
 
     try {
+        const [rows] = await pool.execute("SELECT * FROM User WHERE email = ?", [email]);
+        const user = rows[0];
+
+        if (user) {
+            return res.status(400).json({ message: "User already exists!" });
+        }
 
         const userID = crypto.randomUUID(); 
 
