@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../core/app_colors.dart';
 import '../../models/weapon_model.dart';
+import '../../models/artifact_model.dart';
+
 import '../../services/weapon_service.dart';
+import '../../services/artifact_service.dart';
+
+import '../../widgets/cards/weapon_card.dart';
+import '../../widgets/cards/artifact_card.dart';
+import '../../widgets/home/home_header.dart';
+import '../../widgets/home/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,169 +20,107 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final WeaponService _weaponService = WeaponService();
-  late Future<List<Weapon>> _weaponFuture;
+  final ArtifactService _artifactService = ArtifactService();
 
-  // Future<void> fetchDataArtifacts() async {}
+  late Future<List<Weapon>> _weaponFuture;
+  late Future<List<Artifact>> _artifactFuture;
 
   @override
   void initState() {
     super.initState();
     _weaponFuture = _weaponService.getWeapons();
+    _artifactFuture = _artifactService.getArtifacts();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Header(),
-            SingleChildScrollView(
-              child: Column(children: [SearchBarWdidget()]),
-            ),
-            Expanded(
-              child: FutureBuilder<List<Weapon>>(
-                future: _weaponFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return WeaponCard(weapon: snapshot.data![index]);
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Genshin Import'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Weapons', icon: Icon(Icons.shield_outlined)),
+              Tab(text: 'Artifacts', icon: Icon(Icons.auto_awesome_outlined)),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const HomeHeader(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: HomeSearchBar(),
               ),
-            ),
-          ],
+              Expanded(
+                child: TabBarView(
+                  children: [_buildWeaponGrid(), _buildArtifactGrid()],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-class WeaponCard extends StatelessWidget {
-  final Weapon weapon;
+  Widget _buildWeaponGrid() {
+    return FutureBuilder<List<Weapon>>(
+      future: _weaponFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No weapons found'));
+        }
 
-  const WeaponCard({super.key, required this.weapon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          Image.network(weapon.imageUrl, height: 150, fit: BoxFit.cover),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  weapon.name,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text('Type: ${weapon.type}'),
-                Text('Rarity: ${weapon.rarity}'),
-                Text('Base Attack: ${weapon.baseAttack}'),
-                Text('Sub Stat: ${weapon.subStat}'),
-                Text('Passive: ${weapon.passiveName} - ${weapon.passiveDesc}'),
-                SizedBox(height: 8),
-                Text(
-                  'Price: ${weapon.price}',
-                  style: TextStyle(color: Colors.green),
-                ),
-                Text(
-                  'Stock: ${weapon.stock}',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ],
-            ),
+        return GridView.builder(
+          padding: const EdgeInsets.all(12),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.7,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class SearchBarWdidget extends StatelessWidget {
-  const SearchBarWdidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SearchAnchor(
-      builder: (BuildContext context, SearchController controller) {
-        return SearchBar(
-          controller: controller,
-          padding: WidgetStatePropertyAll<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 16.0),
-          ),
-          leading: const Icon(Icons.search),
-          hintText: 'Search weapons and artifacts here!',
-          onTap: () {
-            controller.openView();
-          },
-          onChanged: (_) {
-            controller.openView();
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            return WeaponCard(weapon: snapshot.data![index]);
           },
         );
       },
-      suggestionsBuilder: (BuildContext context, SearchController controller) {
-        return [
-          ListTile(title: Text("Suggestion 1")),
-          ListTile(title: Text("Suggestion 2")),
-        ];
-      },
     );
   }
-}
 
-class Header extends StatelessWidget {
-  const Header({super.key});
+  Widget _buildArtifactGrid() {
+    return FutureBuilder<List<Artifact>>(
+      future: _artifactFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No artifacts found'));
+        }
 
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0, right: 16.0, bottom: 8.0),
-        child: DisplayCoin(),
-      ),
-    );
-  }
-}
-
-class DisplayCoin extends StatelessWidget {
-  const DisplayCoin({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.monetization_on, color: Colors.amber, size: 18),
-          SizedBox(width: 4),
-          Text(
-            '1.200',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        return GridView.builder(
+          padding: const EdgeInsets.all(12),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.7,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
           ),
-        ],
-      ),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            return ArtifactCard(artifact: snapshot.data![index]);
+          },
+        );
+      },
     );
   }
 }
