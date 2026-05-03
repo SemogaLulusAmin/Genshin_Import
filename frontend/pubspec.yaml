@@ -78,15 +78,19 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Gabarito
+    - family: HyWenhei
       fonts:
-        - asset: assets/fonts/Gabarito.ttf
+        - asset: assets/fonts/HyWenhei.ttf
 
-    - family: Alexandria
+    - family: Rubik
       fonts:
-        - asset: assets/fonts/Alexandria-Regular.ttf
-        - asset: assets/fonts/Alexandria-SemiBold.ttf
+        - asset: assets/fonts/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Rubik-SemiBold.ttf
           weight: 600
+        - asset: assets/fonts/Rubik-Bold.ttf
+          weight: 700
 
   #   - family: Trajan Pro
   #     fonts:

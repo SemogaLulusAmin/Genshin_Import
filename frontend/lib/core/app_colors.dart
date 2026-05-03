@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Warna Utama & Aksen
-  static const Color primary = Color(0xFF657EF8);
+  static const Color primary = Color(0xFFDDB478);
+  static const Color secondary = Color(0xFF193D4D);
 
   // Light Mode Colors
   static const Color bgLight = Color(0xFFF5F7FB);
@@ -12,7 +13,7 @@ class AppColors {
 
   // Dark Mode Colors
   static const Color bgDark = Color(0xFF18191B);
-  static const Color surfaceDark = Color(0xFF2B2D32);
+  static const Color surfaceDark = Color(0xFF1B1D24);
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B3B8);
 

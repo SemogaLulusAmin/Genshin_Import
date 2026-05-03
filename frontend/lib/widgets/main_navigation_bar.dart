@@ -16,10 +16,12 @@ class MainNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navTheme = Theme.of(context).bottomNavigationBarTheme;
+
     return Container(
-      height: 70, // Tinggi navbar
+      height: 70,
       decoration: BoxDecoration(
-        color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+        color: navTheme.backgroundColor,
         border: Border(
           top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
         ),
@@ -27,49 +29,98 @@ class MainNavigationBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(0, AppIcons.swordOutlined, AppIcons.swordFilled),
-          _buildNavItem(1, AppIcons.backpackOutlined, AppIcons.backpackFilled),
-          _buildNavItem(2, AppIcons.boxOutlined, AppIcons.boxFilled),
-          _buildNavItem(3, AppIcons.userOutlined, AppIcons.userFilled),
+          _buildNavItem(context, 0, AppIcons.shop, AppIcons.shopActive, "Shop"),
+          _buildNavItem(
+            context,
+            1,
+            AppIcons.cart,
+            AppIcons.cartActive,
+            "Orders",
+          ),
+          _buildNavItem(
+            context,
+            2,
+            AppIcons.bag,
+            AppIcons.bagActive,
+            "Inventory",
+          ),
+          _buildNavItem(
+            context,
+            3,
+            AppIcons.profile,
+            AppIcons.profileActive,
+            "Profile",
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, String outlineIcon, String filledIcon) {
+  Widget _buildNavItem(
+    BuildContext context,
+    int index,
+    String outlineIcon,
+    String filledIcon,
+    String label,
+  ) {
     final bool isSelected = currentIndex == index;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final navTheme = Theme.of(context).bottomNavigationBarTheme;
+
+    // --- COLORS ---
+    final Color activeIconColor =
+        navTheme.selectedItemColor ?? AppColors.primary;
+
+    final Color inactiveIconColor =
+        (navTheme.unselectedItemColor ??
+                (isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight))
+            .withOpacity(0.6);
+
+    final Color activeTextColor = isDark
+        ? Colors.white
+        : AppColors.textPrimaryLight;
+
+    final Color inactiveTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
+    final Color iconColor = isSelected ? activeIconColor : inactiveIconColor;
 
     return GestureDetector(
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Column(
-        mainAxisSize:
-            MainAxisSize.min, // Agar kolom tidak memakan ruang berlebih
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // EFEK SCALE: Membesar saat isSelected
+          /// ICON
           AnimatedScale(
             duration: const Duration(milliseconds: 200),
-            scale: isSelected ? 1.2 : 1.0, // Membesar 20% saat terpilih
-            curve:
-                Curves.easeOutBack, // Memberikan sedikit efek membal (bounce)
+            scale: isSelected ? 1.7 : 1.4,
+            curve: Curves.easeOutBack,
             child: SvgPicture.asset(
               isSelected ? filledIcon : outlineIcon,
               width: 24,
               height: 24,
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
           ),
 
           const SizedBox(height: 8),
 
-          // Indikator Box Panjang (Tetap ada)
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            height: 3,
-            width: isSelected ? 16 : 0, // Sedikit lebih pendek agar seimbang
-            decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
+          /// LABEL
+          AnimatedScale(
+            duration: const Duration(milliseconds: 200),
+            scale: isSelected ? 1.2 : 1.1,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? activeTextColor : inactiveTextColor,
+              ),
             ),
           ),
         ],

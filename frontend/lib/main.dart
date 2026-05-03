@@ -26,7 +26,7 @@ class GenshinImportApp extends StatelessWidget {
       // Menggunakan tema yang sudah dibuat
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
 
       home: ValueListenableBuilder<bool>(
         valueListenable: isLoggedIn,
@@ -34,7 +34,7 @@ class GenshinImportApp extends StatelessWidget {
           if (loggedIn) {
             return const MainNavigationScreen();
           } else {
-            return const LoginScreen();
+            return const MainNavigationScreen();
           }
         },
       ),

@@ -7,43 +7,39 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+
+      // Core colors
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.bgLight,
-      fontFamily: 'Gabarito', // Properti 1: Font Family
+
+      // Typography
+      fontFamily: 'Rubik',
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          fontFamily: 'HyWenhei',
+          fontSize: 22,
+          color: AppColors.textPrimaryLight,
+        ),
+        bodyMedium: TextStyle(fontSize: 16, color: AppColors.textPrimaryLight),
+        bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+      ),
 
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surfaceLight, // Warna background navbar
-        selectedItemColor: AppColors.primary, // Warna ikon saat dipilih (Biru)
-        unselectedItemColor: Color(0xFF727176), // Warna ikon saat tidak dipilih
-        elevation: 2, // Ketebalan bayangan
+        backgroundColor: AppColors.surfaceLight,
+        elevation: 0,
       ),
 
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.surfaceLight,
         foregroundColor: AppColors.textPrimaryLight,
-        elevation: 0.5,
+        elevation: 0,
       ),
 
       cardTheme: CardThemeData(
-        color: AppColors.surfaceLight, // Properti 2: Background Color
+        color: AppColors.surfaceLight,
         elevation: 1,
-        surfaceTintColor:
-            Colors.transparent, // Mencegah warna ungu default Material 3
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          fontFamily: 'Alexandria',
-          fontWeight: FontWeight.w600,
-          fontSize: 24,
-          color: AppColors.textPrimaryLight,
-        ), // Properti 3: Color
-        bodyMedium: TextStyle(
-          color: AppColors.textSecondaryLight,
-          fontSize: 16,
-        ), // Properti 4: Size
-        bodySmall: TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
       ),
     );
   }
@@ -53,36 +49,39 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+
+      // Core colors
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.bgDark,
-      fontFamily: 'Gabarito',
 
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surfaceDark, // Warna background navbar
-        selectedItemColor: AppColors.primary, // Warna ikon saat dipilih (Biru)
-        unselectedItemColor: Color(0xFF727176), // Warna ikon saat tidak dipilih
-        elevation: 0, // Ketebalan bayangan
+      // Typography
+      fontFamily: 'Rubik',
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          fontFamily: 'HyWenhei',
+          fontSize: 22,
+          color: AppColors.textPrimaryDark,
+        ),
+        bodyMedium: TextStyle(fontSize: 16, color: AppColors.textPrimaryDark),
+        bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondaryDark),
       ),
 
-      appBarTheme: const AppBarTheme(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
         elevation: 0,
       ),
 
-      cardTheme: CardThemeData(
-        color: AppColors.surfaceLight, // Properti 2: Background Color
-        elevation: 1,
-        surfaceTintColor:
-            Colors.transparent, // Mencegah warna ungu default Material 3
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.surfaceDark,
+        foregroundColor: AppColors.textPrimaryDark,
+        elevation: 0,
       ),
 
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(
-          color: AppColors.textPrimaryDark,
-          fontWeight: FontWeight.bold,
-        ),
-        bodyMedium: TextStyle(color: AppColors.textSecondaryDark, fontSize: 14),
+      cardTheme: CardThemeData(
+        color: AppColors.surfaceDark,
+        elevation: 1,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

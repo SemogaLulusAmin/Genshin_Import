@@ -10,4 +10,16 @@ class AppIcons {
 
   static const backpackOutlined = "assets/icons/backpack-outlined.svg";
   static const backpackFilled = "assets/icons/backpack-filled.svg";
+
+  static const shop = "assets/icons/shopsign.svg";
+  static const shopActive = "assets/icons/shopsign_active.svg";
+
+  static const cart = "assets/icons/cart.svg";
+  static const cartActive = "assets/icons/cart_active.svg";
+
+  static const bag = "assets/icons/bag.svg";
+  static const bagActive = "assets/icons/bag_active.svg";
+
+  static const profile = "assets/icons/profile.svg";
+  static const profileActive = "assets/icons/profile_active.svg";
 }
