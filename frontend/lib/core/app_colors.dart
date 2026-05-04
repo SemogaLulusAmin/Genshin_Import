@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Warna Utama & Aksen
-  static const Color primary = Color(0xFFDDB478);
-  static const Color secondary = Color(0xFF193D4D);
+  static const Color primary = Color(0xFFE5B368);
+  static const Color secondary = Color(0xFF14698D);
 
   // Light Mode Colors
   static const Color bgLight = Color(0xFFF5F7FB);
@@ -17,7 +17,8 @@ class AppColors {
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B3B8);
 
-  static const Color fieldBackground = Color(0xFFF9F9FD);
+  static const Color fieldBackgroundDark = Color.fromARGB(255, 40, 43, 47);
+  static const Color fieldBackground = Color(0xFFEFEFEF);
   static const Color inactive = Color(0xFFEAE7ED);
   static const Color border = Color(0xFFE7E6EC);
 }

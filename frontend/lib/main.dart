@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/auth_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'states/auth_state.dart';
@@ -23,10 +24,9 @@ class GenshinImportApp extends StatelessWidget {
       title: 'Genshin Import',
       debugShowCheckedModeBanner: false,
 
-      // Menggunakan tema yang sudah dibuat
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
 
       home: ValueListenableBuilder<bool>(
         valueListenable: isLoggedIn,
@@ -34,7 +34,7 @@ class GenshinImportApp extends StatelessWidget {
           if (loggedIn) {
             return const MainNavigationScreen();
           } else {
-            return const MainNavigationScreen();
+            return const AuthScreen();
           }
         },
       ),

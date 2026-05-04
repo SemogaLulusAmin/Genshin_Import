@@ -20,7 +20,7 @@ class AppTheme {
           fontSize: 22,
           color: AppColors.textPrimaryLight,
         ),
-        bodyMedium: TextStyle(fontSize: 16, color: AppColors.textPrimaryLight),
+        bodyMedium: TextStyle(fontSize: 14, color: AppColors.textPrimaryLight),
         bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
       ),
 
@@ -62,7 +62,7 @@ class AppTheme {
           fontSize: 22,
           color: AppColors.textPrimaryDark,
         ),
-        bodyMedium: TextStyle(fontSize: 16, color: AppColors.textPrimaryDark),
+        bodyMedium: TextStyle(fontSize: 14, color: AppColors.textPrimaryDark),
         bodySmall: TextStyle(fontSize: 12, color: AppColors.textSecondaryDark),
       ),
 
