@@ -65,18 +65,18 @@ class _RegisterFormState extends State<RegisterForm> {
                   children: [
                     TextSpan(
                       text: "Terms & Conditions",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.secondary,
+                        color: isDark ? AppColors.primary : AppColors.secondary,
                       ),
                       // Tambahkan recognizer: TapGestureRecognizer() di sini jika ingin link bisa diklik
                     ),
                     const TextSpan(text: " and "),
                     TextSpan(
                       text: "Privacy Policy",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: AppColors.secondary,
+                        color: isDark ? AppColors.primary : AppColors.secondary,
                       ),
                     ),
                   ],
