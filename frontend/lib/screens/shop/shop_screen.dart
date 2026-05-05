@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/header/screen_header.dart';
 import '../../widgets/card/weapon_card.dart';
+import '../../widgets/card/artifact_card.dart';
 import '../../models/weapon_model.dart';
+import '../../models/artifact_model.dart';
 import '../../services/weapon_service.dart';
+import '../../services/artifact_service.dart';
 
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
@@ -55,7 +58,7 @@ class ShopScreen extends StatelessWidget {
                         children: [
                           Icon(Icons.auto_awesome_rounded, size: 20),
                           SizedBox(width: 6),
-                          Text("Artefacts"),
+                          Text("Artifacts"),
                         ],
                       ),
                     ),
@@ -72,8 +75,8 @@ class ShopScreen extends StatelessWidget {
                     // --- TAB 1: WEAPONS (Existing Logic) ---
                     _buildWeaponsTab(isDark),
 
-                    // --- TAB 2: ARTEFACTS (Placeholder) ---
-                    _buildArtefactsTab(isDark),
+                    // --- TAB 2: ARTIFACTS (Placeholder) ---
+                    _buildArtifactsTab(isDark),
                   ],
                 ),
               ),
@@ -135,28 +138,54 @@ class ShopScreen extends StatelessWidget {
     );
   }
 
-  /// FUNGSI UNTUK MERENDER HALAMAN ARTEFACTS (Placeholder)
-  Widget _buildArtefactsTab(bool isDark) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.star_outlined,
-            size: 80,
-            color: Colors.grey.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Artefacts Coming Soon",
-            style: TextStyle(
-              fontSize: 18,
-              fontFamily: "HyWenhei",
-              color: isDark ? Colors.white54 : Colors.black45,
+  /// FUNGSI UNTUK MERENDER HALAMAN ARTIFACTS (Placeholder)
+  Widget _buildArtifactsTab(bool isDark) {
+    return FutureBuilder<List<Artifact>>(
+      future: ArtifactService().getArtifacts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Error: ${snapshot.error}",
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+              ),
             ),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No Artifacts found"));
+        }
+
+        final artifacts = snapshot.data!;
+
+        return GridView.builder(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+          itemCount: artifacts.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.6,
           ),
-        ],
-      ),
+          itemBuilder: (context, index) {
+            final artifact = artifacts[index];
+            return ArtifactCard(
+              artifact: artifact,
+              onTap: () {
+                // Navigasi detail
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

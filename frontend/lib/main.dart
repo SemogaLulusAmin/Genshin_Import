@@ -27,7 +27,7 @@ class GenshinImportApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
 
       home: ValueListenableBuilder<bool>(
         valueListenable: isLoggedIn,

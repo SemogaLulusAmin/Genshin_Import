@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../models/weapon_model.dart';
+import '../../models/artifact_model.dart';
 import '../../core/app_colors.dart';
 
-class WeaponCard extends StatelessWidget {
-  final Weapon weapon;
+class ArtifactCard extends StatelessWidget {
+  final Artifact artifact;
   final VoidCallback? onTap;
 
-  const WeaponCard({super.key, required this.weapon, this.onTap});
+  const ArtifactCard({super.key, required this.artifact, this.onTap});
 
+  // Logika warna rarity yang sama dengan WeaponCard
   Color _getRarityColor(String rarity) {
     switch (rarity) {
       case '5':
@@ -27,8 +28,8 @@ class WeaponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rarityColor = _getRarityColor(weapon.rarity);
-    final rarity = _getRarityInt(weapon.rarity);
+    final rarityColor = _getRarityColor(artifact.maxRarity);
+    final rarityCount = _getRarityInt(artifact.maxRarity);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -36,7 +37,7 @@ class WeaponCard extends StatelessWidget {
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark ? Color(0xFF1B1D24) : Color(0xFFFAF9F5),
+          color: isDark ? const Color(0xFF1B1D24) : const Color(0xFFFAF9F5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -69,7 +70,7 @@ class WeaponCard extends StatelessWidget {
                         bottomRight: Radius.circular(24),
                       ),
                       child: Image.network(
-                        weapon.imageUrl,
+                        artifact.imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
@@ -87,15 +88,13 @@ class WeaponCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(
-                          0.3,
-                        ), // Semi transparan gelap
+                        color: Colors.black.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "X${weapon.stock}", // Menampilkan angka stok
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                        "X${artifact.stock}",
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           fontFamily: "HyWenhei",
@@ -110,7 +109,7 @@ class WeaponCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        rarity,
+                        rarityCount,
                         (index) => Icon(
                           Icons.star,
                           size: 24,
@@ -130,14 +129,14 @@ class WeaponCard extends StatelessWidget {
               ),
             ),
 
-            /// MID CONTENT (Name & Type)
+            /// MID CONTENT (Name & Set Name)
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    weapon.name.toString(),
+                    artifact.formattedName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -148,14 +147,17 @@ class WeaponCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    weapon.type,
+                    artifact.setName, // Menggunakan Set Name sebagai sub-info
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize:
+                          11, // Sedikit lebih kecil karena set name biasanya panjang
                       fontFamily: "HyWenhei",
                       fontWeight: FontWeight.w400,
                       color: isDark
-                          ? AppColors.textPrimaryDark.withValues(alpha: 0.6)
-                          : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.black.withOpacity(0.6),
                     ),
                   ),
                 ],
@@ -167,24 +169,26 @@ class WeaponCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 6),
               decoration: BoxDecoration(
-                color: isDark ? Color(0xFF1F2C3F) : Color(0xFF3D4E69),
+                color: isDark
+                    ? const Color(0xFF1F2C3F)
+                    : const Color(0xFF3D4E69),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
                     'assets/images/Item_Mora.webp',
-                    width: 22,
-                    height: 22,
+                    width: 20,
+                    height: 20,
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    weapon.price.toStringAsFixed(0),
-                    style: TextStyle(
+                    artifact.price.toStringAsFixed(0),
+                    style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                       fontFamily: "HyWenhei",
-                      color: AppColors.textPrimaryDark,
+                      color: Colors.white,
                     ),
                   ),
                 ],
