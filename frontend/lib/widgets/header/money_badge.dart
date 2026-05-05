@@ -28,23 +28,27 @@ class MoneyBadge extends StatelessWidget {
         final money = snapshot.data ?? 0;
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
           decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.primary.withOpacity(0.6)),
+            color: Color(0xC51D2A54),
+            borderRadius: BorderRadius.circular(60),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.8)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.monetization_on, color: AppColors.primary, size: 18),
+              Image.asset(
+                'assets/images/Item_Mora.webp',
+                width: 30,
+                height: 30,
+                fit: BoxFit.contain,
+              ),
               const SizedBox(width: 6),
               Text(
                 money.toString(),
                 style: TextStyle(
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
+                  color: AppColors.textPrimaryDark,
+                  fontFamily: "HyWenhei",
                   fontWeight: FontWeight.bold,
                 ),
               ),

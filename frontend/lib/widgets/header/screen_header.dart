@@ -23,7 +23,7 @@ class ScreenHeader extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontFamily: "HyWenhei",
               color: isDark
                   ? AppColors.textPrimaryDark
@@ -31,7 +31,7 @@ class ScreenHeader extends StatelessWidget {
             ),
           ),
 
-          /// 💰 MONEY
+          // Money Badge
           const MoneyBadge(),
         ],
       ),

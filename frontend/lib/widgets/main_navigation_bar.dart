@@ -22,6 +22,15 @@ class MainNavigationBar extends StatelessWidget {
       height: 70,
       decoration: BoxDecoration(
         color: navTheme.backgroundColor,
+        // Tambahkan BoxShadow di sini
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1), // Warna bayangan yang halus
+            blurRadius: 10, // Tingkat kelembutan bayangan
+            offset: const Offset(0, -4), // -4 berarti bayangan naik ke atas
+            spreadRadius: 0, // Luasan penyebaran bayangan
+          ),
+        ],
         border: Border(
           top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 2),
         ),
