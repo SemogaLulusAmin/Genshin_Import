@@ -5,6 +5,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/auth_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/shop/shop_screen.dart';
 import 'states/auth_state.dart';
 
 void main() async {
@@ -26,7 +27,7 @@ class GenshinImportApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
 
       home: ValueListenableBuilder<bool>(
         valueListenable: isLoggedIn,
@@ -34,7 +35,7 @@ class GenshinImportApp extends StatelessWidget {
           if (loggedIn) {
             return const MainNavigationScreen();
           } else {
-            return const AuthScreen();
+            return const MainNavigationScreen();
           }
         },
       ),
@@ -54,7 +55,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   // Placeholder untuk 5 halaman wajib sesuai dokumen
   final List<Widget> _pages = [
-    const Center(child: Text('Gallery & Shop Screen')),
+    const Center(child: ShopScreen()),
     const Center(child: Text('Inventory Screen')),
     const Center(child: Text('Delivery Package Screen')),
     const Center(child: Text('Profile Screen')),

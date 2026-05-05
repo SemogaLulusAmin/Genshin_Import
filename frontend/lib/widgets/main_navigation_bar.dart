@@ -23,7 +23,7 @@ class MainNavigationBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: navTheme.backgroundColor,
         border: Border(
-          top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
+          top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 2),
         ),
       ),
       child: Row(
