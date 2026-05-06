@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
+import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -10,18 +11,53 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isChecked = false;
+  final Authservice authService = Authservice();
+
+  Future<void> _handleRegister() async {
+    if (isChecked == false) {
+      return;
+    }
+
+    final result = await authService.register(
+      _nameController.text,
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessage("Registration Success!", Colors.green);
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) Navigator.pop(context);
+      });
+    } else {
+      _showMessage(result['message'], Colors.red);
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        CustomFormField(label: "USERNAME"),
+        CustomFormField(controller: _nameController, label: "USERNAME"),
         const SizedBox(height: 16),
-        CustomFormField(label: "EMAIL"),
+        CustomFormField(controller: _emailController, label: "EMAIL"),
         const SizedBox(height: 16),
-        CustomFormField(obscureText: true, label: "PASSWORD"),
+        CustomFormField(
+          controller: _passwordController,
+          obscureText: true,
+          label: "PASSWORD",
+        ),
         const SizedBox(height: 16),
 
         // Checkbox disini
@@ -92,7 +128,7 @@ class _RegisterFormState extends State<RegisterForm> {
         GestureDetector(
           onTap: isChecked
               ? () {
-                  // submit logic
+                  _handleRegister();
                 }
               : null,
           child: AnimatedOpacity(
