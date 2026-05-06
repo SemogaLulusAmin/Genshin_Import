@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
 import '../../core/app_colors.dart';
+import '../../widgets/sheet/artifact_detail_sheet.dart';
 
 class ArtifactCard extends StatelessWidget {
   final Artifact artifact;
@@ -8,17 +9,16 @@ class ArtifactCard extends StatelessWidget {
 
   const ArtifactCard({super.key, required this.artifact, this.onTap});
 
-  // Logika warna rarity yang sama dengan WeaponCard
-  Color _getRarityColor(String rarity) {
+  List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
       case '5':
-        return const Color.fromARGB(255, 255, 176, 7); // gold
+        return [const Color(0xFF665150), const Color(0xFFE5AD4E)];
       case '4':
-        return const Color(0xFF9C27B0); // purple
+        return [const Color(0xFF5A5285), const Color(0xFFBD7DD7)];
       case '3':
-        return const Color.fromARGB(255, 32, 109, 224); // blue
+        return [const Color(0xFF525274), const Color(0xFF54BFD5)];
       default:
-        return Colors.grey;
+        return [Colors.grey, Colors.grey.shade300];
     }
   }
 
@@ -28,22 +28,29 @@ class ArtifactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rarityColor = _getRarityColor(artifact.maxRarity);
+    final rarityGradient = _getRarityGradient(artifact.maxRarity);
     final rarityCount = _getRarityInt(artifact.maxRarity);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => ArtifactDetailSheet(artifact: artifact),
+        );
+      },
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1B1D24) : const Color(0xFFFAF9F5),
+          color: isDark ? const Color(0xFF1B1D24) : const Color(0xFFFBF9EE),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 🔥 IMAGE PANEL
+            // Image Panel
             Expanded(
               flex: 5,
               child: Stack(
@@ -57,10 +64,7 @@ class ArtifactCard extends StatelessWidget {
                         bottomRight: Radius.circular(24),
                       ),
                       gradient: LinearGradient(
-                        colors: [
-                          rarityColor.withOpacity(0.5),
-                          rarityColor.withOpacity(0.25),
-                        ],
+                        colors: [rarityGradient[0], rarityGradient[1]],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -71,14 +75,14 @@ class ArtifactCard extends StatelessWidget {
                       ),
                       child: Image.network(
                         artifact.imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
                       ),
                     ),
                   ),
 
-                  /// 📦 STOCK INDICATOR (Pojok Kiri Atas)
+                  // Stock Indicator
                   Positioned(
                     top: 8,
                     left: 8,
@@ -103,7 +107,7 @@ class ArtifactCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// ⭐ RARITY STARS
+                  // Rarity Stars
                   Positioned(
                     bottom: -10,
                     child: Row(
@@ -129,7 +133,7 @@ class ArtifactCard extends StatelessWidget {
               ),
             ),
 
-            /// MID CONTENT (Name & Set Name)
+            // Mid Content
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(

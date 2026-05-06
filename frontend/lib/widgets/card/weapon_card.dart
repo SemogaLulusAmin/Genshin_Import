@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
+import '../../widgets/sheet/weapon_detail_sheet.dart';
 
 class WeaponCard extends StatelessWidget {
   final Weapon weapon;
@@ -8,16 +9,16 @@ class WeaponCard extends StatelessWidget {
 
   const WeaponCard({super.key, required this.weapon, this.onTap});
 
-  Color _getRarityColor(String rarity) {
+  List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
       case '5':
-        return const Color.fromARGB(255, 255, 176, 7); // gold
+        return [const Color(0xFF665150), const Color(0xFFE5AD4E)];
       case '4':
-        return const Color(0xFF9C27B0); // purple
+        return [const Color(0xFF5A5285), const Color(0xFFBD7DD7)];
       case '3':
-        return const Color.fromARGB(255, 32, 109, 224); // blue
+        return [const Color(0xFF525274), const Color(0xFF54BFD5)];
       default:
-        return Colors.grey;
+        return [Colors.grey, Colors.grey.shade300];
     }
   }
 
@@ -27,22 +28,29 @@ class WeaponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rarityColor = _getRarityColor(weapon.rarity);
+    final rarityGradient = _getRarityGradient(weapon.rarity);
     final rarity = _getRarityInt(weapon.rarity);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => WeaponDetailSheet(weapon: weapon),
+        );
+      },
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark ? Color(0xFF1B1D24) : Color(0xFFFAF9F5),
+          color: isDark ? Color(0xFF1B1D24) : Color(0xFFFBF9EE),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 🔥 IMAGE PANEL
+            // Image Panel
             Expanded(
               flex: 5,
               child: Stack(
@@ -56,10 +64,7 @@ class WeaponCard extends StatelessWidget {
                         bottomRight: Radius.circular(24),
                       ),
                       gradient: LinearGradient(
-                        colors: [
-                          rarityColor.withOpacity(0.5),
-                          rarityColor.withOpacity(0.25),
-                        ],
+                        colors: [rarityGradient[0], rarityGradient[1]],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -70,14 +75,14 @@ class WeaponCard extends StatelessWidget {
                       ),
                       child: Image.network(
                         weapon.imageUrl,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
                       ),
                     ),
                   ),
 
-                  /// 📦 STOCK INDICATOR (Pojok Kiri Atas)
+                  // Stock Indicator
                   Positioned(
                     top: 8,
                     left: 8,
@@ -104,7 +109,7 @@ class WeaponCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// ⭐ RARITY STARS
+                  // Rarity Stars
                   Positioned(
                     bottom: -10,
                     child: Row(
@@ -130,7 +135,7 @@ class WeaponCard extends StatelessWidget {
               ),
             ),
 
-            /// MID CONTENT (Name & Type)
+            // Mid Content
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(

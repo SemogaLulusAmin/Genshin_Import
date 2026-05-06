@@ -53,7 +53,6 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  // Placeholder untuk 5 halaman wajib sesuai dokumen
   final List<Widget> _pages = [
     const Center(child: ShopScreen()),
     const Center(child: Text('Inventory Screen')),
