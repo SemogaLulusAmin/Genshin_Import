@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
+import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
 
 class LoginForm extends StatefulWidget {
@@ -14,8 +15,33 @@ class _LoginFormState extends State<LoginForm> {
   // 1. Definisikan Controller
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final Authservice authService = Authservice();
   bool _isFormValid = false;
+
+  Future<void> _handleLogin() async {
+    if (_isFormValid == false) {
+      return;
+    }
+
+    final result = await authService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (result['success'] == true) {
+      _showMessage("Login Success!", Colors.green);
+
+      // isLoggedIn.value = true;
+    } else {
+      _showMessage(result['message'], Colors.red);
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
 
   @override
   void initState() {
@@ -99,7 +125,9 @@ class _LoginFormState extends State<LoginForm> {
 
             style: OutlinedButton.styleFrom(
               side: BorderSide(
-                color: isDark ? AppColors.textSecondaryLight.withValues(alpha: 0.6) : AppColors.border,
+                color: isDark
+                    ? AppColors.textSecondaryLight.withValues(alpha: 0.6)
+                    : AppColors.border,
 
                 width: 2,
               ),
