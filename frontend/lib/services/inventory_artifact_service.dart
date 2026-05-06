@@ -25,7 +25,7 @@ class InventoryService {
         final List<dynamic> jsonResponse = json.decode(response.body);
         return jsonResponse.map((data) => Artifact.fromJson(data)).toList();
        } else {
-        throw Exception('Failed to load weapon inventory');
+        throw Exception('Failed to load artifact inventory');
        }
     } catch (e) {
       throw Exception('Error: $e');
