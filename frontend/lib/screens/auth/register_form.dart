@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/core/app_colors.dart';
-import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
 import 'package:frontend/states/auth_state.dart';
 
@@ -15,11 +15,12 @@ class _RegisterFormState extends State<RegisterForm> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool isChecked = false;
-  final Authservice authService = Authservice();
+  bool _isChecked = false;
+  bool _isFormValid = false;
+  final AuthController _authController = AuthController.instance;
 
   Future<void> _handleRegister() async {
-    if (isChecked == false) {
+    if (_isChecked == false || _isFormValid == false) {
       return;
     }
 
@@ -41,37 +42,67 @@ class _RegisterFormState extends State<RegisterForm> {
       return;
     }
 
-    final result = await authService.register(
+    final success = await _authController.register(
       _nameController.text,
       _emailController.text,
       _passwordController.text,
     );
 
-    if (result['success'] == true) {
+    if (success == true) {
       _showMessage("Registration Success! Logging in...", Colors.green);
 
-      final loginResult = await authService.login(
+      final loginSuccess = await _authController.login(
         _emailController.text,
         _passwordController.text,
       );
 
-      if (loginResult['success'] == true) {
+      if (loginSuccess == true) {
         isLoggedIn.value = true;
       } else {
         _showMessage(
-          "Auto-login failed: ${loginResult['message']}",
+          "Auto-login failed: ${_authController.errorMessage ?? "Login Failed"}",
           Colors.red,
         );
       }
     } else {
-      _showMessage(result['message'], Colors.red);
+      _showMessage(
+        _authController.errorMessage ?? "Registration Failed",
+        Colors.red,
+      );
     }
+    _authController.clearErrorMessage();
   }
 
   void _showMessage(String message, Color color) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 2. Pasang listener pada kedua controller
+    _emailController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
+    _nameController.addListener(_validateForm);
+  }
+
+  // Fungsi untuk mengecek apakah semua field sudah terisi
+  void _validateForm() {
+    setState(() {
+      _isFormValid =
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty &&
+          _nameController.text.isNotEmpty;
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -101,7 +132,7 @@ class _RegisterFormState extends State<RegisterForm> {
               child: Transform.scale(
                 scale: 0.9,
                 child: Checkbox(
-                  value: isChecked,
+                  value: _isChecked,
                   activeColor: AppColors.primary, // Sesuaikan dengan tema kamu
                   checkColor: isDark
                       ? AppColors.textPrimaryLight
@@ -111,7 +142,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   onChanged: (bool? value) {
                     setState(() {
-                      isChecked = value ?? false;
+                      _isChecked = value ?? false;
                     });
                   },
                 ),
@@ -156,14 +187,14 @@ class _RegisterFormState extends State<RegisterForm> {
 
         // Submit Button
         GestureDetector(
-          onTap: isChecked
+          onTap: _isFormValid && _isChecked
               ? () {
                   _handleRegister();
                 }
               : null,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
-            opacity: isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
+            opacity: _isFormValid && _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
             child: Container(
               width: 56,
               height: 56,
