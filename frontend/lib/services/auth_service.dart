@@ -1,13 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 class Authservice {
-  // final String _baseUrl = Platform.isAndroid
-  //     ? "http://10.0.2.2:3000/auth"
-  //     : "http://localhost:3000/auth";
-
-  final String _baseUrl = "http://localhost:3000/auth";
+  String get _baseUrl {
+    if (kIsWeb) {
+      return "http://localhost:3000/auth";
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      return "http://10.0.2.2:3000/auth";
+    } else {
+      return "http://localhost:3000/auth";
+    }
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {

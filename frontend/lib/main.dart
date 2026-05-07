@@ -35,7 +35,7 @@ class GenshinImportApp extends StatelessWidget {
           if (loggedIn) {
             return const MainNavigationScreen();
           } else {
-            return const LoginScreen();
+            return const AuthScreen();
           }
         },
       ),
