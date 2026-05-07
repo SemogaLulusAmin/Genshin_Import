@@ -38,24 +38,24 @@ class MainNavigationBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(context, 0, AppIcons.shop, AppIcons.shopActive, "Shop"),
+          _buildNavItem(context, 0, AppIcons.cart, AppIcons.cartActive, "Shop"),
+          // _buildNavItem(
+          //   context,
+          //   1,
+          //   AppIcons.cart,
+          //   AppIcons.cartActive,
+          //   "Orders",
+          // ),
           _buildNavItem(
             context,
             1,
-            AppIcons.cart,
-            AppIcons.cartActive,
-            "Orders",
-          ),
-          _buildNavItem(
-            context,
-            2,
             AppIcons.bag,
             AppIcons.bagActive,
             "Inventory",
           ),
           _buildNavItem(
             context,
-            3,
+            2,
             AppIcons.profile,
             AppIcons.profileActive,
             "Profile",
@@ -111,8 +111,8 @@ class MainNavigationBar extends StatelessWidget {
             curve: Curves.easeOutBack,
             child: SvgPicture.asset(
               isSelected ? filledIcon : outlineIcon,
-              width: 24,
-              height: 24,
+              width: 25,
+              height: 25,
               colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
           ),

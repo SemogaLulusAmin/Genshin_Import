@@ -171,7 +171,7 @@ class _LoginFormState extends State<LoginForm> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset('assets/images/google_logo.png', height: 24),
+                      Image.asset('assets/images/google_logo.png', height: 26),
                     ],
                   ),
                 ),

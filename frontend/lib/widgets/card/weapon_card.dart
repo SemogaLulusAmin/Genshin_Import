@@ -51,11 +51,11 @@ class WeaponCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image Panel
-            Expanded(
-              flex: 5,
+            SizedBox(
+              height: 160,
               child: Stack(
                 clipBehavior: Clip.none,
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.center,
                 children: [
                   Container(
                     width: double.infinity,
@@ -75,7 +75,8 @@ class WeaponCard extends StatelessWidget {
                       ),
                       child: Image.network(
                         weapon.imageUrl,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
                       ),

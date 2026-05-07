@@ -379,7 +379,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         backgroundColor: isDark
                             ? Colors.white
                             : AppColors.textPrimaryLight,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),

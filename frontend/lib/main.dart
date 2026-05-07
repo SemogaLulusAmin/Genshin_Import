@@ -28,7 +28,7 @@ class GenshinImportApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
 
       home: ValueListenableBuilder<bool>(
         valueListenable: isLoggedIn,
@@ -56,7 +56,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _pages = [
     const Center(child: ShopScreen()),
-    const Center(child: Text('Inventory Screen')),
+    // const Center(child: Text('Orders Screen')),
     const Center(child: InventoryScreen()),
     const Center(child: Text('Profile Screen')),
   ];
