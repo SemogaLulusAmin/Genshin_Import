@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
+import 'package:frontend/states/auth_state.dart';
 
 class LoginForm extends StatefulWidget {
   // 👈 Ubah ke StatefulWidget
@@ -31,7 +32,7 @@ class _LoginFormState extends State<LoginForm> {
     if (result['success'] == true) {
       _showMessage("Login Success!", Colors.green);
 
-      // isLoggedIn.value = true;
+      isLoggedIn.value = true;
     } else {
       _showMessage(result['message'], Colors.red);
     }
@@ -177,12 +178,7 @@ class _LoginFormState extends State<LoginForm> {
 
         // 4. SUBMIT BUTTON DENGAN LOGIKA VALIDASI
         GestureDetector(
-          onTap: _isFormValid
-              ? () {
-                  print("Login Berhasil!");
-                  // Tambahkan logika login kamu di sini
-                }
-              : null,
+          onTap: _isFormValid ? _handleLogin : null,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
             opacity: _isFormValid ? 1.0 : 0.4,
