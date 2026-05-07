@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 
-class UserService {
+class Userservice {
   String get _baseUrl {
     if (kIsWeb) {
       return "http://localhost:3000/users";
