@@ -393,7 +393,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Add to Orders ",
+                            "Buy ",
                             style: TextStyle(
                               color: isDark
                                   ? AppColors.textPrimaryLight

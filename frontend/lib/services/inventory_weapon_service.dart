@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/weapon_model.dart';
 
-class InventoryService {
+class InventoryWeaponService {
   static const String baseUrl = 'http://localhost:3000';
 
   Future<List<Weapon>> getInventory() async {
@@ -21,12 +21,12 @@ class InventoryService {
         headers: {'Authorization': 'Bearer $token'},
       );
 
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         return jsonResponse.map((data) => Weapon.fromJson(data)).toList();
-       } else {
+      } else {
         throw Exception('Failed to load weapon inventory');
-       }
+      }
     } catch (e) {
       throw Exception('Error: $e');
     }
