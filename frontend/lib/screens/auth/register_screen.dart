@@ -17,7 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  Authservice authService = Authservice();
+  AuthService authService = AuthService();
 
   // State untuk Checkbox
   bool _isTermsAgreed = false;
