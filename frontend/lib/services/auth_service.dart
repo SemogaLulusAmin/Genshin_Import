@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
-class AuthService {
+class Authservice {
   String get _baseUrl {
     if (kIsWeb) {
       return "http://localhost:3000/auth";
