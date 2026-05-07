@@ -24,6 +24,17 @@ class _LoginFormState extends State<LoginForm> {
       return;
     }
 
+    final email = _emailController.text.trim();
+    final atIndex = email.indexOf('@');
+    final dotIndex = email.lastIndexOf('.');
+
+    if (atIndex <= 0 ||
+        dotIndex <= atIndex + 1 ||
+        dotIndex >= email.length - 1) {
+      _showMessage("Invalid Email Format", Colors.red);
+      return;
+    }
+
     final result = await authService.login(
       _emailController.text,
       _passwordController.text,
