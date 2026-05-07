@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
+import 'package:frontend/states/auth_state.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -29,6 +30,17 @@ class _RegisterFormState extends State<RegisterForm> {
       return;
     }
 
+    final email = _emailController.text.trim();
+    final atIndex = email.indexOf('@');
+    final dotIndex = email.lastIndexOf('.');
+
+    if (atIndex <= 0 ||
+        dotIndex <= atIndex + 1 ||
+        dotIndex >= email.length - 1) {
+      _showMessage("Invalid Email Format", Colors.red);
+      return;
+    }
+
     final result = await authService.register(
       _nameController.text,
       _emailController.text,
@@ -36,10 +48,21 @@ class _RegisterFormState extends State<RegisterForm> {
     );
 
     if (result['success'] == true) {
-      _showMessage("Registration Success!", Colors.green);
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) Navigator.pop(context);
-      });
+      _showMessage("Registration Success! Logging in...", Colors.green);
+
+      final loginResult = await authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (loginResult['success'] == true) {
+        isLoggedIn.value = true;
+      } else {
+        _showMessage(
+          "Auto-login failed: ${loginResult['message']}",
+          Colors.red,
+        );
+      }
     } else {
       _showMessage(result['message'], Colors.red);
     }
