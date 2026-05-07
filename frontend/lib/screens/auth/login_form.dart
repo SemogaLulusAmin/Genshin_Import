@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/core/app_colors.dart';
-import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
 import 'package:frontend/states/auth_state.dart';
 
@@ -16,7 +16,7 @@ class _LoginFormState extends State<LoginForm> {
   // 1. Definisikan Controller
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final Authservice authService = Authservice();
+  final AuthController _authController = AuthController.instance;
   bool _isFormValid = false;
 
   Future<void> _handleLogin() async {
@@ -35,18 +35,18 @@ class _LoginFormState extends State<LoginForm> {
       return;
     }
 
-    final result = await authService.login(
+    final success = await _authController.login(
       _emailController.text,
       _passwordController.text,
     );
 
-    if (result['success'] == true) {
+    if (success == true) {
       _showMessage("Login Success!", Colors.green);
-
       isLoggedIn.value = true;
     } else {
-      _showMessage(result['message'], Colors.red);
+      _showMessage(_authController.errorMessage ?? "Login Failed", Colors.red);
     }
+    _authController.clearErrorMessage();
   }
 
   void _showMessage(String message, Color color) {
@@ -131,8 +131,13 @@ class _LoginFormState extends State<LoginForm> {
           height: 52,
 
           child: OutlinedButton(
-            onPressed: () {
-              // TODO: Google Sign In
+            onPressed: () async {
+              final success = await _authController.loginWithGoogle();
+              if (success) {
+                _showMessage("Google Login Success!", Colors.green);
+              } else {
+                _showMessage(_authController.errorMessage ?? "Google Login Failed", Colors.red);
+              }
             },
 
             style: OutlinedButton.styleFrom(
@@ -165,7 +170,7 @@ class _LoginFormState extends State<LoginForm> {
 
                       color: isDark
                           ? AppColors.textPrimaryDark
-                          : AppColors.textPrimaryLight.withOpacity(0.6),
+                          : AppColors.textPrimaryLight.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
