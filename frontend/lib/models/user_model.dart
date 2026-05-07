@@ -15,7 +15,7 @@ class User {
     return User(
       id: json['id'],
       username: json['username'],
-      money: json['money'].toDouble(),
+      money: double.parse(json['money']),
       roles: json['roles'],
     );
   }
