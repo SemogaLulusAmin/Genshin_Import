@@ -22,6 +22,13 @@ class _RegisterFormState extends State<RegisterForm> {
       return;
     }
 
+    if (_nameController.text.trim().isEmpty ||
+        _emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
+      _showMessage("Please fill all fields", Colors.red);
+      return;
+    }
+
     final result = await authService.register(
       _nameController.text,
       _emailController.text,
