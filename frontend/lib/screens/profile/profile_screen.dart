@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/user_service.dart';
+import 'package:frontend/states/profile_state.dart';
 import '../../models/user_model.dart';
 import '../../core/app_colors.dart';
 
@@ -13,6 +15,17 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isExpanded = false;
+  late ProfileState profileState;
+
+  @override
+  void initState() {
+    super.initState();
+    // profileState = ProfileState(
+    //   isLoading: false,
+    //   user: widget.user, // menentukan dulu user yang akan dikirim seperti apa
+    //   errorMessage: "",
+    // );
+  }
 
   @override
   Widget build(BuildContext context) {
