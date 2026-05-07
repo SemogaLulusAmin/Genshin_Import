@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class Authservice {
+class AuthService {
   String get _baseUrl {
     if (kIsWeb) {
       return "http://localhost:3000/auth";
@@ -22,27 +23,30 @@ class Authservice {
         body: jsonEncode({"email": email, "password": password}),
       );
 
-      final data = json.decode(response.body);
-
       if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setString('username', data['user']['username']);
-        await prefs.setString('email', data['user']['money']);
         await prefs.setString('roles', data['user']['roles']);
+        await prefs.setDouble('money', (data['user']['money'] ?? 0.0));
+
         return {"success": true, "token": data['token'], "user": data['user']};
       } else if (response.statusCode == 401) {
         return {"success": false, "message": "Wrong password"};
       } else if (response.statusCode == 404) {
         return {"success": false, "message": "User not found"};
       } else {
-        return {
-          "success": false,
-          "message": "message: ${data['message'] ?? "Login Failed"}",
-        };
+        final data = json.decode(response.body);
+
+        return {"success": false, "message": data['message'] ?? "Login Failed"};
       }
     } catch (e) {
-      return {"success": false, "message": "message: $e"};
+      return {
+        "success": false,
+        "message": "Failed to login. Please check your connection.",
+      };
     }
   }
 
@@ -69,11 +73,62 @@ class Authservice {
       } else {
         return {
           "success": false,
-          "message": "message: ${data['message'] ?? "Registration Failed"}",
+          "message": data['message'] ?? "Registration Failed",
         };
       }
     } catch (e) {
-      return {"success": false, "message": "message: $e"};
+      return {"success": false, "message": "$e"};
+    }
+  }
+
+  Future<Map<String, dynamic>> loginWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return {"success": false, "message": "Google Sign-In canceled"};
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        return {
+          "success": false,
+          "message": "Failed to get ID token from Google",
+        };
+      }
+
+      final response = await http.post(
+        Uri.parse("$_baseUrl/google"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"idToken": idToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', data['token']);
+        await prefs.setString('username', data['user']['username']);
+        await prefs.setString('roles', data['user']['roles']);
+        await prefs.setDouble('money', (data['user']['money'] ?? 0.0));
+
+        return {"success": true, "token": data['token'], "user": data['user']};
+      } else {
+        final data = json.decode(response.body);
+        return {
+          "success": false,
+          "message": data['message'] ?? "Google Sign-In Failed",
+        };
+      }
+    } catch (e) {
+      return {
+        "success": false,
+        "message": "Failed to login via Google. Please check your connection.",
+      };
     }
   }
 }
