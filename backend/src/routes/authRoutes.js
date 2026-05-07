@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db.js';
 import crypto from 'crypto';
+import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router()
 
@@ -164,5 +165,24 @@ router.post('/logout', async (req, res) => {
         res.status(503);
     }
 });
+
+router.get('/:userID', async (req, res) => {
+    try{
+
+        const {userID} = req.params;
+
+        const [rows] = await pool.execute("SELECT username, email, money, roles FROM User WHERE userID = ?", [userID])
+
+        if(rows.length === 0) return res.status(404).json({message: "User not found!"})
+
+        res.status(200).json({
+            user: rows[0],
+        })
+    } catch (error){
+        res.status(500).json({
+            message: error.message
+        })
+    }
+})
 
 export default router;
