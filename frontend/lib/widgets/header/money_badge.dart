@@ -17,7 +17,7 @@ class MoneyBadge extends StatefulWidget {
 }
 
 class _MoneyBadgeState extends State<MoneyBadge> {
-  double _money = 0;
+  int _money = 0;
   bool _isLoading = false;
 
   @override
@@ -62,7 +62,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
 
       if (mounted) {
         setState(() {
-          _money = result.money ?? _money;
+          _money = result.money;
           _isLoading = false;
         });
       }
