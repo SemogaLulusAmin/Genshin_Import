@@ -53,7 +53,7 @@ class UserService {
           User user = User.fromJson(userData);
 
           // Simpan ke cache biar UI bisa akses cepet
-          await prefs.setString('money', user.money.toInt().toString());
+          await prefs.setString('money', user.money.toString());
           await prefs.setString(
             'userID',
             user.id,
