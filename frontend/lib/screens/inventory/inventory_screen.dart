@@ -136,6 +136,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           color: isDark
                               ? AppColors.textSecondaryDark
                               : AppColors.textSecondaryLight,
+                          fontSize: 16,
                           fontFamily: "HyWenhei",
                         ),
                       ),
@@ -150,6 +151,22 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       : allItems.where((item) {
                           return item.itemType == selectedFilter;
                         }).toList();
+
+                  /// EMPTY FILTER RESULT
+                  if (filteredItems.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "Inventory is Empty",
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                          fontSize: 16,
+                          fontFamily: "HyWenhei",
+                        ),
+                      ),
+                    );
+                  }
 
                   return GridView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -213,7 +230,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
               icon,
               size: 18,
               color: isSelected
-                  ? Colors.white
+                  ? Colors.black
                   : isDark
                   ? Colors.white70
                   : Colors.black87,
@@ -225,7 +242,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
               label,
               style: TextStyle(
                 color: isSelected
-                    ? Colors.white
+                    ? Colors.black
                     : isDark
                     ? Colors.white70
                     : Colors.black87,

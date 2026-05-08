@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/weapon_model.dart';
 
 class WeaponService {
-
   static const String baseUrl = 'http://localhost:3000/weapon';
 
   Future<List<Weapon>> getWeapons() async {
