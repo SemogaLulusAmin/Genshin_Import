@@ -4,7 +4,7 @@ class Inventory {
   final String imageUrl;
   final String rarity;
   final String subtitle;
-  final int quantity;
+  final int totalOwned;
   final String itemType;
 
   Inventory({
@@ -13,7 +13,7 @@ class Inventory {
     required this.imageUrl,
     required this.rarity,
     required this.subtitle,
-    required this.quantity,
+    required this.totalOwned,
     required this.itemType,
   });
 }

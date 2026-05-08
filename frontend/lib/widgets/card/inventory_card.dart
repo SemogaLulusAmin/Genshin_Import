@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../core/app_colors.dart';
 import '../../models/inventory_model.dart';
 
@@ -45,7 +44,6 @@ class InventoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// IMAGE PANEL
             Expanded(
               flex: 5,
               child: Stack(
@@ -91,7 +89,7 @@ class InventoryCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "x${item.quantity}",
+                        "x${item.totalOwned}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -154,7 +152,6 @@ class InventoryCard extends StatelessWidget {
               ),
             ),
 
-            /// CONTENT
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(

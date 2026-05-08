@@ -36,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (result['success'] == true) {
-      print('LoginScreen: Login successful, money = ${result['user']['money']}');
       _showMessage("Login Success!", Colors.green);
 
       isLoggedIn.value = true;

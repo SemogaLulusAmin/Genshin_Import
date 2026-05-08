@@ -63,7 +63,7 @@ router.get('/',authenticateToken, async (req, res) => {
         let query = "";
         if(status === "purchased"){    
             query = `
-                SELECT w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, SUM(t.stock) AS totalOwned
+                SELECT w.weaponID, w.name, w.type, w.rarity, w.baseAttack, w.subStat, w.passiveName, w.passiveDesc, w.image_url, w.price, SUM(t.stock) AS totalOwned
                 FROM Weapon w
                 JOIN WeaponTransaction t ON w.weaponID = t.weaponID
                 WHERE t.userID = ?

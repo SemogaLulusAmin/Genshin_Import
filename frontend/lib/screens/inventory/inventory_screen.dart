@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:frontend/models/artifact_inventory_model.dart';
+import 'package:frontend/models/weapon_inventory_model.dart';
 import '../../core/app_colors.dart';
-
 import '../../widgets/header/screen_header.dart';
 import '../../widgets/card/inventory_card.dart';
-
 import '../../models/inventory_model.dart';
-
 import '../../services/inventory_weapon_service.dart';
 import '../../services/inventory_artifact_service.dart';
 
@@ -24,29 +22,28 @@ class _InventoryScreenState extends State<InventoryScreen> {
     final weapons = await InventoryWeaponService().getInventory();
 
     final artifacts = await InventoryArtifactService().getInventory();
-
+    
     /// WEAPON -> INVENTORY
-    final weaponItems = weapons.map((weapon) {
+    final weaponItems = weapons.map((w) {
       return Inventory(
-        id: weapon.weaponID.toString(),
-        name: weapon.name,
-        imageUrl: weapon.imageUrl,
-        rarity: weapon.rarity,
-        subtitle: weapon.type,
-        quantity: weapon.stock,
+        id: w.weaponID.toString(),
+        name: w.name,
+        imageUrl: w.imageUrl,
+        rarity: w.rarity,
+        subtitle: w.type,
+        totalOwned: w.totalOwned,
         itemType: "Weapon",
       );
     }).toList();
 
-    /// ARTIFACT -> INVENTORY
-    final artifactItems = artifacts.map((artifact) {
+    final artifactItems = artifacts.map((a) {
       return Inventory(
-        id: artifact.artifactID.toString(),
-        name: artifact.name,
-        imageUrl: artifact.imageUrl,
-        rarity: artifact.maxRarity,
-        subtitle: artifact.setName,
-        quantity: artifact.stock,
+        id: a.artifactID.toString(),
+        name: a.name,
+        imageUrl: a.imageUrl,
+        rarity: a.maxRarity,
+        subtitle: a.setName,
+        totalOwned: a.totalOwned,
         itemType: "Artifact",
       );
     }).toList();

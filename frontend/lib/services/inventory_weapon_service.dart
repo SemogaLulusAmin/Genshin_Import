@@ -1,13 +1,12 @@
 import 'dart:convert';
+import 'package:frontend/models/weapon_inventory_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/weapon_model.dart';
 
 class InventoryWeaponService {
   static const String baseUrl = 'http://localhost:3000';
 
-  Future<List<Weapon>> getInventory() async {
+  Future<List<InventoryWeapon>> getInventory() async { 
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('jwt_token');
@@ -23,7 +22,7 @@ class InventoryWeaponService {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        return jsonResponse.map((data) => Weapon.fromJson(data)).toList();
+        return jsonResponse.map((data) => InventoryWeapon.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load weapon inventory');
       }

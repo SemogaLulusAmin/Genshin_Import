@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/buy/:artifactID',authenticateToken, async (req,res) => {
     const userID = req.user.userID;
 
-    const {artifact} = req.params;
+    const {artifactID} = req.params;
     const { quantity, price} = req.body;
 
     const connection = await pool.getConnection();
@@ -62,7 +62,7 @@ router.get('/',authenticateToken, async (req, res) => {
         let query = "";
         if(status === "purchased"){
             query = `
-                SELECT a.name, a.set_name, a.max_rarity, SUM(t.stock) as totalOwned, a.image_url, a.price, a.piece_bonus_2, a.piece_bonus_4
+                SELECT a.artifactID, a.name, a.set_name, a.max_rarity, SUM(t.stock) as totalOwned, a.image_url, a.price, a.piece_bonus_2, a.piece_bonus_4
                 FROM Artifact a
                 JOIN ArtifactTransaction t ON a.artifactID = t.artifactID
                 WHERE t.userID = ?

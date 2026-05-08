@@ -36,20 +36,17 @@ class UserService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         
-        // Asumsi response BE: { "user": { "money": "50000.00", ... } }
         final userData = data['user'];
         
         if (userData != null) {
-          // Handle Decimal dari BE (String/Double) ke Int buat FE
           var rawMoney = userData['money'];
           int freshMoney = 0;
           if (rawMoney != null) {
             freshMoney = num.parse(rawMoney.toString()).toInt();
           }
 
-          // Simpan ke cache biar UI bisa akses cepet
           await prefs.setString('money', freshMoney.toString());
-          await prefs.setString('userID', userID); // Simpan ID-nya juga sekalian
+          await prefs.setString('userID', userID); 
 
           return {
             "success": true,
@@ -63,7 +60,6 @@ class UserService {
       return {"success": false, "message": "Server error: ${response.statusCode}"};
 
     } catch (e) {
-      print('AuthService Error: $e');
       return {"success": false, "message": "Error: $e"};
     }
   }

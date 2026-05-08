@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'package:frontend/models/artifact_inventory_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/artifact_model.dart';
 
 class InventoryArtifactService {
   static const String baseUrl = 'http://localhost:3000';
 
-  Future<List<Artifact>> getInventory() async {
+  // 1. Ganti return type-nya
+  Future<List<InventoryArtifact>> getInventory() async { 
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('jwt_token');
@@ -23,7 +23,7 @@ class InventoryArtifactService {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        return jsonResponse.map((data) => Artifact.fromJson(data)).toList();
+        return jsonResponse.map((data) => InventoryArtifact.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load artifact inventory');
       }
