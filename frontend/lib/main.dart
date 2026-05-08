@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
-import 'screens/auth/login_screen.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/inventory/inventory_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
