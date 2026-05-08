@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
-import '../../core/app_colors.dart';
 import '../../widgets/sheet/artifact_detail_sheet.dart';
 
 class ArtifactCard extends StatelessWidget {
