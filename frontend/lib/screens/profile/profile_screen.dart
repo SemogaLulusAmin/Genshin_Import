@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/user_service.dart';
 import 'package:frontend/states/profile_state.dart';
 import '../../models/user_model.dart';
 import '../../core/app_colors.dart';
