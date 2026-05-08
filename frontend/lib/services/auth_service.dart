@@ -83,7 +83,12 @@ class AuthService {
 
   Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId:
+            "CLIENT_ID_DARI_GOOGLE_CLOUD_CONSOLE.apps.googleusercontent.com",
+        scopes: ['email'],
+      );
+
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
