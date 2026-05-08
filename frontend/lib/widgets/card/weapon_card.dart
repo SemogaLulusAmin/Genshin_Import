@@ -99,7 +99,7 @@ class WeaponCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "X${weapon.stock}", 
+                        "X${weapon.stock}",
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 12,

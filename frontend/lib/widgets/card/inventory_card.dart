@@ -44,8 +44,8 @@ class InventoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 5,
+            SizedBox(
+              height: 160,
               child: Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.bottomCenter,
@@ -68,7 +68,8 @@ class InventoryCard extends StatelessWidget {
                       ),
                       child: Image.network(
                         item.imageUrl,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
                       ),
