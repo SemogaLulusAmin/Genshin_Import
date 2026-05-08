@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
+import '../../services/weapon_service.dart';
+import '../header/money_badge.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
@@ -388,27 +390,55 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      onPressed: weapon.stock == 0 ? null : () {},
+                      onPressed: weapon.stock == 0
+                          ? null
+                          : () async {
+                              try {
+                                final success = await WeaponService()
+                                    .purchaseWeapon(weapon.weaponID, quantity);
+
+                                if (success) {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Purchase successful!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Close the sheet
+                                  Navigator.of(context).pop();
+                                }
+                                await MoneyBadge.refresh();
+                              } catch (e) {
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Purchase failed: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Add to Orders ",
+                            "Purchase ",
                             style: TextStyle(
                               color: isDark
                                   ? AppColors.textPrimaryLight
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
 
                           /// 💰 ICON MATA UANG
                           Image.asset(
                             'assets/images/Item_Mora.webp',
-                            width: 24,
-                            height: 24,
+                            width: 26,
+                            height: 26,
                           ),
 
                           const SizedBox(width: 4),
@@ -422,7 +452,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
                         ],

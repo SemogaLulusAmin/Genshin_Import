@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../models/weapon_model.dart';
-import '../../core/app_colors.dart';
-import '../../widgets/sheet/weapon_detail_sheet.dart';
 
-class WeaponCard extends StatelessWidget {
-  final Weapon weapon;
+import '../../core/app_colors.dart';
+import '../../models/inventory_model.dart';
+
+class InventoryCard extends StatelessWidget {
+  final Inventory item;
   final VoidCallback? onTap;
 
-  const WeaponCard({super.key, required this.weapon, this.onTap});
+  const InventoryCard({super.key, required this.item, this.onTap});
 
   List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
@@ -28,34 +28,29 @@ class WeaponCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rarityGradient = _getRarityGradient(weapon.rarity);
-    final rarity = _getRarityInt(weapon.rarity);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final rarityGradient = _getRarityGradient(item.rarity);
+
+    final rarity = _getRarityInt(item.rarity);
+
     return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (_) => WeaponDetailSheet(weapon: weapon),
-        );
-      },
+      onTap: onTap,
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: isDark ? Color(0xFF1B1D24) : Color(0xFFFBF9EE),
+          color: isDark ? const Color(0xFF1B1D24) : const Color(0xFFFBF9EE),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Panel
-            SizedBox(
-              height: 160,
+            /// IMAGE PANEL
+            Expanded(
+              flex: 5,
               child: Stack(
                 clipBehavior: Clip.none,
-                alignment: Alignment.center,
+                alignment: Alignment.bottomCenter,
                 children: [
                   Container(
                     width: double.infinity,
@@ -74,16 +69,15 @@ class WeaponCard extends StatelessWidget {
                         bottomRight: Radius.circular(24),
                       ),
                       child: Image.network(
-                        weapon.imageUrl,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
+                        item.imageUrl,
+                        fit: BoxFit.contain,
                         errorBuilder: (_, __, ___) =>
                             const Icon(Icons.image_not_supported),
                       ),
                     ),
                   ),
 
-                  // Stock Indicator
+                  /// QUANTITY BADGE
                   Positioned(
                     top: 8,
                     left: 8,
@@ -93,24 +87,48 @@ class WeaponCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(
-                          0.3,
-                        ), // Semi transparan gelap
+                        color: Colors.black.withValues(alpha: 0.35),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "X${weapon.stock}", // Menampilkan angka stok
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                        "x${item.quantity}",
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           fontFamily: "HyWenhei",
                         ),
                       ),
                     ),
                   ),
 
-                  // Rarity Stars
+                  /// ITEM TYPE BADGE
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        item.itemType.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          fontFamily: "HyWenhei",
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// RARITY STARS
                   Positioned(
                     bottom: -10,
                     child: Row(
@@ -123,7 +141,7 @@ class WeaponCard extends StatelessWidget {
                           color: const Color(0xFFFFCD38),
                           shadows: [
                             Shadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),
@@ -136,25 +154,34 @@ class WeaponCard extends StatelessWidget {
               ),
             ),
 
-            // Mid Content
+            /// CONTENT
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// NAME
                   Text(
-                    weapon.name.toString(),
+                    item.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       fontFamily: "HyWenhei",
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
                     ),
                   ),
+
                   const SizedBox(height: 2),
+
+                  /// SUBTITLE
                   Text(
-                    weapon.type,
+                    item.subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12,
                       fontFamily: "HyWenhei",
@@ -162,35 +189,6 @@ class WeaponCard extends StatelessWidget {
                       color: isDark
                           ? AppColors.textPrimaryDark.withValues(alpha: 0.6)
                           : AppColors.textPrimaryLight.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            /// PRICE PANEL
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: isDark ? Color(0xFF1F2C3F) : Color(0xFF3D4E69),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/Item_Mora.webp',
-                    width: 22,
-                    height: 22,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    weapon.price.toStringAsFixed(0),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      fontFamily: "HyWenhei",
-                      color: AppColors.textPrimaryDark,
                     ),
                   ),
                 ],

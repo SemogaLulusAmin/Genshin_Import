@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'register_screen.dart';
 import '../../services/auth_service.dart';
 import '../../states/auth_state.dart';
+import '../../widgets/header/money_badge.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,9 +36,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (result['success'] == true) {
+      print('LoginScreen: Login successful, money = ${result['user']['money']}');
       _showMessage("Login Success!", Colors.green);
 
       isLoggedIn.value = true;
+      
+      // Wait for MoneyBadge to be created, then refresh it
+      Future.delayed(const Duration(milliseconds: 500), () {
+        MoneyBadge.refresh();
+      });
     } else {
       _showMessage(result['message'], Colors.red);
     }

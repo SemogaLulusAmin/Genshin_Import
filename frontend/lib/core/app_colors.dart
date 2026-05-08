@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Warna Utama & Aksen
-  static const Color primary = Color(0xFFE5B368);
+  static const Color primary = Color(0xFFF0BB6A);
   static const Color secondary = Color(0xFF14698D);
 
   // Light Mode Colors

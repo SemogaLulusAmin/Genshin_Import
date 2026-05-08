@@ -28,8 +28,12 @@ class Authservice {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
         await prefs.setString('username', data['user']['username']);
-        await prefs.setString('email', data['user']['money']);
+        await prefs.setString('userID', data['user']['id']);  // Backend sends 'id', not 'userID'
         await prefs.setString('roles', data['user']['roles']);
+        final money = data['user']['money'] ?? 10000;
+        // Store money as string to handle DECIMAL from database
+        await prefs.setString('money', money.toString());
+        print('AuthService Login: Stored money = $money (type: ${money.runtimeType})');
         return {"success": true, "token": data['token'], "user": data['user']};
       } else if (response.statusCode == 401) {
         return {"success": false, "message": "Wrong password"};

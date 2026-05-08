@@ -134,7 +134,6 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: () {
               // TODO: Google Sign In
             },
-
             style: OutlinedButton.styleFrom(
               side: BorderSide(
                 color: isDark
@@ -143,7 +142,6 @@ class _LoginFormState extends State<LoginForm> {
 
                 width: 2,
               ),
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -151,9 +149,7 @@ class _LoginFormState extends State<LoginForm> {
 
             child: Stack(
               alignment: Alignment.center,
-
               children: [
-                /// 🔹 TEXT (CENTER BENERAN)
                 Center(
                   child: Text(
                     "SIGN IN WITH GOOGLE",
@@ -172,12 +168,10 @@ class _LoginFormState extends State<LoginForm> {
 
                 Align(
                   alignment: Alignment.centerLeft,
-
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-
                     children: [
-                      Image.asset('assets/images/google_logo.png', height: 24),
+                      Image.asset('assets/images/google_logo.png', height: 26),
                     ],
                   ),
                 ),
@@ -187,27 +181,31 @@ class _LoginFormState extends State<LoginForm> {
         ),
         const SizedBox(height: 48),
 
-        // 4. SUBMIT BUTTON DENGAN LOGIKA VALIDASI
-        GestureDetector(
-          onTap: _isFormValid ? _handleLogin : null,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _isFormValid ? 1.0 : 0.4,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_forward_rounded,
-                size: 28,
-                color: isDark
-                    ? AppColors.textPrimaryLight
-                    : AppColors.textPrimaryDark,
+        // Next Button
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _isFormValid ? 1.0 : 0.4,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _isFormValid ? _handleLogin : null,
+              borderRadius: BorderRadius.circular(16),
+              child: Ink(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 28,
+                  color: isDark
+                      ? AppColors.textPrimaryLight
+                      : AppColors.textPrimaryDark,
+                ),
               ),
             ),
           ),
