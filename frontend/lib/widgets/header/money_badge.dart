@@ -10,14 +10,14 @@ class MoneyBadge extends StatefulWidget {
   State<MoneyBadge> createState() => _MoneyBadgeState();
 
   static _MoneyBadgeState? _instance;
-  
+
   static Future<void> refresh() async {
     await _instance?._refreshMoney();
   }
 }
 
 class _MoneyBadgeState extends State<MoneyBadge> {
-  int _money = 0;
+  double _money = 0;
   bool _isLoading = false;
 
   @override
@@ -48,12 +48,12 @@ class _MoneyBadgeState extends State<MoneyBadge> {
       });
     }
 
-    _refreshMoney(showLoading: false); 
+    _refreshMoney(showLoading: false);
   }
 
   Future<void> _refreshMoney({bool showLoading = true}) async {
-    if (_isLoading) return; 
-    
+    if (_isLoading) return;
+
     if (showLoading) setState(() => _isLoading = true);
 
     try {
@@ -62,13 +62,10 @@ class _MoneyBadgeState extends State<MoneyBadge> {
 
       if (mounted) {
         setState(() {
-          if (result['success'] == true) {
-            _money = result['money'] ?? _money; 
-          }
+          _money = result.money ?? _money;
           _isLoading = false;
         });
       }
-
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -77,7 +74,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _refreshMoney(showLoading: true), 
+      onTap: () => _refreshMoney(showLoading: true),
       child: Container(
         padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
         decoration: BoxDecoration(
@@ -100,7 +97,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
                 width: 20,
                 height: 16,
                 child: CircularProgressIndicator(
-                  strokeWidth: 1.5, 
+                  strokeWidth: 1.5,
                   color: Colors.white,
                 ),
               )
