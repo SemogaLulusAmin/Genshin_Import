@@ -32,7 +32,7 @@ class ArtifactCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
-      onTap: () {
+      onTap: onTap ?? () {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,

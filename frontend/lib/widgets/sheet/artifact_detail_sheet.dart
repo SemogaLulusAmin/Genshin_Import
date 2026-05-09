@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
+import '../../services/auth_service.dart';
 import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
+import '../../screens/admin/admin_artifact_form_screen.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
@@ -14,7 +16,23 @@ class ArtifactDetailSheet extends StatefulWidget {
 }
 
 class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
+  late Artifact _artifact;
   int quantity = 1;
+  bool _isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _artifact = widget.artifact;
+    _loadAdminState();
+  }
+
+  Future<void> _loadAdminState() async {
+    final isAdmin = await AuthService().isAdmin();
+    if (mounted) {
+      setState(() => _isAdmin = isAdmin);
+    }
+  }
 
   List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
@@ -35,7 +53,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final artifact = widget.artifact;
+    final artifact = _artifact;
     final gradient = _getRarityGradient(artifact.maxRarity);
     final rarity = _getRarityInt(artifact.maxRarity);
     final totalPrice = artifact.price * quantity;
@@ -458,6 +476,86 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         ],
                       ),
                     ),
+
+                    if (_isAdmin) ...[
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        onPressed: () async {
+                          final updated = await Navigator.of(context).push<bool?>(
+                            MaterialPageRoute(
+                              builder: (_) => AdminArtifactFormScreen(artifact: artifact),
+                            ),
+                          );
+                          if (updated == true) {
+                            try {
+                              final refreshed = await ArtifactService().getArtifactById(artifact.artifactID);
+                              if (refreshed != null && mounted) {
+                                setState(() => _artifact = refreshed);
+                              }
+                            } catch (_) {
+                              if (mounted) setState(() {});
+                            }
+                          }
+                        },
+                        child: const Text('Edit Artifact'),
+                      ),
+                      const SizedBox(height: 10),
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: const Text('Delete Artifact'),
+                              content: const Text('Are you sure you want to delete this artifact?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirmed != true) return;
+
+                          try {
+                            final success = await ArtifactService().deleteArtifact(artifact.artifactID);
+                            if (success) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Artifact deleted'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Delete failed: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('Delete Artifact'),
+                      ),
+                    ],
                   ],
                 ),
               ),

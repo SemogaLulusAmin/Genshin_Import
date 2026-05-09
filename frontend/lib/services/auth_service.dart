@@ -79,4 +79,13 @@ class Authservice {
       return {"success": false, "message": "message: $e"};
     }
   }
+
+  Future<bool> isAdmin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final roles = prefs.getString('roles');
+    if (roles == null) return false;
+    return roles.toLowerCase().contains('admin');
+  }
 }
+
+class AuthService extends Authservice {}

@@ -3,6 +3,7 @@ import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/services/auth_service.dart';
 import '../../widgets/custom_form_field.dart';
 import 'package:frontend/states/auth_state.dart';
+import '../../view_models/auth_viewmodel.dart';
 
 class LoginForm extends StatefulWidget {
   // 👈 Ubah ke StatefulWidget
@@ -43,6 +44,7 @@ class _LoginFormState extends State<LoginForm> {
     if (result['success'] == true) {
       _showMessage("Login Success!", Colors.green);
 
+      await AuthViewModel.instance.refresh();
       isLoggedIn.value = true;
     } else {
       _showMessage(result['message'], Colors.red);
