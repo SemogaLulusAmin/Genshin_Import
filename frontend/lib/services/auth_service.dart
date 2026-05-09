@@ -82,7 +82,8 @@ class AuthService {
     // dan endpoint backend final sudah siap untuk semua platform.
     return {
       "success": false,
-      "message": "Google Sign-In belum dikonfigurasi untuk arsitektur MVVM ini.",
+      "message":
+          "Google Sign-In belum dikonfigurasi untuk arsitektur MVVM ini.",
     };
   }
 }
