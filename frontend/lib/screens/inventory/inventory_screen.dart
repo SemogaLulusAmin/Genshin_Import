@@ -29,26 +29,34 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     final artifacts = await InventoryArtifactService().getInventory();
 
-    final weaponItems = weapons.map((w) => InventoryWeapon(
-      weaponID: w.weaponID,
-      name: w.name,
-      type: w.type,
-      rarity: w.rarity,
-      totalOwned: w.totalOwned,
-      imageUrl: w.imageUrl,
-    )).toList();
+    final weaponItems = weapons
+        .map(
+          (w) => InventoryWeapon(
+            weaponID: w.weaponID,
+            name: w.name,
+            type: w.type,
+            rarity: w.rarity,
+            totalOwned: w.totalOwned,
+            imageUrl: w.imageUrl,
+          ),
+        )
+        .toList();
 
-    final artifactItems = artifacts.map((a) => InventoryArtifact(
-      artifactID: a.artifactID,
-      name: a.name,
-      setName: a.setName,
-      maxRarity: a.maxRarity,
-      totalOwned: a.totalOwned,
-      imageUrl: a.imageUrl,
-      price: a.price,
-      pieceBonus2: a.pieceBonus2,
-      pieceBonus4: a.pieceBonus4,
-    )).toList();
+    final artifactItems = artifacts
+        .map(
+          (a) => InventoryArtifact(
+            artifactID: a.artifactID,
+            name: a.name,
+            setName: a.setName,
+            maxRarity: a.maxRarity,
+            totalOwned: a.totalOwned,
+            imageUrl: a.imageUrl,
+            price: a.price,
+            pieceBonus2: a.pieceBonus2,
+            pieceBonus4: a.pieceBonus4,
+          ),
+        )
+        .toList();
 
     /// MERGE ALL
     final allItems = [...weaponItems, ...artifactItems];
@@ -180,7 +188,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                               crossAxisCount: 2,
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
-                              childAspectRatio: 0.63,
+                              childAspectRatio: 0.69,
                             ),
                         itemBuilder: (context, index) {
                           final item = filteredItems[index];
@@ -195,6 +203,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
                                     builder: (context) => ArtifactDetailSheet(
                                       artifact: artifact,
                                       enablePurchase: false,
@@ -208,6 +217,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
                                     builder: (context) => WeaponDetailSheet(
                                       weapon: weapon,
                                       enablePurchase: false,

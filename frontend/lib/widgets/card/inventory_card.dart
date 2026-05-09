@@ -154,7 +154,7 @@ class InventoryCard extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
+              padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

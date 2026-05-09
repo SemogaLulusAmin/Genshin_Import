@@ -25,7 +25,7 @@ class GenshinImportApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
 
       home: AnimatedBuilder(
         animation: AuthViewModel.instance,
