@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/core/app_colors.dart';
+import 'package:frontend/view_models/auth_viewmodel.dart';
 import '../../widgets/custom_form_field.dart';
-import 'package:frontend/states/auth_state.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -17,7 +16,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
   bool _isChecked = false;
   bool _isFormValid = false;
-  final AuthController _authController = AuthController.instance;
+  final AuthViewModel _authViewModel = AuthViewModel.instance;
 
   Future<void> _handleRegister() async {
     if (_isChecked == false || _isFormValid == false) {
@@ -42,7 +41,7 @@ class _RegisterFormState extends State<RegisterForm> {
       return;
     }
 
-    final success = await _authController.register(
+    final success = await _authViewModel.register(
       _nameController.text,
       _emailController.text,
       _passwordController.text,
@@ -51,26 +50,24 @@ class _RegisterFormState extends State<RegisterForm> {
     if (success == true) {
       _showMessage("Registration Success! Logging in...", Colors.green);
 
-      final loginSuccess = await _authController.login(
+      final loginSuccess = await _authViewModel.login(
         _emailController.text,
         _passwordController.text,
       );
 
-      if (loginSuccess == true) {
-        isLoggedIn.value = true;
-      } else {
+      if (loginSuccess != true) {
         _showMessage(
-          "Auto-login failed: ${_authController.errorMessage ?? "Login Failed"}",
+          "Auto-login failed: ${_authViewModel.errorMessage ?? "Login Failed"}",
           Colors.red,
         );
       }
     } else {
       _showMessage(
-        _authController.errorMessage ?? "Registration Failed",
+        _authViewModel.errorMessage ?? "Registration Failed",
         Colors.red,
       );
     }
-    _authController.clearErrorMessage();
+    _authViewModel.clearErrorMessage();
   }
 
   void _showMessage(String message, Color color) {
@@ -100,6 +97,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
