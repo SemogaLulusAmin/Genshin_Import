@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
