@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
+import '../../services/auth_service.dart';
 import '../../models/user_model.dart';
 import '../../core/app_colors.dart';
+import '../../view_models/auth_viewmodel.dart';
+import '../admin/admin_dashboard_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,11 +15,26 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isExpanded = false;
+  bool? _isAdmin;
 
-  Future<User?> _fetchUser() async {
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminStatus();
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final authService = AuthService();
+    final isAdmin = await authService.isAdmin();
+    setState(() {
+      _isAdmin = isAdmin;
+    });
+  }
+
+  Future<UserModel?> _fetchUser() async {
     final result = await UserService().getUserData();
     if (result['success'] == true && result['user'] != null) {
-      return User.fromJson(result['user']);
+      return UserModel.fromJson(result['user']);
     }
     throw Exception(result['message'] ?? 'Unknown fetch error');
   }
@@ -24,10 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authViewModel = AuthViewModel.instance;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      body: FutureBuilder<User?>(
+      body: FutureBuilder<UserModel?>(
         future: _fetchUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -37,9 +56,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("Failed to load user profile: No data"));
+      body: AnimatedBuilder(
+        animation: authViewModel,
+        builder: (context, _) {
+          final user = authViewModel.currentUser;
+
+          if (user == null) {
+            return const Center(
+              child: Text("User session is not loaded yet"),
+            );
           }
-          final user = snapshot.data!;
 
           return SingleChildScrollView(
             child: Column(
@@ -54,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                            'assets/images/background_Light.jpg',
+                            'assets/images/Background_Light.jpg',
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -193,25 +219,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 10),
 
+                      // Admin access if user is admin
+                      if (_isAdmin == true)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AdminDashboardScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: const [
+                                Icon(Icons.admin_panel_settings),
+                                SizedBox(width: 10),
+                                Expanded(child: Text("Admin Panel")),
+                                Icon(Icons.chevron_right),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      if (_isAdmin == true) const SizedBox(height: 10),
+
                       /// LOGOUT
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.logout),
-                            SizedBox(width: 10),
-                            Expanded(child: Text("Log out")),
-                            Icon(Icons.chevron_right),
-                          ],
+                      GestureDetector(
+                        onTap: () async {
+                          await AuthViewModel.instance.logout();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: const [
+                              Icon(Icons.logout),
+                              SizedBox(width: 10),
+                              Expanded(child: Text("Log out")),
+                              Icon(Icons.chevron_right),
+                            ],
+                          ),
                         ),
                       ),
                     ],

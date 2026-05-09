@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../states/user_state.dart';
+import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/header/screen_header.dart';
 import '../../widgets/card/inventory_card.dart';
@@ -22,6 +22,7 @@ class InventoryScreen extends StatefulWidget {
 
 class _InventoryScreenState extends State<InventoryScreen> {
   String selectedFilter = "All";
+  final UserViewModel _userViewModel = UserViewModel.instance;
 
   Future<List<Inventory>> _loadInventory() async {
     final weapons = await InventoryWeaponService().getInventory();
@@ -115,10 +116,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
             /// INVENTORY GRID
             Expanded(
               child: ListenableBuilder(
-                listenable: UserState.instance,
+                listenable: _userViewModel,
                 builder: (context, _) {
-                  final int refreshTrigger =
-                      UserState.instance.inventoryTrigger;
+                  final int refreshTrigger = _userViewModel.inventoryRefreshKey;
                   return FutureBuilder<List<Inventory>>(
                     key: ValueKey(refreshTrigger),
                     future: _loadInventory(),

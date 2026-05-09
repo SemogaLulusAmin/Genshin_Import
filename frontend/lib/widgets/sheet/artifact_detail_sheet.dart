@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
+<<<<<<< HEAD
 import '../../services/auth_service.dart';
 import '../../states/user_state.dart';
+=======
+import '../../view_models/user_viewmodel.dart';
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
 import '../../core/app_colors.dart';
 import '../../screens/admin/admin_artifact_form_screen.dart';
 
@@ -425,8 +429,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
-                                  UserState.instance.decreaseMoney(totalPrice.toInt());
-                                  UserState.instance.triggerInventoryRefresh();
+                                  UserViewModel.instance.decreaseMoney(totalPrice.toInt());
+                                  UserViewModel.instance.triggerInventoryRefresh();
                                   if (context.mounted) Navigator.of(context).pop();
                                 }
                               } catch (e) {

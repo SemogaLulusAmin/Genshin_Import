@@ -17,7 +17,7 @@ class ArtifactService {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl'),
+        Uri.parse(baseUrl),
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -87,7 +87,11 @@ class ArtifactService {
     }
   }
 
+<<<<<<< HEAD
   Future<bool> createArtifact(Map<String, dynamic> artifactData, {String? imagePath}) async {
+=======
+  Future<bool> createArtifact(Map<String, dynamic> artifactData, String imagePath) async {
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('jwt_token');
@@ -96,6 +100,7 @@ class ArtifactService {
         throw Exception('No token found. Please login first.');
       }
 
+<<<<<<< HEAD
       if (imagePath != null && imagePath.isNotEmpty) {
         final request = http.MultipartRequest('POST', Uri.parse(baseUrl));
         request.headers['Authorization'] = 'Bearer $token';
@@ -117,12 +122,41 @@ class ArtifactService {
       );
 
       return response.statusCode == 200;
+=======
+      var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
+      artifactData.forEach((key, value) {
+        if (value != null) {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add image file
+      if (imagePath.isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to create artifact: $responseData');
+      }
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
     } catch (e) {
       throw Exception('Network error: $e');
     }
   }
 
+<<<<<<< HEAD
   Future<bool> updateArtifact(String artifactId, Map<String, dynamic> artifactData, {String? imagePath}) async {
+=======
+  Future<bool> updateArtifact(String artifactId, Map<String, dynamic> artifactData, String? imagePath) async {
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('jwt_token');
@@ -131,6 +165,7 @@ class ArtifactService {
         throw Exception('No token found. Please login first.');
       }
 
+<<<<<<< HEAD
       if (imagePath != null && imagePath.isNotEmpty) {
         final request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/$artifactId'));
         request.headers['Authorization'] = 'Bearer $token';
@@ -152,6 +187,31 @@ class ArtifactService {
       );
 
       return response.statusCode == 200;
+=======
+      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/$artifactId'));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
+      artifactData.forEach((key, value) {
+        if (value != null) {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add image file if provided
+      if (imagePath != null && imagePath.isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update artifact: $responseData');
+      }
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
     } catch (e) {
       throw Exception('Network error: $e');
     }
@@ -171,7 +231,15 @@ class ArtifactService {
         headers: {'Authorization': 'Bearer $token'},
       );
 
+<<<<<<< HEAD
       return response.statusCode == 200;
+=======
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to delete artifact: ${response.body}');
+      }
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
     } catch (e) {
       throw Exception('Network error: $e');
     }

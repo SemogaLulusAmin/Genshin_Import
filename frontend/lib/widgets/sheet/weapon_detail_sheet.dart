@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
+<<<<<<< HEAD
 import '../../services/auth_service.dart';
 import '../../states/user_state.dart';
 import '../../screens/admin/admin_weapon_form_screen.dart';
+=======
+import '../../view_models/user_viewmodel.dart';
+>>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
@@ -427,8 +431,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
-                                  UserState.instance.decreaseMoney(totalPrice.toInt());
-                                  UserState.instance.triggerInventoryRefresh();
+                                  UserViewModel.instance.decreaseMoney(totalPrice.toInt());
+                                  UserViewModel.instance.triggerInventoryRefresh();
                                   if (context.mounted) Navigator.of(context).pop();
                                 }
                               } catch (e) {
