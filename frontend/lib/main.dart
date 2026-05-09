@@ -2,15 +2,28 @@ import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
+import 'screens/inventory/inventory_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
+import 'states/auth_state.dart';
+import 'package:provider/provider.dart';
+import 'states/user_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthViewModel.instance.bootstrapSession();
 
-  runApp(const GenshinImportApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserState()),
+      ],
+      child: const GenshinImportApp(),
+    ),
+  );
 }
 
 class GenshinImportApp extends StatelessWidget {
@@ -57,6 +70,13 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const Center(child: ShopScreen()),
+    // const Center(child: Text('Orders Screen')),
+    const Center(child: InventoryScreen()),
+    const Center(child: Text('Profile Screen')),
+  ];
 
   @override
   Widget build(BuildContext context) {

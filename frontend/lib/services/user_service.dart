@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -15,25 +16,67 @@ class UserService {
     }
   }
 
-  Future<UserModel> getUser(String userId) async {
-    final response = await http.get(Uri.parse('$baseUrl/users/$userId'));
+  Future<Map<String, dynamic>> getUserData() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      
+      final String? token = prefs.getString('jwt_token');
 
-    if (response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load user');
+      if (token == null || token.isEmpty) {
+        return {"success": false, "message": "No token found."};
+      }
+
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      final String? userID = decodedToken['id']?.toString(); 
+
+      if (userID == null) {
+        return {"success": false, "message": "Invalid Token Payload."};
+      }
+
+      final response = await http.get(
+        Uri.parse("$baseUrl/auth/$userID"),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        
+        final userData = data['user'];
+        
+        if (userData != null) {
+          var rawMoney = userData['money'];
+          int freshMoney = 0;
+          if (rawMoney != null) {
+            freshMoney = num.parse(rawMoney.toString()).toInt();
+          }
+
+          await prefs.setString('money', freshMoney.toString());
+          await prefs.setString('userID', userID); 
+
+          return {
+            "success": true,
+            "user": userData,
+            "money": freshMoney
+          };
+        }
+      }
+
+      
+      return {"success": false, "message": "Server error: ${response.statusCode}"};
+
+    } catch (e) {
+      return {"success": false, "message": "Error: $e"};
     }
   }
 
-  Future<List<UserModel>> getAllUsers() async {
-    final response = await http.get(Uri.parse('$baseUrl/users'));
+  static final StreamController<int> moneyStream = StreamController<int>.broadcast();
 
-    if (response.statusCode == 200) {
-      List<dynamic> usersJson = jsonDecode(response.body);
-      return usersJson.map((json) => UserModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load users');
-    }
+  // Fungsi untuk update manual tanpa hit API (Opsional tapi enak buat UX)
+  static void updateLocalMoney(int newAmount) {
+    moneyStream.add(newAmount);
   }
 
   Future<UserModel> getCurrentUser() async {

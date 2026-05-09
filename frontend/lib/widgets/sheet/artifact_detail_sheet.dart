@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
+import '../../services/artifact_service.dart';
+import 'package:provider/provider.dart';
+import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
-
-  const ArtifactDetailSheet({super.key, required this.artifact});
+  final bool enablePurchase;
+  const ArtifactDetailSheet({super.key, required this.artifact, this.enablePurchase = true});
 
   @override
   State<ArtifactDetailSheet> createState() => _ArtifactDetailSheetState();
@@ -256,6 +259,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             ],
 
                             /// STOCK
+                            if(widget.enablePurchase)
                             Container(
                               padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
                               decoration: BoxDecoration(
@@ -296,6 +300,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
               ),
 
               /// BOTTOM (SAMA PERSIS)
+              if(widget.enablePurchase)
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                 child: Column(
@@ -379,31 +384,63 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         backgroundColor: isDark
                             ? Colors.white
                             : AppColors.textPrimaryLight,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      onPressed: artifact.stock == 0 ? null : () {},
+                      onPressed: artifact.stock == 0
+                          ? null
+                          : () async {
+                              try {
+                                final success = await ArtifactService()
+                                    .purchaseArtifact(
+                                      artifact.artifactID,
+                                      quantity,
+                                    );
+
+                                if (success) {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Purchase successful!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Close the sheet
+                                  context.read<UserState>().decreaseMoney(totalPrice.toInt());
+                                  context.read<UserState>().triggerInventoryRefresh();
+                                  if (context.mounted) Navigator.of(context).pop();
+                                }
+                              } catch (e) {
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Purchase failed: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Add to Orders ",
+                            "Purchase ",
                             style: TextStyle(
                               color: isDark
                                   ? AppColors.textPrimaryLight
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
 
                           Image.asset(
                             'assets/images/Item_Mora.webp',
-                            width: 24,
-                            height: 24,
+                            width: 26,
+                            height: 26,
                           ),
 
                           const SizedBox(width: 4),
@@ -416,7 +453,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
                         ],

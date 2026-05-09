@@ -184,30 +184,39 @@ class _RegisterFormState extends State<RegisterForm> {
         const SizedBox(height: 32),
 
         // Submit Button
-        GestureDetector(
-          onTap: _isFormValid && _isChecked
-              ? () {
-                  _handleRegister();
-                }
-              : null,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
-            opacity: _isFormValid && _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_forward_rounded,
-                size: 28,
-                color: isDark
-                    ? AppColors.textPrimaryLight
-                    : AppColors.textPrimaryDark,
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
+
+          child: Material(
+            color: Colors.transparent,
+
+            child: InkWell(
+              onTap: isChecked
+                  ? () {
+                      _handleRegister();
+                    }
+                  : null,
+
+              borderRadius: BorderRadius.circular(16),
+
+              child: Ink(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 28,
+                  color: isDark
+                      ? AppColors.textPrimaryLight
+                      : AppColors.textPrimaryDark,
+                ),
               ),
             ),
           ),

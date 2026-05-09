@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../models/artifact_model.dart';
-import '../../widgets/sheet/artifact_detail_sheet.dart';
+import '../../core/app_colors.dart';
+import '../../models/inventory_model.dart';
 
-class ArtifactCard extends StatelessWidget {
-  final Artifact artifact;
+class InventoryCard extends StatelessWidget {
+  final Inventory item;
   final VoidCallback? onTap;
 
-  const ArtifactCard({super.key, required this.artifact, this.onTap});
+  const InventoryCard({super.key, required this.item, this.onTap});
 
   List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
@@ -27,19 +27,14 @@ class ArtifactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rarityGradient = _getRarityGradient(artifact.maxRarity);
-    final rarityCount = _getRarityInt(artifact.maxRarity);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final rarityGradient = _getRarityGradient(item.rarity);
+
+    final rarity = _getRarityInt(item.rarity);
+
     return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (_) => ArtifactDetailSheet(artifact: artifact),
-        );
-      },
+      onTap: onTap,
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
@@ -49,7 +44,6 @@ class ArtifactCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Panel
             SizedBox(
               height: 160,
               child: Stack(
@@ -73,7 +67,7 @@ class ArtifactCard extends StatelessWidget {
                         bottomRight: Radius.circular(24),
                       ),
                       child: Image.network(
-                        artifact.imageUrl,
+                        item.imageUrl,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
                         errorBuilder: (_, __, ___) =>
@@ -82,7 +76,7 @@ class ArtifactCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Stock Indicator
+                  /// QUANTITY BADGE
                   Positioned(
                     top: 8,
                     left: 8,
@@ -92,35 +86,61 @@ class ArtifactCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.35),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "X${artifact.stock}",
+                        "x${item.totalOwned}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           fontFamily: "HyWenhei",
                         ),
                       ),
                     ),
                   ),
 
-                  // Rarity Stars
+                  /// ITEM TYPE BADGE
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        item.itemType.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          fontFamily: "HyWenhei",
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// RARITY STARS
                   Positioned(
                     bottom: -10,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        rarityCount,
+                        rarity,
                         (index) => Icon(
                           Icons.star,
                           size: 24,
                           color: const Color(0xFFFFCD38),
                           shadows: [
                             Shadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),
@@ -133,66 +153,40 @@ class ArtifactCard extends StatelessWidget {
               ),
             ),
 
-            // Mid Content
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// NAME
                   Text(
-                    artifact.formattedName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      fontFamily: "HyWenhei",
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    artifact.setName, // Menggunakan Set Name sebagai sub-info
+                    item.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize:
-                          11, // Sedikit lebih kecil karena set name biasanya panjang
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontFamily: "HyWenhei",
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
+                    ),
+                  ),
+
+                  const SizedBox(height: 2),
+
+                  /// SUBTITLE
+                  Text(
+                    item.subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
                       fontFamily: "HyWenhei",
                       fontWeight: FontWeight.w400,
                       color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            /// PRICE PANEL
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF1F2C3F)
-                    : const Color(0xFF3D4E69),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/Item_Mora.webp',
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    artifact.price.toStringAsFixed(0),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      fontFamily: "HyWenhei",
-                      color: Colors.white,
+                          ? AppColors.textPrimaryDark.withValues(alpha: 0.6)
+                          : AppColors.textPrimaryLight.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

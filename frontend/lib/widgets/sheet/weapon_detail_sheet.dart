@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
+import '../../services/weapon_service.dart';
+import 'package:provider/provider.dart';
+import '../../states/user_state.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
+  final bool enablePurchase;
 
-  const WeaponDetailSheet({super.key, required this.weapon});
+  const WeaponDetailSheet({super.key, required this.weapon, this.enablePurchase = true});
 
   @override
   State<WeaponDetailSheet> createState() => _WeaponDetailSheetState();
@@ -38,7 +42,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     final rarity = _getRarityInt(weapon.rarity);
     final totalPrice = weapon.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
+    
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       maxChildSize: 0.95,
@@ -254,6 +258,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                             const SizedBox(height: 20),
 
                             /// STOCK
+                            if(widget.enablePurchase)
                             Container(
                               padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
                               decoration: BoxDecoration(
@@ -290,6 +295,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                 ),
               ),
 
+              if(widget.enablePurchase)
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                 decoration: const BoxDecoration(color: Colors.transparent),
@@ -388,27 +394,56 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      onPressed: weapon.stock == 0 ? null : () {},
+                      onPressed: weapon.stock == 0
+                          ? null
+                          : () async {
+                              try {
+                                final success = await WeaponService()
+                                    .purchaseWeapon(weapon.weaponID, quantity);
+
+                                if (success) {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Purchase successful!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Close the sheet
+                                  context.read<UserState>().decreaseMoney(totalPrice.toInt());
+                                  context.read<UserState>().triggerInventoryRefresh();
+                                  if (context.mounted) Navigator.of(context).pop();
+                                }
+                              } catch (e) {
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Purchase failed: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Add to Orders ",
+                            "Purchase ",
                             style: TextStyle(
                               color: isDark
                                   ? AppColors.textPrimaryLight
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
 
                           /// 💰 ICON MATA UANG
                           Image.asset(
                             'assets/images/Item_Mora.webp',
-                            width: 24,
-                            height: 24,
+                            width: 26,
+                            height: 26,
                           ),
 
                           const SizedBox(width: 4),
@@ -422,7 +457,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                   : AppColors.textPrimaryDark,
                               fontFamily: "HyWenhei",
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
                         ],
