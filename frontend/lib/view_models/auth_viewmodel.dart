@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/user_model.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/user_service.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -15,6 +16,7 @@ class AuthViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _isBootstrapping = false;
   String? _errorMessage;
+  String? _nameError;
   String? _emailError;
   String? _passwordError;
   UserModel? _currentUser;
@@ -22,6 +24,7 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isBootstrapping => _isBootstrapping;
   String? get errorMessage => _errorMessage;
+  String? get nameError => _nameError;
   String? get emailError => _emailError;
   String? get passwordError => _passwordError;
   UserModel? get currentUser => _currentUser;
@@ -44,6 +47,7 @@ class AuthViewModel extends ChangeNotifier {
 
     try {
       _currentUser = await _userService.getCurrentUser();
+      UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
     } catch (e) {
       await _clearPersistedSession();
       _currentUser = null;
@@ -55,7 +59,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<bool> login(String email, String password) async {
-    clearErrorMessage();
+    _clearAuthErrors();
 
     final trimmedEmail = email.trim();
     final isValid = _validateLoginFields(trimmedEmail, password);
@@ -67,13 +71,18 @@ class AuthViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+
     final result = await _authService.login(trimmedEmail, password);
+
     _isLoading = false;
     if (result['success'] == true) {
-      final userJson = result['user'];
-      if (userJson is Map<String, dynamic>) {
-        _currentUser = UserModel.fromJson(userJson);
+      _currentUser = await _resolveUserFromResult(result);
+      if (_currentUser == null) {
+        _errorMessage = "Failed to load user session";
+        notifyListeners();
+        return false;
       }
+      UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
       notifyListeners();
       return true;
     }
@@ -84,10 +93,12 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<bool> register(String name, String email, String password) async {
-    clearErrorMessage();
+    _clearAuthErrors();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      _errorMessage = "Name, email, and password are required";
+    final trimmedName = name.trim();
+    final trimmedEmail = email.trim();
+    final isValid = _validateRegisterFields(trimmedName, trimmedEmail, password);
+    if (!isValid) {
       notifyListeners();
       return false;
     }
@@ -96,15 +107,35 @@ class AuthViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    final result = await _authService.register(name, email, password);
+    final result = await _authService.register(
+      trimmedName,
+      trimmedEmail,
+      password,
+    );
+
+    if (result['success'] != true) {
+      _isLoading = false;
+      _errorMessage = result['message'];
+      notifyListeners();
+      return false;
+    }
+
+    final loginResult = await _authService.login(trimmedEmail, password);
 
     _isLoading = false;
-    if (result['success'] == true) {
+    if (loginResult['success'] == true) {
+      _currentUser = await _resolveUserFromResult(loginResult);
+      if (_currentUser == null) {
+        _errorMessage = "Failed to load user session";
+        notifyListeners();
+        return false;
+      }
+      UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
       notifyListeners();
       return true;
     }
 
-    _errorMessage = result['message'];
+    _errorMessage = loginResult['message'] ?? "Auto-login failed";
     notifyListeners();
     return false;
   }
@@ -119,10 +150,13 @@ class AuthViewModel extends ChangeNotifier {
 
     _isLoading = false;
     if (result['success'] == true) {
-      final userJson = result['user'];
-      if (userJson is Map<String, dynamic>) {
-        _currentUser = UserModel.fromJson(userJson);
+      _currentUser = await _resolveUserFromResult(result);
+      if (_currentUser == null) {
+        _errorMessage = "Failed to load user session";
+        notifyListeners();
+        return false;
       }
+      UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
       notifyListeners();
       return true;
     }
@@ -137,14 +171,24 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
 
     await _clearPersistedSession();
+    await UserViewModel.instance.reset();
     _currentUser = null;
-    _errorMessage = null;
+    _clearAuthErrors();
     _isLoading = false;
     notifyListeners();
   }
 
   void clearErrorMessage() {
+    if (_errorMessage == null) return;
+
     _errorMessage = null;
+    notifyListeners();
+  }
+
+  void clearNameError() {
+    if (_nameError == null) return;
+
+    _nameError = null;
     notifyListeners();
   }
 
@@ -163,6 +207,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   bool _validateLoginFields(String email, String password) {
+    _nameError = null;
     _emailError = null;
     _passwordError = null;
 
@@ -177,6 +222,50 @@ class AuthViewModel extends ChangeNotifier {
     }
 
     return _emailError == null && _passwordError == null;
+  }
+
+  bool _validateRegisterFields(String name, String email, String password) {
+    _nameError = null;
+    _emailError = null;
+    _passwordError = null;
+
+    if (name.isEmpty) {
+      _nameError = "Username is required";
+    }
+
+    if (email.isEmpty) {
+      _emailError = "Email is required";
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
+      _emailError = "Please enter a valid email address";
+    }
+
+    if (password.isEmpty) {
+      _passwordError = "Password is required";
+    }
+
+    return _nameError == null &&
+        _emailError == null &&
+        _passwordError == null;
+  }
+
+  Future<UserModel?> _resolveUserFromResult(Map<String, dynamic> result) async {
+    final userJson = result['user'];
+    if (userJson is Map<String, dynamic>) {
+      return UserModel.fromJson(userJson);
+    }
+
+    try {
+      return await _userService.getCurrentUser();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _clearAuthErrors() {
+    _errorMessage = null;
+    _nameError = null;
+    _emailError = null;
+    _passwordError = null;
   }
 
   Future<void> _clearPersistedSession() async {
