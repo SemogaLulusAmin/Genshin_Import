@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../core/app_colors.dart';
+import '../../view_models/auth_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final User user;
+  final UserModel user;
 
   const ProfileScreen({super.key, required this.user});
 
@@ -169,24 +170,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
 
                   /// LOGOUT
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.logout),
-                        SizedBox(width: 10),
-                        Expanded(child: Text("Log out")),
-                        Icon(Icons.chevron_right),
-                      ],
+                  GestureDetector(
+                    onTap: () async {
+                      await AuthViewModel.instance.logout();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.logout),
+                          SizedBox(width: 10),
+                          Expanded(child: Text("Log out")),
+                          Icon(Icons.chevron_right),
+                        ],
+                      ),
                     ),
                   ),
                 ],
