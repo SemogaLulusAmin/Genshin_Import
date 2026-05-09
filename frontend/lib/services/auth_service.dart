@@ -23,20 +23,33 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = _decodeJsonBody(response.body);
+        final token = data['token']?.toString();
+
+        if (token == null || token.isEmpty) {
+          return {"success": false, "message": "Login response is invalid"};
+        }
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', data['token']);
+        await prefs.setString('jwt_token', token);
 
-        return {"success": true, "token": data['token'], "user": data['user']};
+        final user = data['user'];
+        if (user is Map<String, dynamic>) {
+          user['email'] ??= email;
+        }
+
+        return {"success": true, "token": token, "user": user};
       } else if (response.statusCode == 401) {
         return {"success": false, "message": "Wrong password"};
       } else if (response.statusCode == 404) {
         return {"success": false, "message": "User not found"};
       } else {
-        final data = json.decode(response.body);
+        final data = _decodeJsonBody(response.body);
 
-        return {"success": false, "message": data['message'] ?? "Login Failed"};
+        return {
+          "success": false,
+          "message": data['message']?.toString() ?? "Login Failed",
+        };
       }
     } catch (e) {
       return {
@@ -62,18 +75,24 @@ class AuthService {
         }),
       );
 
-      final data = json.decode(response.body);
+      final data = _decodeJsonBody(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return {"success": true, "message": data['message']};
+        return {
+          "success": true,
+          "message": data['message']?.toString() ?? "Registration Success",
+        };
       } else {
         return {
           "success": false,
-          "message": data['message'] ?? "Registration Failed",
+          "message": data['message']?.toString() ?? "Registration Failed",
         };
       }
     } catch (e) {
-      return {"success": false, "message": "$e"};
+      return {
+        "success": false,
+        "message": "Failed to register. Please check your connection.",
+      };
     }
   }
 
@@ -85,5 +104,18 @@ class AuthService {
       "message":
           "Google Sign-In belum dikonfigurasi untuk arsitektur MVVM ini.",
     };
+  }
+
+  Map<String, dynamic> _decodeJsonBody(String body) {
+    if (body.trim().isEmpty) {
+      return <String, dynamic>{};
+    }
+
+    final decoded = json.decode(body);
+    if (decoded is Map<String, dynamic>) {
+      return decoded;
+    }
+
+    return <String, dynamic>{};
   }
 }
