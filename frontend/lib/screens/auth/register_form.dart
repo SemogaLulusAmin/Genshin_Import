@@ -163,6 +163,35 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
               ],
             ),
+          ],
+        ),
+
+        const SizedBox(height: 32),
+
+        // Submit Button
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
+
+          child: Material(
+            color: Colors.transparent,
+
+            child: InkWell(
+              onTap: _isChecked
+                  ? () {
+                      _handleRegister();
+                    }
+                  : null,
+
+              borderRadius: BorderRadius.circular(16),
+
+              child: Ink(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
 
             const SizedBox(height: 32),
 

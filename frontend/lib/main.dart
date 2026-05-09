@@ -61,21 +61,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = AuthViewModel.instance;
+
     final pages = <Widget>[
       const Center(child: ShopScreen()),
       const Center(child: InventoryScreen()),
       const ProfileScreen(),
+      if (authViewModel.isAdmin) const AdminDashboardScreen(),
     ];
+
+    final safeIndex = _selectedIndex.clamp(0, pages.length - 1);
 
     return Scaffold(
       // Menggunakan IndexedStack agar state halaman tidak hilang saat pindah tab
-      body: IndexedStack(index: _selectedIndex, children: pages),
+      body: IndexedStack(index: safeIndex, children: pages),
       // Memanggil komponen Navbar terpisah
       bottomNavigationBar: MainNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: safeIndex,
+        showAdmin: authViewModel.isAdmin,
         onTap: (index) {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = index.clamp(0, pages.length - 1);
           });
         },
       ),

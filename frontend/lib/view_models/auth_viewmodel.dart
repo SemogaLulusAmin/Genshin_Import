@@ -15,6 +15,7 @@ class AuthViewModel extends ChangeNotifier {
 
   bool _isLoading = false;
   bool _isBootstrapping = false;
+  bool _isAdmin = false;
   String? _errorMessage;
   String? _nameError;
   String? _emailError;
@@ -23,6 +24,7 @@ class AuthViewModel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   bool get isBootstrapping => _isBootstrapping;
+  bool get isAdmin => _isAdmin;
   String? get errorMessage => _errorMessage;
   String? get nameError => _nameError;
   String? get emailError => _emailError;
@@ -40,17 +42,20 @@ class AuthViewModel extends ChangeNotifier {
 
     if (token == null || token.isEmpty) {
       _currentUser = null;
+      _isAdmin = false;
       _isBootstrapping = false;
       notifyListeners();
       return;
     }
 
     try {
+      _isAdmin = await _authService.isAdmin();
       _currentUser = await _userService.getCurrentUser();
       UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
     } catch (e) {
       await _clearPersistedSession();
       _currentUser = null;
+      _isAdmin = false;
       _errorMessage = e.toString();
     } finally {
       _isBootstrapping = false;
@@ -82,6 +87,7 @@ class AuthViewModel extends ChangeNotifier {
         notifyListeners();
         return false;
       }
+      _isAdmin = await _authService.isAdmin();
       UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
       notifyListeners();
       return true;
@@ -173,6 +179,8 @@ class AuthViewModel extends ChangeNotifier {
     await _clearPersistedSession();
     await UserViewModel.instance.reset();
     _currentUser = null;
+    _isAdmin = false;
+    _errorMessage = null;
     _clearAuthErrors();
     _isLoading = false;
     notifyListeners();
