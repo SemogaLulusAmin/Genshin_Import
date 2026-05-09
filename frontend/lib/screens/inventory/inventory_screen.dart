@@ -28,26 +28,34 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
     final artifacts = await InventoryArtifactService().getInventory();
 
-    final weaponItems = weapons.map((w) => InventoryWeapon(
-      weaponID: w.weaponID,
-      name: w.name,
-      type: w.type,
-      rarity: w.rarity,
-      totalOwned: w.totalOwned,
-      imageUrl: w.imageUrl,
-    )).toList();
+    final weaponItems = weapons
+        .map(
+          (w) => InventoryWeapon(
+            weaponID: w.weaponID,
+            name: w.name,
+            type: w.type,
+            rarity: w.rarity,
+            totalOwned: w.totalOwned,
+            imageUrl: w.imageUrl,
+          ),
+        )
+        .toList();
 
-    final artifactItems = artifacts.map((a) => InventoryArtifact(
-      artifactID: a.artifactID,
-      name: a.name,
-      setName: a.setName,
-      maxRarity: a.maxRarity,
-      totalOwned: a.totalOwned,
-      imageUrl: a.imageUrl,
-      price: a.price,
-      pieceBonus2: a.pieceBonus2,
-      pieceBonus4: a.pieceBonus4,
-    )).toList();
+    final artifactItems = artifacts
+        .map(
+          (a) => InventoryArtifact(
+            artifactID: a.artifactID,
+            name: a.name,
+            setName: a.setName,
+            maxRarity: a.maxRarity,
+            totalOwned: a.totalOwned,
+            imageUrl: a.imageUrl,
+            price: a.price,
+            pieceBonus2: a.pieceBonus2,
+            pieceBonus4: a.pieceBonus4,
+          ),
+        )
+        .toList();
 
     /// MERGE ALL
     final allItems = [...weaponItems, ...artifactItems];
@@ -109,111 +117,122 @@ class _InventoryScreenState extends State<InventoryScreen> {
               child: ListenableBuilder(
                 listenable: UserState.instance,
                 builder: (context, _) {
-                  final int refreshTrigger = UserState.instance.inventoryTrigger;
+                  final int refreshTrigger =
+                      UserState.instance.inventoryTrigger;
                   return FutureBuilder<List<Inventory>>(
                     key: ValueKey(refreshTrigger),
                     future: _loadInventory(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "Error: ${snapshot.error}",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    );
-                  }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            "Error: ${snapshot.error}",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                            ),
+                          ),
+                        );
+                      }
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "Inventory is empty",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                          fontSize: 16,
-                          fontFamily: "HyWenhei",
-                        ),
-                      ),
-                    );
-                  }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Inventory is empty",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                              fontSize: 16,
+                              fontFamily: "HyWenhei",
+                            ),
+                          ),
+                        );
+                      }
 
-                  final allItems = snapshot.data!;
+                      final allItems = snapshot.data!;
 
-                  /// FILTER LOGIC
-                  final filteredItems = selectedFilter == "All"
-                      ? allItems
-                      : allItems.where((item) {
-                          return item.itemType == selectedFilter;
-                        }).toList();
+                      /// FILTER LOGIC
+                      final filteredItems = selectedFilter == "All"
+                          ? allItems
+                          : allItems.where((item) {
+                              return item.itemType == selectedFilter;
+                            }).toList();
 
-                  /// EMPTY FILTER RESULT
-                  if (filteredItems.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "Inventory is Empty",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                          fontSize: 16,
-                          fontFamily: "HyWenhei",
-                        ),
-                      ),
-                    );
-                  }
+                      /// EMPTY FILTER RESULT
+                      if (filteredItems.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Inventory is Empty",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                              fontSize: 16,
+                              fontFamily: "HyWenhei",
+                            ),
+                          ),
+                        );
+                      }
 
-                  return GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    itemCount: filteredItems.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.63,
-                        ),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
+                      return GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                        itemCount: filteredItems.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 0.69,
+                            ),
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index];
 
-                      return InventoryCard(
-                        item: item,
-                        onTap: () async {
-                          if (item is InventoryArtifact) {
-                            final artifact = await ArtifactService().getArtifactById(item.artifactID);
-                            if (artifact != null) {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) => ArtifactDetailSheet(artifact: artifact, enablePurchase: false,),
-                              );
-                            }
-                          } else if (item is InventoryWeapon) {
-                            final weapon = await WeaponService().getWeaponById(item.weaponID);
-                            if (weapon != null) {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) => WeaponDetailSheet(weapon: weapon, enablePurchase: false),
-                              );
-                            }
-                          }
+                          return InventoryCard(
+                            item: item,
+                            onTap: () async {
+                              if (item is InventoryArtifact) {
+                                final artifact = await ArtifactService()
+                                    .getArtifactById(item.artifactID);
+                                if (artifact != null) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => ArtifactDetailSheet(
+                                      artifact: artifact,
+                                      enablePurchase: false,
+                                    ),
+                                  );
+                                }
+                              } else if (item is InventoryWeapon) {
+                                final weapon = await WeaponService()
+                                    .getWeaponById(item.weaponID);
+                                if (weapon != null) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => WeaponDetailSheet(
+                                      weapon: weapon,
+                                      enablePurchase: false,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          );
                         },
                       );
                     },
                   );
                 },
-              );
-              },
-            ),
+              ),
             ),
           ],
         ),
