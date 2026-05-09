@@ -16,7 +16,7 @@ class WeaponService {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl'),
+        Uri.parse(baseUrl),
         headers: {'Authorization': 'Bearer $token'},
       );
 

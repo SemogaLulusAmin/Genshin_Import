@@ -35,7 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
             children: [
               // Logo SVG
               SvgPicture.asset(
-                'images/Genshin_Import_logo.svg',
+                'assets/images/Genshin_Import_logo.svg',
                 height: 48,
                 colorFilter: ColorFilter.mode(
                   isDark

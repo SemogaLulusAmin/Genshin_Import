@@ -1,10 +1,19 @@
-import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend/models/user_model.dart';
 
 class UserService {
-  final String baseUrl = 'http://localhost:3000';
+  String get baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:3000';
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:3000';
+    } else {
+      return 'http://localhost:3000';
+    }
+  }
 
   Future<Map<String, dynamic>> getUserData() async {
     try {
@@ -25,7 +34,7 @@ class UserService {
       final String resp = utf8.decode(base64Url.decode(normalized));
       final Map<String, dynamic> decodedToken = json.decode(resp);
 
-      final String? userID = decodedToken['id']?.toString(); 
+      final String? userID = decodedToken['id']?.toString();
 
       if (userID == null) {
         return {"success": false, "message": "Invalid Token Payload."};
@@ -41,10 +50,11 @@ class UserService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        
+
         final userData = data['user'];
-        
-        if (userData != null) {
+
+        if (userData is Map<String, dynamic>) {
+          userData['id'] ??= userID;
           var rawMoney = userData['money'];
           int freshMoney = 0;
           if (rawMoney != null) {
@@ -63,17 +73,22 @@ class UserService {
       }
 
       
-      return {"success": false, "message": "Server error: ${response.statusCode}"};
+      return {
+        "success": false,
+        "message": "Server error: ${response.statusCode}",
+      };
 
     } catch (e) {
       return {"success": false, "message": "Error: $e"};
     }
   }
 
-  static final StreamController<int> moneyStream = StreamController<int>.broadcast();
+  Future<UserModel> getCurrentUser() async {
+    final result = await getUserData();
+    if (result['success'] == true && result['user'] is Map<String, dynamic>) {
+      return UserModel.fromJson(result['user'] as Map<String, dynamic>);
+    }
 
-  // Fungsi untuk update manual tanpa hit API (Opsional tapi enak buat UX)
-  static void updateLocalMoney(int newAmount) {
-    moneyStream.add(newAmount);
+    throw Exception(result['message']?.toString() ?? 'Failed to load user');
   }
 }

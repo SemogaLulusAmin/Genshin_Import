@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
-import 'screens/auth/login_screen.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/inventory/inventory_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
 import 'screens/profile/profile_screen.dart';
-import 'states/auth_state.dart';
 
 void main() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('jwt_token');
-  isLoggedIn.value = (token != null);
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthViewModel.instance.bootstrapSession();
 
   runApp(const GenshinImportApp());
 }
@@ -31,14 +27,22 @@ class GenshinImportApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
 
-      home: ValueListenableBuilder<bool>(
-        valueListenable: isLoggedIn,
-        builder: (context, loggedIn, child) {
-          if (loggedIn) {
-            return const MainNavigationScreen();
-          } else {
-            return const AuthScreen();
+      home: AnimatedBuilder(
+        animation: AuthViewModel.instance,
+        builder: (context, child) {
+          final authViewModel = AuthViewModel.instance;
+
+          if (authViewModel.isBootstrapping) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
+
+          if (authViewModel.isLoggedIn) {
+            return const MainNavigationScreen();
+          }
+
+          return const AuthScreen();
         },
       ),
     );
@@ -55,18 +59,17 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const Center(child: ShopScreen()),
-    // const Center(child: Text('Orders Screen')),
-    const Center(child: InventoryScreen()),
-    const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final pages = <Widget>[
+      const Center(child: ShopScreen()),
+      const Center(child: InventoryScreen()),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
       // Menggunakan IndexedStack agar state halaman tidak hilang saat pindah tab
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      body: IndexedStack(index: _selectedIndex, children: pages),
       // Memanggil komponen Navbar terpisah
       bottomNavigationBar: MainNavigationBar(
         currentIndex: _selectedIndex,
