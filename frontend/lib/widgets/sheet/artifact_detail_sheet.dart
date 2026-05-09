@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
-import '../header/money_badge.dart';
+import 'package:provider/provider.dart';
+import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
@@ -407,8 +408,9 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
-                                  Navigator.of(context).pop();
-                                  await MoneyBadge.refresh();
+                                  context.read<UserState>().decreaseMoney(totalPrice.toInt());
+                                  context.read<UserState>().triggerInventoryRefresh();
+                                  if (context.mounted) Navigator.of(context).pop();
                                 }
                               } catch (e) {
                                 // Show error message

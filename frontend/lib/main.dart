@@ -8,13 +8,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/shop/shop_screen.dart';
 import 'states/auth_state.dart';
+import 'package:provider/provider.dart';
+import 'states/user_state.dart';
 
 void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('jwt_token');
   isLoggedIn.value = (token != null);
 
-  runApp(const GenshinImportApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserState()),
+      ],
+      child: const GenshinImportApp(),
+    ),
+  );
 }
 
 class GenshinImportApp extends StatelessWidget {

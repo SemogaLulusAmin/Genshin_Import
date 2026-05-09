@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 
 class MoneyBadge extends StatefulWidget {
@@ -8,30 +10,19 @@ class MoneyBadge extends StatefulWidget {
 
   @override
   State<MoneyBadge> createState() => _MoneyBadgeState();
-
-  static _MoneyBadgeState? _instance;
-  
-  static Future<void> refresh() async {
-    await _instance?._refreshMoney();
-  }
 }
 
 class _MoneyBadgeState extends State<MoneyBadge> {
-  int _money = 0;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    MoneyBadge._instance = this;
     _loadMoney();
   }
 
   @override
   void dispose() {
-    if (MoneyBadge._instance == this) {
-      MoneyBadge._instance = null;
-    }
     super.dispose();
   }
 
@@ -43,9 +34,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
     final int cachedMoney = num.tryParse(moneyStr)?.toInt() ?? 0;
 
     if (mounted) {
-      setState(() {
-        _money = cachedMoney;
-      });
+      context.read<UserState>().setMoney(cachedMoney);
     }
 
     _refreshMoney(showLoading: false); 
@@ -61,10 +50,10 @@ class _MoneyBadgeState extends State<MoneyBadge> {
       final result = await userService.getUserData();
 
       if (mounted) {
+        if (result['success'] == true && result['money'] != null) {
+          context.read<UserState>().setMoney(result['money']); 
+        }
         setState(() {
-          if (result['success'] == true) {
-            _money = result['money'] ?? _money; 
-          }
           _isLoading = false;
         });
       }
@@ -106,7 +95,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
               )
             else
               Text(
-                _money.toString(),
+                context.watch<UserState>().money.toString(),
                 style: TextStyle(
                   color: AppColors.textPrimaryDark,
                   fontFamily: "HyWenhei",
