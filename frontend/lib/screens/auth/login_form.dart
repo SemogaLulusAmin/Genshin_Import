@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/controllers/auth_controller.dart';
 import 'package:frontend/core/app_colors.dart';
+import 'package:frontend/view_models/auth_viewmodel.dart';
 import '../../widgets/custom_form_field.dart';
-import 'package:frontend/states/auth_state.dart';
 
 class LoginForm extends StatefulWidget {
   // 👈 Ubah ke StatefulWidget
@@ -16,7 +15,7 @@ class _LoginFormState extends State<LoginForm> {
   // 1. Definisikan Controller
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthController _authController = AuthController.instance;
+  final AuthViewModel _authViewModel = AuthViewModel.instance;
   bool _isFormValid = false;
 
   Future<void> _handleLogin() async {
@@ -35,18 +34,17 @@ class _LoginFormState extends State<LoginForm> {
       return;
     }
 
-    final success = await _authController.login(
+    final success = await _authViewModel.login(
       _emailController.text,
       _passwordController.text,
     );
 
     if (success == true) {
       _showMessage("Login Success!", Colors.green);
-      isLoggedIn.value = true;
     } else {
-      _showMessage(_authController.errorMessage ?? "Login Failed", Colors.red);
+      _showMessage(_authViewModel.errorMessage ?? "Login Failed", Colors.red);
     }
-    _authController.clearErrorMessage();
+    _authViewModel.clearErrorMessage();
   }
 
   void _showMessage(String message, Color color) {
@@ -132,11 +130,14 @@ class _LoginFormState extends State<LoginForm> {
 
           child: OutlinedButton(
             onPressed: () async {
-              final success = await _authController.loginWithGoogle();
+              final success = await _authViewModel.loginWithGoogle();
               if (success) {
                 _showMessage("Google Login Success!", Colors.green);
               } else {
-                _showMessage(_authController.errorMessage ?? "Google Login Failed", Colors.red);
+                _showMessage(
+                  _authViewModel.errorMessage ?? "Google Login Failed",
+                  Colors.red,
+                );
               }
             },
 
