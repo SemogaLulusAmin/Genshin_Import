@@ -1,4 +1,4 @@
-class Inventory {
+abstract class Inventory {
   final String id;
   final String name;
   final String imageUrl;

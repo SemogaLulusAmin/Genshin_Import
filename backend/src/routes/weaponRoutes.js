@@ -41,6 +41,22 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 })
 
+router.get('/:weaponID', authenticateToken, async (req, res) => {
+    try {
+        const { weaponID } = req.params;
+        const [result] = await pool.query(`SELECT * FROM Weapon WHERE weaponID = ?`, [weaponID]);
+        
+        if (result.length === 0) {
+            return res.status(404).json({message: "Weapon not found"});
+        }
+
+        res.status(200).json(result[0]);
+    } catch (error){
+        console.log(error.message); 
+        res.status(500).json({message: "Failed to fetch the weapon!"});
+    }
+})
+
 router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
     try {
 

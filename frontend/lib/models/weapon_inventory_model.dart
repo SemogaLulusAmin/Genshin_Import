@@ -1,19 +1,25 @@
-class InventoryWeapon {
+import 'inventory_model.dart';
+
+class InventoryWeapon extends Inventory {
   final String weaponID;
-  final String name;
   final String type;
-  final String rarity;
-  final int totalOwned; 
-  final String imageUrl;
 
   InventoryWeapon({
     required this.weaponID,
-    required this.name,
+    required String name,
     required this.type,
-    required this.rarity,
-    required this.totalOwned,
-    required this.imageUrl,
-  });
+    required String rarity,
+    required int totalOwned,
+    required String imageUrl,
+  }) : super(
+          id: weaponID,
+          name: name,
+          imageUrl: imageUrl,
+          rarity: rarity,
+          subtitle: type,
+          totalOwned: totalOwned,
+          itemType: 'Weapon',
+        );
 
   factory InventoryWeapon.fromJson(Map<String, dynamic> json) {
     return InventoryWeapon(

@@ -6,8 +6,9 @@ import '../header/money_badge.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
+  final bool enablePurchase;
 
-  const WeaponDetailSheet({super.key, required this.weapon});
+  const WeaponDetailSheet({super.key, required this.weapon, this.enablePurchase = true});
 
   @override
   State<WeaponDetailSheet> createState() => _WeaponDetailSheetState();
@@ -40,7 +41,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     final rarity = _getRarityInt(weapon.rarity);
     final totalPrice = weapon.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
+    
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       maxChildSize: 0.95,
@@ -256,6 +257,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                             const SizedBox(height: 20),
 
                             /// STOCK
+                            if(widget.enablePurchase)
                             Container(
                               padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
                               decoration: BoxDecoration(
@@ -292,6 +294,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                 ),
               ),
 
+              if(widget.enablePurchase)
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                 decoration: const BoxDecoration(color: Colors.transparent),
@@ -406,9 +409,9 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
+                                  await MoneyBadge.refresh();
                                   Navigator.of(context).pop();
                                 }
-                                await MoneyBadge.refresh();
                               } catch (e) {
                                 // Show error message
                                 ScaffoldMessenger.of(context).showSnackBar(

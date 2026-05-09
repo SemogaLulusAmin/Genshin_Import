@@ -31,6 +31,33 @@ class WeaponService {
     }
   }
 
+  Future<Weapon?> getWeaponById(String weaponId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        throw Exception('No token found. Please login first.');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/$weaponId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        return Weapon.fromJson(jsonResponse);
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        throw Exception('Failed to load weapon');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
   Future<bool> purchaseWeapon(String weaponId, int quantity) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();

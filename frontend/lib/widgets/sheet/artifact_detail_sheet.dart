@@ -6,8 +6,8 @@ import '../../core/app_colors.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
-
-  const ArtifactDetailSheet({super.key, required this.artifact});
+  final bool enablePurchase;
+  const ArtifactDetailSheet({super.key, required this.artifact, this.enablePurchase = true});
 
   @override
   State<ArtifactDetailSheet> createState() => _ArtifactDetailSheetState();
@@ -258,6 +258,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             ],
 
                             /// STOCK
+                            if(widget.enablePurchase)
                             Container(
                               padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
                               decoration: BoxDecoration(
@@ -298,6 +299,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
               ),
 
               /// BOTTOM (SAMA PERSIS)
+              if(widget.enablePurchase)
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                 child: Column(
@@ -406,8 +408,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                   );
                                   // Close the sheet
                                   Navigator.of(context).pop();
+                                  await MoneyBadge.refresh();
                                 }
-                                await MoneyBadge.refresh();
                               } catch (e) {
                                 // Show error message
                                 ScaffoldMessenger.of(context).showSnackBar(

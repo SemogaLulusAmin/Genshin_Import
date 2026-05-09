@@ -40,6 +40,22 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 })
 
+router.get('/:artifactID', authenticateToken, async (req, res) => {
+    try {
+        const { artifactID } = req.params;
+        const [result] = await pool.query(`SELECT * FROM Artifact WHERE artifactID = ?`, [artifactID]);
+        
+        if (result.length === 0) {
+            return res.status(404).json({message: "Artifact not found"});
+        }
+
+        res.status(200).json(result[0]);
+    } catch (error){
+        console.log(error.message); 
+        res.status(500).json({message: "Failed to fetch the artifact!"});
+    }
+})
+
 router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
     try {
         //      1         2       3         4         5        6       7             8

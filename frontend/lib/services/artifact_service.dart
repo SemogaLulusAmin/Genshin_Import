@@ -32,6 +32,33 @@ class ArtifactService {
     }
   }
 
+  Future<Artifact?> getArtifactById(String artifactId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        throw Exception('No token found. Please login first.');
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/$artifactId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        return Artifact.fromJson(jsonResponse);
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        throw Exception('Failed to load artifact');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
   Future<bool> purchaseArtifact(String artifactId, int quantity) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();

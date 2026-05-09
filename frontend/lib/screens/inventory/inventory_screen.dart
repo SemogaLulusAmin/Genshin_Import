@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/artifact_inventory_model.dart';
-import 'package:frontend/models/weapon_inventory_model.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/header/screen_header.dart';
 import '../../widgets/card/inventory_card.dart';
 import '../../models/inventory_model.dart';
+import '../../models/weapon_inventory_model.dart';
+import '../../models/artifact_inventory_model.dart';
+import '../../widgets/sheet/artifact_detail_sheet.dart';
+import '../../widgets/sheet/weapon_detail_sheet.dart';
+import '../../services/artifact_service.dart';
+import '../../services/weapon_service.dart';
 import '../../services/inventory_weapon_service.dart';
 import '../../services/inventory_artifact_service.dart';
 
@@ -22,31 +26,27 @@ class _InventoryScreenState extends State<InventoryScreen> {
     final weapons = await InventoryWeaponService().getInventory();
 
     final artifacts = await InventoryArtifactService().getInventory();
-    
-    /// WEAPON -> INVENTORY
-    final weaponItems = weapons.map((w) {
-      return Inventory(
-        id: w.weaponID.toString(),
-        name: w.name,
-        imageUrl: w.imageUrl,
-        rarity: w.rarity,
-        subtitle: w.type,
-        totalOwned: w.totalOwned,
-        itemType: "Weapon",
-      );
-    }).toList();
 
-    final artifactItems = artifacts.map((a) {
-      return Inventory(
-        id: a.artifactID.toString(),
-        name: a.name,
-        imageUrl: a.imageUrl,
-        rarity: a.maxRarity,
-        subtitle: a.setName,
-        totalOwned: a.totalOwned,
-        itemType: "Artifact",
-      );
-    }).toList();
+    final weaponItems = weapons.map((w) => InventoryWeapon(
+      weaponID: w.weaponID,
+      name: w.name,
+      type: w.type,
+      rarity: w.rarity,
+      totalOwned: w.totalOwned,
+      imageUrl: w.imageUrl,
+    )).toList();
+
+    final artifactItems = artifacts.map((a) => InventoryArtifact(
+      artifactID: a.artifactID,
+      name: a.name,
+      setName: a.setName,
+      maxRarity: a.maxRarity,
+      totalOwned: a.totalOwned,
+      imageUrl: a.imageUrl,
+      price: a.price,
+      pieceBonus2: a.pieceBonus2,
+      pieceBonus4: a.pieceBonus4,
+    )).toList();
 
     /// MERGE ALL
     final allItems = [...weaponItems, ...artifactItems];
@@ -180,9 +180,26 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
                       return InventoryCard(
                         item: item,
-                        onTap: () {
-                          // TODO:
-                          // Inventory Detail Sheet
+                        onTap: () async {
+                          if (item is InventoryArtifact) {
+                            final artifact = await ArtifactService().getArtifactById(item.artifactID);
+                            if (artifact != null) {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) => ArtifactDetailSheet(artifact: artifact, enablePurchase: false,),
+                              );
+                            }
+                          } else if (item is InventoryWeapon) {
+                            final weapon = await WeaponService().getWeaponById(item.weaponID);
+                            if (weapon != null) {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) => WeaponDetailSheet(weapon: weapon, enablePurchase: false),
+                              );
+                            }
+                          }
                         },
                       );
                     },
