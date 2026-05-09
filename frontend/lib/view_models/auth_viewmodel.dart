@@ -15,11 +15,15 @@ class AuthViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _isBootstrapping = false;
   String? _errorMessage;
+  String? _emailError;
+  String? _passwordError;
   UserModel? _currentUser;
 
   bool get isLoading => _isLoading;
   bool get isBootstrapping => _isBootstrapping;
   String? get errorMessage => _errorMessage;
+  String? get emailError => _emailError;
+  String? get passwordError => _passwordError;
   UserModel? get currentUser => _currentUser;
   bool get isLoggedIn => _currentUser != null;
 
@@ -53,12 +57,9 @@ class AuthViewModel extends ChangeNotifier {
   Future<bool> login(String email, String password) async {
     clearErrorMessage();
 
-    if (email.isEmpty || password.isEmpty) {
-      _errorMessage = "Email and password are required";
-      notifyListeners();
-      return false;
-    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      _errorMessage = "Please enter a valid email address";
+    final trimmedEmail = email.trim();
+    final isValid = _validateLoginFields(trimmedEmail, password);
+    if (!isValid) {
       notifyListeners();
       return false;
     }
@@ -66,9 +67,7 @@ class AuthViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-
-    final result = await _authService.login(email, password);
-
+    final result = await _authService.login(trimmedEmail, password);
     _isLoading = false;
     if (result['success'] == true) {
       final userJson = result['user'];
@@ -147,6 +146,37 @@ class AuthViewModel extends ChangeNotifier {
   void clearErrorMessage() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  void clearEmailError() {
+    if (_emailError == null) return;
+
+    _emailError = null;
+    notifyListeners();
+  }
+
+  void clearPasswordError() {
+    if (_passwordError == null) return;
+
+    _passwordError = null;
+    notifyListeners();
+  }
+
+  bool _validateLoginFields(String email, String password) {
+    _emailError = null;
+    _passwordError = null;
+
+    if (email.isEmpty) {
+      _emailError = "Email is required";
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
+      _emailError = "Please enter a valid email address";
+    }
+
+    if (password.isEmpty) {
+      _passwordError = "Password is required";
+    }
+
+    return _emailError == null && _passwordError == null;
   }
 
   Future<void> _clearPersistedSession() async {
