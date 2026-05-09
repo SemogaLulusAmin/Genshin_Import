@@ -1,7 +1,7 @@
 class UserModel {
   final String id;
   final String username;
-  final String email; // ✅ tambahin ini
+  final String email;
   final double money;
   final String roles;
 
@@ -17,8 +17,8 @@ class UserModel {
     return UserModel(
       id: json['id'] ?? '',
       username: json['username'] ?? '',
-      email: json['email'] ?? '', // ✅ ambil dari DB
-      money: (json['money'] ?? 0).toDouble(),
+      email: json['email'] ?? '',
+      money: (json['money'] ?? 0.0).toDouble(),
       roles: json['roles'] ?? '',
     );
   }
