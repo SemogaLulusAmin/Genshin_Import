@@ -3,13 +3,9 @@ import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/inventory/inventory_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
 import 'screens/profile/profile_screen.dart';
-import 'states/auth_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,23 +59,12 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const Center(child: ShopScreen()),
-    // const Center(child: Text('Orders Screen')),
-    const Center(child: InventoryScreen()),
-    const ProfileScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final currentUser = AuthViewModel.instance.currentUser;
     final pages = <Widget>[
       const Center(child: ShopScreen()),
-      const Center(child: Text('Inventory Screen')),
-      const Center(child: Text('Delivery Package Screen')),
-      currentUser != null
-          ? ProfileScreen(user: currentUser)
-          : const Center(child: Text('User session is not loaded yet')),
+      const Center(child: InventoryScreen()),
+      const ProfileScreen(),
     ];
 
     return Scaffold(
