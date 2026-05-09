@@ -51,8 +51,14 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<bool> login(String email, String password) async {
+    clearErrorMessage();
+
     if (email.isEmpty || password.isEmpty) {
       _errorMessage = "Email and password are required";
+      notifyListeners();
+      return false;
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      _errorMessage = "Please enter a valid email address";
       notifyListeners();
       return false;
     }
@@ -79,6 +85,8 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<bool> register(String name, String email, String password) async {
+    clearErrorMessage();
+
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       _errorMessage = "Name, email, and password are required";
       notifyListeners();
