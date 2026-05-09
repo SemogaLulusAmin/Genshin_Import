@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../states/user_state.dart';
+import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/header/screen_header.dart';
 import '../../widgets/card/inventory_card.dart';
@@ -22,6 +22,7 @@ class InventoryScreen extends StatefulWidget {
 
 class _InventoryScreenState extends State<InventoryScreen> {
   String selectedFilter = "All";
+  final UserViewModel _userViewModel = UserViewModel.instance;
 
   Future<List<Inventory>> _loadInventory() async {
     final weapons = await InventoryWeaponService().getInventory();
@@ -107,113 +108,121 @@ class _InventoryScreenState extends State<InventoryScreen> {
             /// INVENTORY GRID
             Expanded(
               child: ListenableBuilder(
-                listenable: UserState.instance,
+                listenable: _userViewModel,
                 builder: (context, _) {
-                  final int refreshTrigger = UserState.instance.inventoryTrigger;
+                  final int refreshTrigger = _userViewModel.inventoryRefreshKey;
                   return FutureBuilder<List<Inventory>>(
                     key: ValueKey(refreshTrigger),
                     future: _loadInventory(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "Error: ${snapshot.error}",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    );
-                  }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            "Error: ${snapshot.error}",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                            ),
+                          ),
+                        );
+                      }
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "Inventory is empty",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                          fontSize: 16,
-                          fontFamily: "HyWenhei",
-                        ),
-                      ),
-                    );
-                  }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Inventory is empty",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                              fontSize: 16,
+                              fontFamily: "HyWenhei",
+                            ),
+                          ),
+                        );
+                      }
 
-                  final allItems = snapshot.data!;
+                      final allItems = snapshot.data!;
 
-                  /// FILTER LOGIC
-                  final filteredItems = selectedFilter == "All"
-                      ? allItems
-                      : allItems.where((item) {
-                          return item.itemType == selectedFilter;
-                        }).toList();
+                      /// FILTER LOGIC
+                      final filteredItems = selectedFilter == "All"
+                          ? allItems
+                          : allItems.where((item) {
+                              return item.itemType == selectedFilter;
+                            }).toList();
 
-                  /// EMPTY FILTER RESULT
-                  if (filteredItems.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "Inventory is Empty",
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                          fontSize: 16,
-                          fontFamily: "HyWenhei",
-                        ),
-                      ),
-                    );
-                  }
+                      /// EMPTY FILTER RESULT
+                      if (filteredItems.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "Inventory is Empty",
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight,
+                              fontSize: 16,
+                              fontFamily: "HyWenhei",
+                            ),
+                          ),
+                        );
+                      }
 
-                  return GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    itemCount: filteredItems.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.63,
-                        ),
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
+                      return GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                        itemCount: filteredItems.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 0.63,
+                            ),
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index];
 
-                      return InventoryCard(
-                        item: item,
-                        onTap: () async {
-                          if (item is InventoryArtifact) {
-                            final artifact = await ArtifactService().getArtifactById(item.artifactID);
-                            if (artifact != null) {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) => ArtifactDetailSheet(artifact: artifact, enablePurchase: false,),
-                              );
-                            }
-                          } else if (item is InventoryWeapon) {
-                            final weapon = await WeaponService().getWeaponById(item.weaponID);
-                            if (weapon != null) {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) => WeaponDetailSheet(weapon: weapon, enablePurchase: false),
-                              );
-                            }
-                          }
+                          return InventoryCard(
+                            item: item,
+                            onTap: () async {
+                              if (item is InventoryArtifact) {
+                                final artifact = await ArtifactService()
+                                    .getArtifactById(item.artifactID);
+                                if (artifact != null) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) => ArtifactDetailSheet(
+                                      artifact: artifact,
+                                      enablePurchase: false,
+                                    ),
+                                  );
+                                }
+                              } else if (item is InventoryWeapon) {
+                                final weapon = await WeaponService()
+                                    .getWeaponById(item.weaponID);
+                                if (weapon != null) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (context) => WeaponDetailSheet(
+                                      weapon: weapon,
+                                      enablePurchase: false,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          );
                         },
                       );
                     },
                   );
                 },
-              );
-              },
-            ),
+              ),
             ),
           ],
         ),
