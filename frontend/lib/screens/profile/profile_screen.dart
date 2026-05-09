@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../services/user_service.dart';
+import '../../services/auth_service.dart';
 import '../../models/user_model.dart';
 import '../../core/app_colors.dart';
 import '../../view_models/auth_viewmodel.dart';
+import '../admin/admin_dashboard_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,11 +15,26 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isExpanded = false;
+  bool? _isAdmin;
 
-  Future<User?> _fetchUser() async {
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminStatus();
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final authService = AuthService();
+    final isAdmin = await authService.isAdmin();
+    setState(() {
+      _isAdmin = isAdmin;
+    });
+  }
+
+  Future<UserModel?> _fetchUser() async {
     final result = await UserService().getUserData();
     if (result['success'] == true && result['user'] != null) {
-      return User.fromJson(result['user']);
+      return UserModel.fromJson(result['user']);
     }
     throw Exception(result['message'] ?? 'Unknown fetch error');
   }
@@ -28,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      body: FutureBuilder<User?>(
+      body: FutureBuilder<UserModel?>(
         future: _fetchUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -195,6 +212,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                       const SizedBox(height: 10),
+
+                      // Admin access if user is admin
+                      if (_isAdmin == true)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AdminDashboardScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: const [
+                                Icon(Icons.admin_panel_settings),
+                                SizedBox(width: 10),
+                                Expanded(child: Text("Admin Panel")),
+                                Icon(Icons.chevron_right),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      if (_isAdmin == true) const SizedBox(height: 10),
 
                       /// LOGOUT
                       GestureDetector(

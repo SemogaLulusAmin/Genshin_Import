@@ -27,6 +27,7 @@ class AuthService {
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', data['token']);
+        await prefs.setString('user_data', jsonEncode(data['user']));
 
         return {"success": true, "token": data['token'], "user": data['user']};
       } else if (response.statusCode == 401) {
@@ -86,4 +87,88 @@ class AuthService {
           "Google Sign-In belum dikonfigurasi untuk arsitektur MVVM ini.",
     };
   }
+
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? userDataString = prefs.getString('user_data');
+
+      if (userDataString != null) {
+        final userData = json.decode(userDataString);
+        return {"success": true, "user": userData};
+      }
+
+      // Fallback to API call if no stored data
+      final String? token = prefs.getString('jwt_token');
+      if (token == null) {
+        return null;
+      }
+
+      final response = await http.get(
+        Uri.parse("$_baseUrl/me"),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        await prefs.setString('user_data', jsonEncode(data));
+        return {"success": true, "user": data};
+      } else {
+        return {"success": false, "message": "Failed to get user info"};
+      }
+    } catch (e) {
+      return {"success": false, "message": "Network error: $e"};
+    }
+  }
+
+  Future<bool> isAdmin() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null || token.isEmpty) {
+        return false;
+      }
+
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        return false;
+      }
+
+      final String payload = parts[1];
+      final String normalized = base64Url.normalize(payload);
+      final String decodedPayload = utf8.decode(base64Url.decode(normalized));
+      final Map<String, dynamic> decodedToken = json.decode(decodedPayload);
+
+      /// Support both `role` and `roles` claims.
+      dynamic roleValue = decodedToken['role'] ?? decodedToken['roles'];
+      if (roleValue == null) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final String? storedUser = prefs.getString('user_data');
+        if (storedUser != null) {
+          final Map<String, dynamic> storedJson = json.decode(storedUser);
+          roleValue = storedJson['role'] ?? storedJson['roles'];
+        }
+      }
+
+      if (roleValue == null) {
+        return false;
+      }
+
+      if (roleValue is String) {
+        return roleValue.toLowerCase().contains('admin');
+      }
+
+      if (roleValue is Iterable) {
+        return roleValue
+            .map((item) => item?.toString().toLowerCase())
+            .any((role) => role == 'admin');
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }
+

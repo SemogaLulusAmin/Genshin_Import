@@ -85,4 +85,102 @@ class WeaponService {
       throw Exception('Network error: $e');
     }
   }
+
+  Future<bool> createWeapon(Map<String, dynamic> weaponData, String imagePath) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        throw Exception('No token found. Please login first.');
+      }
+
+      var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
+      weaponData.forEach((key, value) {
+        if (value != null) {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add image file
+      if (imagePath.isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to create weapon: $responseData');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Future<bool> updateWeapon(String weaponId, Map<String, dynamic> weaponData, String? imagePath) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        throw Exception('No token found. Please login first.');
+      }
+
+      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/$weaponId'));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
+      weaponData.forEach((key, value) {
+        if (value != null) {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add image file if provided
+      if (imagePath != null && imagePath.isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update weapon: $responseData');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Future<bool> deleteWeapon(String weaponId) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null) {
+        throw Exception('No token found. Please login first.');
+      }
+
+      final response = await http.delete(
+        Uri.parse('$baseUrl/$weaponId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to delete weapon: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
 }

@@ -186,13 +186,13 @@ class _RegisterFormState extends State<RegisterForm> {
         // Submit Button
         AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
-          opacity: isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
+          opacity: _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
 
           child: Material(
             color: Colors.transparent,
 
             child: InkWell(
-              onTap: isChecked
+              onTap: _isChecked
                   ? () {
                       _handleRegister();
                     }
