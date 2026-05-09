@@ -4,7 +4,6 @@ import 'package:frontend/view_models/auth_viewmodel.dart';
 import '../../widgets/custom_form_field.dart';
 
 class LoginForm extends StatefulWidget {
-  // 👈 Ubah ke StatefulWidget
   const LoginForm({super.key});
 
   @override
@@ -12,25 +11,12 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  // 1. Definisikan Controller
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthViewModel _authViewModel = AuthViewModel.instance;
-  bool _isFormValid = false;
 
   Future<void> _handleLogin() async {
-    if (_isFormValid == false) {
-      return;
-    }
-
-    final email = _emailController.text.trim();
-    final atIndex = email.indexOf('@');
-    final dotIndex = email.lastIndexOf('.');
-
-    if (atIndex <= 0 ||
-        dotIndex <= atIndex + 1 ||
-        dotIndex >= email.length - 1) {
-      _showMessage("Invalid Email Format", Colors.red);
+    if (_authViewModel.isLoading) {
       return;
     }
 
@@ -38,12 +24,22 @@ class _LoginFormState extends State<LoginForm> {
       _emailController.text,
       _passwordController.text,
     );
+    
+    if (!mounted) return;
 
     if (success == true) {
       _showMessage("Login Success!", Colors.green);
-    } else {
-      _showMessage(_authViewModel.errorMessage ?? "Login Failed", Colors.red);
+    } else if (_authViewModel.emailError == null &&
+        _authViewModel.passwordError == null) {
+      final message = _authViewModel.errorMessage ?? "Login Failed";
+
+      if (message == "User not found" || message == "Wrong password") {
+        await _showLoginErrorDialog(message);
+      } else {
+        _showMessage(message, Colors.red);
+      }
     }
+
     _authViewModel.clearErrorMessage();
   }
 
@@ -53,26 +49,29 @@ class _LoginFormState extends State<LoginForm> {
     ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // 2. Pasang listener pada kedua controller
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-  }
+  Future<void> _showLoginErrorDialog(String message) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  // Fungsi untuk mengecek apakah semua field sudah terisi
-  void _validateForm() {
-    setState(() {
-      _isFormValid =
-          _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
-    });
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+          title: const Text("Login Failed"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Oke"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   void dispose() {
-    // 3. Jangan lupa dispose agar tidak memory leak
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -82,143 +81,161 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Column(
-      children: [
-        // Pastikan CustomFormField kamu menerima parameter 'controller'
-        CustomFormField(label: "EMAIL", controller: _emailController),
-        const SizedBox(height: 16),
-        CustomFormField(
-          obscureText: true,
-          label: "PASSWORD",
-          controller: _passwordController,
-        ),
-
-        const SizedBox(height: 20),
-
-        // ... (Bagian Divider "or you could" tetap sama) ...
-        Row(
+    return AnimatedBuilder(
+      animation: _authViewModel,
+      builder: (context, child) {
+        return Column(
           children: [
-            Expanded(
-              child: Divider(
-                color: isDark ? Colors.white12 : Colors.grey.shade300,
-              ),
+            CustomFormField(
+              label: "EMAIL",
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              errorText: _authViewModel.emailError,
+              onChanged: (_) => _authViewModel.clearEmailError(),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "or you could",
-                style: TextStyle(
-                  color: AppColors.textSecondaryLight,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Divider(
-                color: isDark ? Colors.white12 : Colors.grey.shade300,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        // Google Sign In
-        SizedBox(
-          width: double.infinity,
-
-          height: 52,
-
-          child: OutlinedButton(
-            onPressed: () async {
-              final success = await _authViewModel.loginWithGoogle();
-              if (success) {
-                _showMessage("Google Login Success!", Colors.green);
-              } else {
-                _showMessage(
-                  _authViewModel.errorMessage ?? "Google Login Failed",
-                  Colors.red,
-                );
-              }
-            },
-
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: isDark
-                    ? AppColors.textSecondaryLight.withValues(alpha: 0.6)
-                    : AppColors.border,
-
-                width: 2,
-              ),
-
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+            const SizedBox(height: 16),
+            CustomFormField(
+              obscureText: true,
+              label: "PASSWORD",
+              controller: _passwordController,
+              errorText: _authViewModel.passwordError,
+              onChanged: (_) => _authViewModel.clearPasswordError(),
             ),
 
-            child: Stack(
-              alignment: Alignment.center,
+            const SizedBox(height: 20),
 
+            Row(
               children: [
-                /// 🔹 TEXT (CENTER BENERAN)
-                Center(
+                Expanded(
+                  child: Divider(
+                    color: isDark ? Colors.white12 : Colors.grey.shade300,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    "SIGN IN WITH GOOGLE",
-
+                    "or you could",
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                      letterSpacing: 0.4,
-
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                      color: AppColors.textSecondaryLight,
+                      fontSize: 15,
                     ),
                   ),
                 ),
-
-                Align(
-                  alignment: Alignment.centerLeft,
-
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-
-                    children: [
-                      Image.asset('assets/images/google_logo.png', height: 24),
-                    ],
+                Expanded(
+                  child: Divider(
+                    color: isDark ? Colors.white12 : Colors.grey.shade300,
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(height: 48),
+            const SizedBox(height: 20),
 
-        // 4. SUBMIT BUTTON DENGAN LOGIKA VALIDASI
-        GestureDetector(
-          onTap: _isFormValid ? _handleLogin : null,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _isFormValid ? 1.0 : 0.4,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_forward_rounded,
-                size: 28,
-                color: isDark
-                    ? AppColors.textPrimaryLight
-                    : AppColors.textPrimaryDark,
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: OutlinedButton(
+                onPressed: _authViewModel.isLoading
+                    ? null
+                    : () async {
+                        final success = await _authViewModel.loginWithGoogle();
+                        if (!context.mounted) return;
+
+                        if (success) {
+                          _showMessage("Google Login Success!", Colors.green);
+                        } else {
+                          _showMessage(
+                            _authViewModel.errorMessage ??
+                                "Google Login Failed",
+                            Colors.red,
+                          );
+                        }
+                      },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: isDark
+                        ? AppColors.textSecondaryLight.withValues(alpha: 0.6)
+                        : AppColors.border,
+                    width: 2,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Center(
+                      child: Text(
+                        "SIGN IN WITH GOOGLE",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          letterSpacing: 0.4,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimaryLight.withValues(
+                                  alpha: 0.6,
+                                ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/images/google_logo.png',
+                            height: 24,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+            const SizedBox(height: 48),
+
+            GestureDetector(
+              onTap: _authViewModel.isLoading ? null : _handleLogin,
+              child: Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: _authViewModel.isLoading
+                      ? SizedBox(
+                          key: const ValueKey("login-loading"),
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.6,
+                            color: isDark
+                                ? AppColors.textPrimaryLight
+                                : AppColors.textPrimaryDark,
+                          ),
+                        )
+                      : Icon(
+                          Icons.arrow_forward_rounded,
+                          key: const ValueKey("login-arrow"),
+                          size: 28,
+                          color: isDark
+                              ? AppColors.textPrimaryLight
+                              : AppColors.textPrimaryDark,
+                        ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
