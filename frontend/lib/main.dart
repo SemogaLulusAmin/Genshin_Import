@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
-import 'states/auth_state.dart';
-import 'package:provider/provider.dart';
 import 'states/user_state.dart';
 
 void main() async {
@@ -18,9 +16,7 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserState()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => UserState())],
       child: const GenshinImportApp(),
     ),
   );
