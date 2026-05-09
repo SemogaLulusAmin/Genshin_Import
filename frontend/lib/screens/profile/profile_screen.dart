@@ -42,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authViewModel = AuthViewModel.instance;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
@@ -55,11 +56,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
           if (!snapshot.hasData || snapshot.data == null) {
+      body: AnimatedBuilder(
+        animation: authViewModel,
+        builder: (context, _) {
+          final user = authViewModel.currentUser;
+
+          if (user == null) {
             return const Center(
-              child: Text("Failed to load user profile: No data"),
+              child: Text("User session is not loaded yet"),
             );
           }
-          final user = snapshot.data!;
 
           return SingleChildScrollView(
             child: Column(
@@ -74,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                            'assets/images/background_Light.jpg',
+                            'assets/images/Background_Light.jpg',
                           ),
                           fit: BoxFit.cover,
                         ),

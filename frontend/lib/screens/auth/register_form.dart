@@ -15,29 +15,15 @@ class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isChecked = false;
-  bool _isFormValid = false;
   final AuthViewModel _authViewModel = AuthViewModel.instance;
 
   Future<void> _handleRegister() async {
-    if (_isChecked == false || _isFormValid == false) {
+    if (_authViewModel.isLoading) {
       return;
     }
 
-    if (_nameController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty ||
-        _passwordController.text.trim().isEmpty) {
-      _showMessage("Please fill all fields", Colors.red);
-      return;
-    }
-
-    final email = _emailController.text.trim();
-    final atIndex = email.indexOf('@');
-    final dotIndex = email.lastIndexOf('.');
-
-    if (atIndex <= 0 ||
-        dotIndex <= atIndex + 1 ||
-        dotIndex >= email.length - 1) {
-      _showMessage("Invalid Email Format", Colors.red);
+    if (!_isChecked) {
+      _showMessage("Please agree to the terms first", Colors.red);
       return;
     }
 
@@ -47,26 +33,19 @@ class _RegisterFormState extends State<RegisterForm> {
       _passwordController.text,
     );
 
+    if (!mounted) return;
+
     if (success == true) {
-      _showMessage("Registration Success! Logging in...", Colors.green);
-
-      final loginSuccess = await _authViewModel.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (loginSuccess != true) {
-        _showMessage(
-          "Auto-login failed: ${_authViewModel.errorMessage ?? "Login Failed"}",
-          Colors.red,
-        );
-      }
-    } else {
+      _showMessage("Registration Success!", Colors.green);
+    } else if (_authViewModel.nameError == null &&
+        _authViewModel.emailError == null &&
+        _authViewModel.passwordError == null) {
       _showMessage(
         _authViewModel.errorMessage ?? "Registration Failed",
         Colors.red,
       );
     }
+
     _authViewModel.clearErrorMessage();
   }
 
@@ -74,25 +53,6 @@ class _RegisterFormState extends State<RegisterForm> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // 2. Pasang listener pada kedua controller
-    _emailController.addListener(_validateForm);
-    _passwordController.addListener(_validateForm);
-    _nameController.addListener(_validateForm);
-  }
-
-  // Fungsi untuk mengecek apakah semua field sudah terisi
-  void _validateForm() {
-    setState(() {
-      _isFormValid =
-          _emailController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty &&
-          _nameController.text.isNotEmpty;
-    });
   }
 
   @override
@@ -106,77 +66,102 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        CustomFormField(controller: _nameController, label: "USERNAME"),
-        const SizedBox(height: 16),
-        CustomFormField(controller: _emailController, label: "EMAIL"),
-        const SizedBox(height: 16),
-        CustomFormField(
-          controller: _passwordController,
-          obscureText: true,
-          label: "PASSWORD",
-        ),
-        const SizedBox(height: 16),
-
-        // Checkbox disini
-        Row(
-          crossAxisAlignment: CrossAxisAlignment
-              .start, // Agar teks panjang tetap sejajar atas dengan checkbox
+    return AnimatedBuilder(
+      animation: _authViewModel,
+      builder: (context, child) {
+        return Column(
           children: [
-            SizedBox(
-              height: 24,
-              width: 24,
-              child: Transform.scale(
-                scale: 0.9,
-                child: Checkbox(
-                  value: _isChecked,
-                  activeColor: AppColors.primary, // Sesuaikan dengan tema kamu
-                  checkColor: isDark
-                      ? AppColors.textPrimaryLight
-                      : AppColors.textPrimaryDark,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isChecked = value ?? false;
-                    });
-                  },
-                ),
-              ),
+            CustomFormField(
+              controller: _nameController,
+              label: "USERNAME",
+              errorText: _authViewModel.nameError,
+              onChanged: (_) => _authViewModel.clearNameError(),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  text: "I agree to the ",
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black87,
-                    fontSize: 14,
-                    height: 1.5,
-                    fontFamily: "Rubik",
+            const SizedBox(height: 16),
+            CustomFormField(
+              controller: _emailController,
+              label: "EMAIL",
+              keyboardType: TextInputType.emailAddress,
+              errorText: _authViewModel.emailError,
+              onChanged: (_) => _authViewModel.clearEmailError(),
+            ),
+            const SizedBox(height: 16),
+            CustomFormField(
+              controller: _passwordController,
+              obscureText: true,
+              label: "PASSWORD",
+              errorText: _authViewModel.passwordError,
+              onChanged: (_) => _authViewModel.clearPasswordError(),
+            ),
+            const SizedBox(height: 16),
+
+            // Checkbox disini
+            Row(
+              crossAxisAlignment: CrossAxisAlignment
+                  .start, // Agar teks panjang tetap sejajar atas dengan checkbox
+              children: [
+                SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: Transform.scale(
+                    scale: 0.9,
+                    child: Checkbox(
+                      value: _isChecked,
+                      activeColor:
+                          AppColors.primary, // Sesuaikan dengan tema kamu
+                      checkColor: isDark
+                          ? AppColors.textPrimaryLight
+                          : AppColors.textPrimaryDark,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      onChanged: _authViewModel.isLoading
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                _isChecked = value ?? false;
+                              });
+                            },
+                    ),
                   ),
-                  children: [
-                    TextSpan(
-                      text: "Terms & Conditions",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.primary : AppColors.secondary,
-                      ),
-                      // Tambahkan recognizer: TapGestureRecognizer() di sini jika ingin link bisa diklik
-                    ),
-                    const TextSpan(text: " and "),
-                    TextSpan(
-                      text: "Privacy Policy",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.primary : AppColors.secondary,
-                      ),
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "I agree to the ",
+                      style: TextStyle(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                        fontSize: 14,
+                        height: 1.5,
+                        fontFamily: "Rubik",
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Terms & Conditions",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.primary
+                                : AppColors.secondary,
+                          ),
+                          // Tambahkan recognizer: TapGestureRecognizer() di sini jika ingin link bisa diklik
+                        ),
+                        const TextSpan(text: " and "),
+                        TextSpan(
+                          text: "Privacy Policy",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.primary
+                                : AppColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -207,21 +192,62 @@ class _RegisterFormState extends State<RegisterForm> {
                   color: isDark
                       ? AppColors.textPrimaryDark
                       : AppColors.textPrimaryLight,
-                  borderRadius: BorderRadius.circular(16),
-                ),
 
-                child: Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 28,
-                  color: isDark
-                      ? AppColors.textPrimaryLight
-                      : AppColors.textPrimaryDark,
+            const SizedBox(height: 32),
+
+            // Submit Button
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),
+
+              child: Material(
+                color: Colors.transparent,
+
+                child: InkWell(
+                  onTap: _authViewModel.isLoading ? null : _handleRegister,
+
+                  borderRadius: BorderRadius.circular(16),
+
+                  child: Ink(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: _authViewModel.isLoading
+                          ? SizedBox(
+                              key: const ValueKey("register-loading"),
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.6,
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                              ),
+                            )
+                          : Icon(
+                              Icons.arrow_forward_rounded,
+                              key: const ValueKey("register-arrow"),
+                              size: 28,
+                              color: isDark
+                                  ? AppColors.textPrimaryLight
+                                  : AppColors.textPrimaryDark,
+                            ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

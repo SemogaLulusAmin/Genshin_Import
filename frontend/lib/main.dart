@@ -3,10 +3,9 @@ import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/inventory/inventory_screen.dart';
-import 'screens/profile/profile_screen.dart';
+import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
-import 'screens/admin/admin_dashboard_screen.dart';
-import 'view_models/auth_viewmodel.dart';
+import 'screens/profile/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +25,7 @@ class GenshinImportApp extends StatelessWidget {
 
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
 
       home: AnimatedBuilder(
         animation: AuthViewModel.instance,

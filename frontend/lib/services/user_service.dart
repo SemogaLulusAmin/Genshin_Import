@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +34,7 @@ class UserService {
       final String resp = utf8.decode(base64Url.decode(normalized));
       final Map<String, dynamic> decodedToken = json.decode(resp);
 
-      final String? userID = decodedToken['id']?.toString(); 
+      final String? userID = decodedToken['id']?.toString();
 
       if (userID == null) {
         return {"success": false, "message": "Invalid Token Payload."};
@@ -51,10 +50,11 @@ class UserService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        
+
         final userData = data['user'];
-        
-        if (userData != null) {
+
+        if (userData is Map<String, dynamic>) {
+          userData['id'] ??= userID;
           var rawMoney = userData['money'];
           int freshMoney = 0;
           if (rawMoney != null) {
@@ -73,54 +73,22 @@ class UserService {
       }
 
       
-      return {"success": false, "message": "Server error: ${response.statusCode}"};
+      return {
+        "success": false,
+        "message": "Server error: ${response.statusCode}",
+      };
 
     } catch (e) {
       return {"success": false, "message": "Error: $e"};
     }
   }
 
-  static final StreamController<int> moneyStream = StreamController<int>.broadcast();
-
-  // Fungsi untuk update manual tanpa hit API (Opsional tapi enak buat UX)
-  static void updateLocalMoney(int newAmount) {
-    moneyStream.add(newAmount);
-  }
-
   Future<UserModel> getCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
-
-    if (token == null || token.isEmpty) {
-      throw Exception('No token found. Please login first.');
+    final result = await getUserData();
+    if (result['success'] == true && result['user'] is Map<String, dynamic>) {
+      return UserModel.fromJson(result['user'] as Map<String, dynamic>);
     }
 
-    // TODO: Ganti endpoint sementara ini dengan endpoint backend yang final.
-    // Contoh umum: /auth/me atau /users/me.
-    final response = await http.get(
-      Uri.parse('$baseUrl/auth/me'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    if (response.statusCode == 200) {
-      final dynamic data = jsonDecode(response.body);
-
-      // TODO: Sesuaikan mapping ini jika backend mengembalikan payload berbeda.
-      if (data is Map<String, dynamic> && data['user'] is Map<String, dynamic>) {
-        return UserModel.fromJson(data['user'] as Map<String, dynamic>);
-      }
-
-      if (data is Map<String, dynamic>) {
-        return UserModel.fromJson(data);
-      }
-
-      throw Exception('Unexpected user response format');
-    }
-
-    if (response.statusCode == 401) {
-      throw Exception('Token is invalid or expired');
-    }
-
-    throw Exception('Failed to load current user');
+    throw Exception(result['message']?.toString() ?? 'Failed to load user');
   }
 }
