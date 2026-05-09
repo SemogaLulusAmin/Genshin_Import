@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class UserState extends ChangeNotifier {
+  // Singleton pattern
+  static final UserState instance = UserState._internal();
+  UserState._internal();
+
   int _money = 0;
   int _inventoryTrigger = 0;
 

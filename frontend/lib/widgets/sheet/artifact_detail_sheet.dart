@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
-import 'package:provider/provider.dart';
 import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 
@@ -408,8 +407,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
-                                  context.read<UserState>().decreaseMoney(totalPrice.toInt());
-                                  context.read<UserState>().triggerInventoryRefresh();
+                                  UserState.instance.decreaseMoney(totalPrice.toInt());
+                                  UserState.instance.triggerInventoryRefresh();
                                   if (context.mounted) Navigator.of(context).pop();
                                 }
                               } catch (e) {

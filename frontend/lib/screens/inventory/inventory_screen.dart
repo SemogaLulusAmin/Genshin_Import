@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 import '../../widgets/header/screen_header.dart';
@@ -64,7 +63,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final int refreshTrigger = context.watch<UserState>().inventoryTrigger;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
@@ -108,9 +106,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
             /// INVENTORY GRID
             Expanded(
-              child: FutureBuilder<List<Inventory>>(
-                key: ValueKey(refreshTrigger),
-                future: _loadInventory(),
+              child: ListenableBuilder(
+                listenable: UserState.instance,
+                builder: (context, _) {
+                  final int refreshTrigger = UserState.instance.inventoryTrigger;
+                  return FutureBuilder<List<Inventory>>(
+                    key: ValueKey(refreshTrigger),
+                    future: _loadInventory(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -209,7 +211,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     },
                   );
                 },
-              ),
+              );
+              },
+            ),
             ),
           ],
         ),
