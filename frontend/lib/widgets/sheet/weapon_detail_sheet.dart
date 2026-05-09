@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
-import 'package:provider/provider.dart';
 import '../../states/user_state.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
@@ -410,8 +409,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                     ),
                                   );
                                   // Close the sheet
-                                  context.read<UserState>().decreaseMoney(totalPrice.toInt());
-                                  context.read<UserState>().triggerInventoryRefresh();
+                                  UserState.instance.decreaseMoney(totalPrice.toInt());
+                                  UserState.instance.triggerInventoryRefresh();
                                   if (context.mounted) Navigator.of(context).pop();
                                 }
                               } catch (e) {

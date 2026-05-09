@@ -26,7 +26,15 @@ class UserService {
         return {"success": false, "message": "No token found."};
       }
 
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        return {"success": false, "message": "Invalid JWT Token format."};
+      }
+      final String payload = parts[1];
+      final String normalized = base64Url.normalize(payload);
+      final String resp = utf8.decode(base64Url.decode(normalized));
+      final Map<String, dynamic> decodedToken = json.decode(resp);
+
       final String? userID = decodedToken['id']?.toString(); 
 
       if (userID == null) {

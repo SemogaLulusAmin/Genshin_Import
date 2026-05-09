@@ -8,18 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
-import 'states/user_state.dart';
+import 'screens/profile/profile_screen.dart';
+import 'states/auth_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthViewModel.instance.bootstrapSession();
 
-  runApp(
-    MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => UserState())],
-      child: const GenshinImportApp(),
-    ),
-  );
+  runApp(const GenshinImportApp());
 }
 
 class GenshinImportApp extends StatelessWidget {
@@ -71,7 +67,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const Center(child: ShopScreen()),
     // const Center(child: Text('Orders Screen')),
     const Center(child: InventoryScreen()),
-    const Center(child: Text('Profile Screen')),
+    const ProfileScreen(),
   ];
 
   @override

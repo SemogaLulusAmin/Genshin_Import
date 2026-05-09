@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/user_service.dart';
-import 'package:frontend/view_models/auth_viewmodel.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../states/user_state.dart';
 import '../../core/app_colors.dart';
 
@@ -34,7 +33,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
     final int cachedMoney = num.tryParse(moneyStr)?.toInt() ?? 0;
 
     if (mounted) {
-      context.read<UserState>().setMoney(cachedMoney);
+      UserState.instance.setMoney(cachedMoney);
     }
 
     _refreshMoney(showLoading: false); 
@@ -51,7 +50,7 @@ class _MoneyBadgeState extends State<MoneyBadge> {
 
       if (mounted) {
         if (result['success'] == true && result['money'] != null) {
-          context.read<UserState>().setMoney(result['money']); 
+          UserState.instance.setMoney(result['money']); 
         }
         setState(() {
           _isLoading = false;
@@ -94,12 +93,15 @@ class _MoneyBadgeState extends State<MoneyBadge> {
                 ),
               )
             else
-              Text(
-                context.watch<UserState>().money.toString(),
-                style: TextStyle(
-                  color: AppColors.textPrimaryDark,
-                  fontFamily: "HyWenhei",
-                  fontWeight: FontWeight.bold,
+              ListenableBuilder(
+                listenable: UserState.instance,
+                builder: (context, _) => Text(
+                  UserState.instance.money.toString(),
+                  style: TextStyle(
+                    color: AppColors.textPrimaryDark,
+                    fontFamily: "HyWenhei",
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
           ],
