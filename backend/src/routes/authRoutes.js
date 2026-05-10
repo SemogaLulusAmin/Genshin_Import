@@ -86,7 +86,7 @@ router.post('/register/google', async (req, res) => {
         }
 
         const tokenJWT = jwt.sign(
-            { id: user.userID, email: user.email }, 
+            { id: user.userID, email: user.email, roles: user.roles }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' }
         );

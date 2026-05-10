@@ -3,7 +3,7 @@ import fs from 'fs';
 import multer from 'multer';
 import pool from '../db.js';
 import { authenticateToken, isAdmin } from '../middleware/authMiddleware.js';
-
+import path from 'path';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -55,16 +55,12 @@ router.get('/:artifactID', authenticateToken, async (req, res) => {
         res.status(500).json({message: "Failed to fetch the artifact!"});
     }
 })
-
-router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
+router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
     try {
-        //      1         2       3         4         5        6       7             8
-        const {name, set_name, max_rarity, stock, image_url, price, piece_bonus_2, piece_bonus_4} = req.body;
-
-        if (!req.file) return res.status(400).json({message : "No image was uploaded!"});
+        const { name, set_name, max_rarity, stock, price, piece_bonus_2, piece_bonus_4 } = req.body;
+        if (!req.file) return res.status(400).json({ message: "No image was uploaded!" });
 
         const imageUrl = `/assets/${req.file.filename}`;
-
         const artifactID = crypto.randomUUID();
 
         const query = `
@@ -72,105 +68,67 @@ router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,r
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
         `;
 
-        const values = [
-            artifactID,
-            name,
-            set_name,
-            max_rarity,
-            stock,
-            image_url,
-            price,
-            piece_bonus_2,
-            piece_bonus_4
-        ];
-
+        const values = [artifactID, name, set_name, max_rarity, stock, imageUrl, price, piece_bonus_2, piece_bonus_4];
         await pool.execute(query, values);
 
-        res.status(200).json({
-            message: "Success insert a new artifact"
-        });
-
-    } catch (error){
+        res.status(201).json({ message: "Success insert a new artifact" }); // Pakai 201 Created
+    } catch (error) {
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
 });
 
-router.put('/:artifactID', authenticateToken, isAdmin, upload.single('image'), async (req,res) => {
+router.put('/:artifactID', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
     const { artifactID } = req.params;
-    
-    const {name, set_name, max_rarity, stock, image_url, price, piece_bonus_2, piece_bonus_4} = req.body;
-    try {
-        const [rows] = await pool.execute(`SELECT image_url FROM artifact WHERE artifactID = ?`, [artifactID]);
+    const { name, set_name, max_rarity, stock, price, piece_bonus_2, piece_bonus_4 } = req.body;
 
-        if(rows.length === 0) return res.status(400).json({message: "Data is not found"});
+    try {
+        const [rows] = await pool.execute(`SELECT image_url FROM Artifact WHERE artifactID = ?`, [artifactID]);
+        if (rows.length === 0) return res.status(404).json({ message: "Data not found" });
 
         const oldImageUrl = rows[0].image_url;
-        let newImageUrl = oldImageUrl;
+        let finalImageUrl = oldImageUrl; // Gunakan variabel yang jelas
 
-        if(req.file){
-            newImageUrl = `/assets/${req.file.filename}`;
-
-            const oldPath = `/public${oldImageUrl}`;
-
-            if(fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-
+        if (req.file) {
+            finalImageUrl = `/assets/${req.file.filename}`;
+            const oldPath = `./public${oldImageUrl}`; // Pakai ./ biar path-nya benar
+            if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
         }
 
         const query = `
-            UPDATE artifact
+            UPDATE Artifact
             SET name = ?, set_name = ?, max_rarity = ?, stock = ?, image_url = ?, price = ?, piece_bonus_2 = ?, piece_bonus_4 = ?
             WHERE artifactID = ? 
         `;
 
-        const values = [
-            name,
-            set_name,
-            max_rarity,
-            stock,
-            image_url,
-            price,
-            piece_bonus_2,
-            piece_bonus_4,
-            artifactID
-        ];
+        // FIX 2: Pakai finalImageUrl, bukan image_url dari req.body
+        const values = [name, set_name, max_rarity, stock, finalImageUrl, price, piece_bonus_2, piece_bonus_4, artifactID];
 
         await pool.execute(query, values);
-
-        res.status(200);
-
-    } catch (error){
+        res.status(200).json({ message: "Artifact updated successfully" }); // FIX 3: Kirim JSON
+    } catch (error) {
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
 });
 
-router.delete('/:artifactID', authenticateToken, isAdmin, async (req,res) => {
-    const {artifactID} = req.params;
-
+router.delete('/:artifactID', authenticateToken, isAdmin, async (req, res) => {
+    const { artifactID } = req.params;
     try {
-        const [rows] = await pool.execute("SELECT image_url FROM artifact WHERE artifactID = ?", [artifactID]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "Cannot find a artifact!" });
-        }
+        const [rows] = await pool.execute("SELECT image_url FROM Artifact WHERE artifactID = ?", [artifactID]);
+        if (rows.length === 0) return res.status(404).json({ message: "Artifact not found" });
 
         const imageUrl = rows[0].image_url;
-
-        await pool.execute("DELETE FROM artifact WHERE artifactID = ?", [artifactID]);
+        await pool.execute("DELETE FROM Artifact WHERE artifactID = ?", [artifactID]);
 
         const filePath = `./public${imageUrl}`; 
-        
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath); 
-        }
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-        res.status(200);
-
-    } catch (error){
+        res.status(200).json({ message: "Artifact deleted" }); // FIX 3: Kirim JSON
+    } catch (error) {
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
-})
+});
 
 export default router;

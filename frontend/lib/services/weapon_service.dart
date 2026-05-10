@@ -134,4 +134,66 @@ class WeaponService {
       throw Exception('Network error: $e');
     }
   }
+
+  Future<bool> updateWeapon(String id, Map<String, String> fields, XFile? imageFile) async {
+    try {
+      final token = await _getToken(); // Pakai helper yang udah lu buat
+
+      // Pakai apiBaseUrl, bukan baseUrl (biar konsisten sama code atas lu)
+      var request = http.MultipartRequest(
+        'PUT', 
+        Uri.parse('$apiBaseUrl/$id'), 
+      );
+
+      // Header Authorization
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Masukin field teks (name, rarity, price, stock, dll)
+      request.fields.addAll(fields);
+
+      // Kalau ada gambar baru yang dipilih, kirim sebagai bytes (biar support Web)
+      if (imageFile != null) {
+        final typed_data.Uint8List bytes = await imageFile.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image', 
+            bytes,
+            filename: imageFile.name,
+          ),
+        );
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final errorData = json.decode(response.body);
+        print("Update Failed: ${errorData['message']}");
+        return false;
+      }
+    } catch (e) {
+      print("Error Update Network: $e");
+      return false;
+    }
+  }
+
+  // DELETE WEAPON (Masukin ke WeaponService)
+  Future<bool> deleteWeapon(String weaponID) async {
+    try {
+      final token = await _getToken();
+      // Pastikan apiBaseUrl di WeaponService itu: '$serverUrl/weapon'
+      final response = await http.delete(
+        Uri.parse('$apiBaseUrl/$weaponID'), 
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
 }

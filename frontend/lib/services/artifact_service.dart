@@ -108,22 +108,64 @@ class ArtifactService {
 
   // 4. PURCHASE ARTIFACT
   Future<bool> purchaseArtifact(String artifactId, int quantity) async {
+      try {
+        final token = await _getToken();
+        final response = await http.post(
+          Uri.parse('$serverUrl/userArtifact/buy/$artifactId'),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({'quantity': quantity}),
+        );
+
+        if (response.statusCode == 200) {
+          return true;
+        } else {
+          final error = json.decode(response.body);
+          throw Exception(error['message'] ?? 'Failed to purchase artifact');
+        }
+      } catch (e) {
+        throw Exception('Network error: $e');
+      }
+    }
+
+    Future<bool> updateArtifact(String artifactID, Map<String, String> fields, {XFile? imageFile}) async {
+    final token = await _getToken();
+    // URL sesuai backend lu: /artifact/:artifactID
+    var request = http.MultipartRequest('PUT', Uri.parse('$apiBaseUrl/$artifactID'));
+    request.headers['Authorization'] = 'Bearer $token';
+    
+    request.fields.addAll(fields);
+
+    if (imageFile != null) {
+      final bytes = await imageFile.readAsBytes();
+      request.files.add(http.MultipartFile.fromBytes('image', bytes, filename: imageFile.name));
+    }
+
+    var response = await http.Response.fromStream(await request.send());
+    return response.statusCode == 200;
+  }
+
+  // 6. DELETE ARTIFACT
+  Future<bool> deleteArtifact(String artifactID) async {
     try {
       final token = await _getToken();
-      final response = await http.post(
-        Uri.parse('$serverUrl/userArtifact/buy/$artifactId'),
+      
+      // Method-nya DELETE, URL-nya: /artifact/:artifactID
+      final response = await http.delete(
+        Uri.parse('$apiBaseUrl/$artifactID'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({'quantity': quantity}),
       );
 
       if (response.statusCode == 200) {
         return true;
       } else {
         final error = json.decode(response.body);
-        throw Exception(error['message'] ?? 'Failed to purchase artifact');
+        throw Exception(error['message'] ?? 'Failed to delete artifact');
       }
     } catch (e) {
       throw Exception('Network error: $e');

@@ -3,6 +3,7 @@ import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
 import '../../view_models/user_viewmodel.dart';
+import 'edit_weapon_screen.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
@@ -257,34 +258,48 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                             const SizedBox(height: 20),
 
                             /// STOCK
-                            if(widget.enablePurchase)
-                            Container(
-                              padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.8,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.inventory_2_outlined, size: 16),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Stock : ${weapon.stock}',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.textPrimaryDark
-                                          : AppColors.textPrimaryLight,
-                                      fontFamily: "HyWenhei",
-                                      fontWeight: FontWeight.w500,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (widget.enablePurchase)
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.8)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.inventory_2_outlined, size: 16),
+                                        const SizedBox(width: 8),
+                                        Text('Stock : ${weapon.stock}',
+                                            style: const TextStyle(fontFamily: "HyWenhei", fontWeight: FontWeight.w500)),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                
+                                /// TOMBOL EDIT (Muncul kalau mode admin/bukan purchase)
+                                if (UserViewModel.instance.isAdmin == true)
+                                  ElevatedButton.icon(
+                                    onPressed: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => WeaponEditScreen(weapon : weapon),
+                                        ),
+                                      );
+                                      // Kalau sukses edit, tutup sheet biar page utama refresh
+                                      if (result == true && context.mounted) {
+                                        Navigator.pop(context);
+                                        UserViewModel.instance.triggerInventoryRefresh();
+                                      }
+                                    },
+                                    icon: const Icon(Icons.edit_note, color: Colors.white),
+                                    label: const Text("Edit Artifact", style: TextStyle(color: Colors.white)),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                                  ),
+                              ],
                             ),
                           ],
                         ),
@@ -293,6 +308,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                   ),
                 ),
               ),
+
+              
 
               if(widget.enablePurchase)
               Container(
