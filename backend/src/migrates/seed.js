@@ -1,6 +1,7 @@
 import pool from "../db.js";
 import axios from 'axios';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 async function seedDB() {
     try {
@@ -76,18 +77,21 @@ async function seedDB() {
         }
 
         {
+            const password = "Aiueo1234@";
+
+            const hashPassword = bcrypt.hashSync(password, 7);
             
             const query = `
                 INSERT INTO User
                 (userID, username, email, password, provider, bearer_token, money, roles)
-                (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `
 
             const values = [
                 "c8a54cd8-a9ed-4b5b-8dd4-471d9cf1bd13",
                 "Ayam Jago",
                 "ayamjago@gmail.com",
-                "Aiueo1234@",
+                hashPassword,
                 "local",
                 "9a7b501d4130b88836f02607bd1ff186721e6ff5",
                 100000,
@@ -97,19 +101,22 @@ async function seedDB() {
             await pool.execute(query, values);
         }
 
-        {
+        {   
+            const password = "Aiueo1234@";
+
+            const hashPassword = bcrypt.hashSync(password, 7);
             
             const query = `
                 INSERT INTO User
                 (userID, username, email, password, provider, bearer_token, money, roles)
-                (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `
 
             const values = [
                 "f9aeb268-04cc-4aad-8e16-2d5ab77b365e",
                 "Maltzu",
                 "maltzu@gmail.com",
-                "Aiueo1234@",
+                hashPassword,
                 "local",
                 "0aa1fde3ce0399f87d0b0805b2dac83a6af6a309",
                 10000,
