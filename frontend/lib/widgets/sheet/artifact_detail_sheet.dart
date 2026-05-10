@@ -34,6 +34,36 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
     return int.tryParse(rarity) ?? 1;
   }
 
+  void _deleteArtifact(BuildContext context) async {
+    bool confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Hapus Artifact?"),
+        content: const Text("Data ini akan hilang selamanya bang."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("BATAL")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true), 
+            child: const Text("HAPUS", style: TextStyle(color: Colors.red))
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (confirm) {
+      try {
+        final success = await ArtifactService().deleteArtifact(widget.artifact.artifactID);
+        if (success && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Artifact berhasil dihapus!")));
+          Navigator.pop(context); // Tutup Sheet
+          // Panggil refresh list jika perlu
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final artifact = widget.artifact;
@@ -335,6 +365,19 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                       ),
 
                       const SizedBox(height: 16),
+
+                      if(UserViewModel.instance.isAdmin == true)
+                      OutlinedButton.icon(
+                          onPressed: () => _deleteArtifact(context),
+                          icon: const Icon(Icons.delete_forever, color: Colors.red),
+                          label: const Text("DELETE ARTIFACT", style: TextStyle(color: Colors.red)),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.red),
+                            minimumSize: const Size(double.infinity, 45),
+                          ),
+                        ),
+
+                      const SizedBox(height: 15,),
 
                       /// PURCHASE BUTTON
                       ElevatedButton(

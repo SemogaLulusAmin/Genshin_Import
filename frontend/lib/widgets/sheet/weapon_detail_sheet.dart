@@ -35,6 +35,35 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     return int.tryParse(rarity) ?? 1;
   }
 
+  void _deleteWeapon(BuildContext context) async {
+    bool confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Hapus Weapon?"),
+        content: const Text("Weapon ini bakal ancur dari database, yakin?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("GAK JADI")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true), 
+            child: const Text("YA, HAPUS", style: TextStyle(color: Colors.red))
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (confirm) {
+      try {
+        final success = await WeaponService().deleteWeapon(widget.weapon.weaponID);
+        if (success && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Weapon musnah!")));
+          Navigator.pop(context); // Tutup Sheet
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }  
+
   @override
   Widget build(BuildContext context) {
     final weapon = widget.weapon;
@@ -399,6 +428,19 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                       ),
                     ),
                     const SizedBox(height: 16),
+
+                    if(UserViewModel.instance.isAdmin == true)
+                    OutlinedButton.icon(
+                      onPressed: () => _deleteWeapon(context),
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      label: const Text("DELETE WEAPON", style: TextStyle(color: Colors.red)),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        minimumSize: const Size(double.infinity, 45),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15,),
 
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
