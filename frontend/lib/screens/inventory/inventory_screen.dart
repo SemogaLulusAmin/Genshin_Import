@@ -287,7 +287,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     : isDark
                     ? Colors.white70
                     : Colors.black87,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 fontFamily: "HyWenhei",
               ),
             ),

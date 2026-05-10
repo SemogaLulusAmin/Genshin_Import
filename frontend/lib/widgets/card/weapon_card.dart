@@ -51,8 +51,8 @@ class WeaponCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image Panel
-            SizedBox(
-              height: 160,
+            Expanded(
+              flex: 5,
               child: Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
