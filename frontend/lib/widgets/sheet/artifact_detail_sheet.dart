@@ -3,12 +3,16 @@ import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
-import 'edit_artifact_screen.dart'; 
+import 'edit_artifact_screen.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
   final bool enablePurchase;
-  const ArtifactDetailSheet({super.key, required this.artifact, this.enablePurchase = true});
+  const ArtifactDetailSheet({
+    super.key,
+    required this.artifact,
+    this.enablePurchase = true,
+  });
 
   @override
   State<ArtifactDetailSheet> createState() => _ArtifactDetailSheetState();
@@ -35,31 +39,42 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
   }
 
   void _deleteArtifact(BuildContext context) async {
-    bool confirm = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Hapus Artifact?"),
-        content: const Text("Data ini akan hilang selamanya bang."),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("BATAL")),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true), 
-            child: const Text("HAPUS", style: TextStyle(color: Colors.red))
+    bool confirm =
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Hapus Artifact?"),
+            content: const Text("Data ini akan hilang selamanya bang."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("BATAL"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("HAPUS", style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
 
     if (confirm) {
       try {
-        final success = await ArtifactService().deleteArtifact(widget.artifact.artifactID);
+        final success = await ArtifactService().deleteArtifact(
+          widget.artifact.artifactID,
+        );
         if (success && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Artifact berhasil dihapus!")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Artifact berhasil dihapus!")),
+          );
           Navigator.pop(context); // Tutup Sheet
           // Panggil refresh list jika perlu
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -127,8 +142,12 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                 artifact.imageUrl,
                                 width: MediaQuery.of(context).size.width * 0.65,
                                 fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) => 
-                                  const Icon(Icons.broken_image, size: 100, color: Colors.white30),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(
+                                      Icons.broken_image,
+                                      size: 100,
+                                      color: Colors.white30,
+                                    ),
                               ),
                             ),
 
@@ -200,7 +219,9 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             Text(
                               artifact.formattedName,
                               style: TextStyle(
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimaryLight,
                                 fontSize: 21,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: "HyWenhei",
@@ -210,7 +231,11 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             Text(
                               artifact.setName,
                               style: TextStyle(
-                                color: isDark ? Colors.white70 : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                                color: isDark
+                                    ? Colors.white70
+                                    : AppColors.textPrimaryLight.withValues(
+                                        alpha: 0.6,
+                                      ),
                                 fontSize: 14,
                                 fontFamily: "HyWenhei",
                               ),
@@ -218,11 +243,14 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             const SizedBox(height: 20),
 
                             /// 2-PC BONUS
-                            if (artifact.pieceBonus2 != null && artifact.pieceBonus2!.isNotEmpty) ...[
+                            if (artifact.pieceBonus2 != null &&
+                                artifact.pieceBonus2!.isNotEmpty) ...[
                               Text(
                                 "2-Piece Bonus",
                                 style: TextStyle(
-                                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                  color: isDark
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimaryLight,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                   fontFamily: "HyWenhei",
@@ -232,7 +260,11 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               Text(
                                 artifact.pieceBonus2!,
                                 style: TextStyle(
-                                  color: isDark ? Colors.white70 : AppColors.textPrimaryLight.withValues(alpha: 0.8),
+                                  color: isDark
+                                      ? Colors.white70
+                                      : AppColors.textPrimaryLight.withValues(
+                                          alpha: 0.8,
+                                        ),
                                   height: 1.4,
                                 ),
                               ),
@@ -240,11 +272,14 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             ],
 
                             /// 4-PC BONUS
-                            if (artifact.pieceBonus4 != null && artifact.pieceBonus4!.isNotEmpty) ...[
+                            if (artifact.pieceBonus4 != null &&
+                                artifact.pieceBonus4!.isNotEmpty) ...[
                               Text(
                                 "4-Piece Bonus",
                                 style: TextStyle(
-                                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                  color: isDark
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimaryLight,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                   fontFamily: "HyWenhei",
@@ -254,13 +289,16 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               Text(
                                 artifact.pieceBonus4!,
                                 style: TextStyle(
-                                  color: isDark ? Colors.white70 : AppColors.textPrimaryLight.withValues(alpha: 0.8),
+                                  color: isDark
+                                      ? Colors.white70
+                                      : AppColors.textPrimaryLight.withValues(
+                                          alpha: 0.8,
+                                        ),
                                   height: 1.4,
                                 ),
                               ),
                               const SizedBox(height: 20),
                             ],
-                            
 
                             /// STOCK & EDIT BUTTON (ADMIN ONLY)
                             Row(
@@ -268,22 +306,39 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               children: [
                                 if (widget.enablePurchase)
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      8,
+                                      6,
+                                      12,
+                                      6,
+                                    ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.8)),
+                                      border: Border.all(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(Icons.inventory_2_outlined, size: 16),
+                                        const Icon(
+                                          Icons.inventory_2_outlined,
+                                          size: 16,
+                                        ),
                                         const SizedBox(width: 8),
-                                        Text('Stock : ${artifact.stock}',
-                                            style: const TextStyle(fontFamily: "HyWenhei", fontWeight: FontWeight.w500)),
+                                        Text(
+                                          'Stock : ${artifact.stock}',
+                                          style: const TextStyle(
+                                            fontFamily: "HyWenhei",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                
+
                                 /// TOMBOL EDIT (Muncul kalau mode admin/bukan purchase)
                                 if (UserViewModel.instance.isAdmin == true)
                                   ElevatedButton.icon(
@@ -291,18 +346,30 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                       final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => ArtifactEditScreen(artifact: artifact),
+                                          builder: (context) =>
+                                              ArtifactEditScreen(
+                                                artifact: artifact,
+                                              ),
                                         ),
                                       );
                                       // Kalau sukses edit, tutup sheet biar page utama refresh
                                       if (result == true && context.mounted) {
                                         Navigator.pop(context);
-                                        UserViewModel.instance.triggerInventoryRefresh();
+                                        UserViewModel.instance
+                                            .triggerInventoryRefresh();
                                       }
                                     },
-                                    icon: const Icon(Icons.edit_note, color: Colors.white),
-                                    label: const Text("Edit Artifact", style: TextStyle(color: Colors.white)),
-                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                                    icon: const Icon(
+                                      Icons.edit_note,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      "Edit Artifact",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueGrey,
+                                    ),
                                   ),
                               ],
                             ),
@@ -326,38 +393,65 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         height: 44,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.bgDark.withValues(alpha: 0.07),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : AppColors.bgDark.withValues(alpha: 0.07),
                         ),
                         child: Row(
                           children: [
                             InkWell(
-                              onTap: quantity > 1 ? () => setState(() => quantity--) : null,
+                              onTap: quantity > 1
+                                  ? () => setState(() => quantity--)
+                                  : null,
                               child: Container(
                                 width: 44,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: AppColors.primary,
-                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4)),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    bottomLeft: Radius.circular(4),
+                                  ),
                                 ),
-                                child: Icon(Icons.remove, color: AppColors.textPrimaryLight),
+                                child: Icon(
+                                  Icons.remove,
+                                  color: AppColors.textPrimaryLight,
+                                ),
                               ),
                             ),
                             Expanded(
                               child: Center(
-                                child: Text(quantity.toString(),
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, fontFamily: "HyWenhei", color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight)),
+                                child: Text(
+                                  quantity.toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: "HyWenhei",
+                                    color: isDark
+                                        ? AppColors.textPrimaryDark
+                                        : AppColors.textPrimaryLight,
+                                  ),
+                                ),
                               ),
                             ),
                             InkWell(
-                              onTap: quantity < artifact.stock ? () => setState(() => quantity++) : null,
+                              onTap: quantity < artifact.stock
+                                  ? () => setState(() => quantity++)
+                                  : null,
                               child: Container(
                                 width: 44,
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: AppColors.primary,
-                                  borderRadius: const BorderRadius.only(topRight: Radius.circular(4), bottomRight: Radius.circular(4)),
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(4),
+                                    bottomRight: Radius.circular(4),
+                                  ),
                                 ),
-                                child: Icon(Icons.add, color: AppColors.textPrimaryLight),
+                                child: Icon(
+                                  Icons.add,
+                                  color: AppColors.textPrimaryLight,
+                                ),
                               ),
                             ),
                           ],
@@ -366,50 +460,107 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
 
                       const SizedBox(height: 16),
 
-                      if(UserViewModel.instance.isAdmin == true)
-                      OutlinedButton.icon(
+                      if (UserViewModel.instance.isAdmin == true)
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFE00707),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           onPressed: () => _deleteArtifact(context),
-                          icon: const Icon(Icons.delete_forever, color: Colors.red),
-                          label: const Text("DELETE ARTIFACT", style: TextStyle(color: Colors.red)),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.red),
-                            minimumSize: const Size(double.infinity, 45),
+                          icon: const Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "Delete Artifact",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "HyWenhei",
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
-
-                      const SizedBox(height: 15,),
+                      const SizedBox(height: 15),
 
                       /// PURCHASE BUTTON
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : AppColors.textPrimaryLight,
+                          backgroundColor: isDark
+                              ? Colors.white
+                              : AppColors.textPrimaryLight,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
                         onPressed: artifact.stock == 0
                             ? null
                             : () async {
                                 try {
-                                  final success = await ArtifactService().purchaseArtifact(artifact.artifactID, quantity);
+                                  final success = await ArtifactService()
+                                      .purchaseArtifact(
+                                        artifact.artifactID,
+                                        quantity,
+                                      );
                                   if (success && context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Purchase successful!'), backgroundColor: Colors.green));
-                                    UserViewModel.instance.decreaseMoney(totalPrice.toInt());
-                                    UserViewModel.instance.triggerInventoryRefresh();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Purchase successful!'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    UserViewModel.instance.decreaseMoney(
+                                      totalPrice.toInt(),
+                                    );
+                                    UserViewModel.instance
+                                        .triggerInventoryRefresh();
                                     Navigator.of(context).pop();
                                   }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Purchase failed: $e'), backgroundColor: Colors.red));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Purchase failed: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
                                 }
                               },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Purchase ",
-                                style: TextStyle(color: isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark, fontFamily: "HyWenhei", fontWeight: FontWeight.w700, fontSize: 15)),
-                            Image.asset('assets/images/Item_Mora.webp', width: 26, height: 26),
+                            Text(
+                              "Purchase ",
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Image.asset(
+                              'assets/images/Item_Mora.webp',
+                              width: 26,
+                              height: 26,
+                            ),
                             const SizedBox(width: 4),
-                            Text(totalPrice.toStringAsFixed(0),
-                                style: TextStyle(color: isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark, fontFamily: "HyWenhei", fontWeight: FontWeight.w700, fontSize: 15)),
+                            Text(
+                              totalPrice.toStringAsFixed(0),
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
                           ],
                         ),
                       ),

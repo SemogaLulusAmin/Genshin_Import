@@ -9,7 +9,11 @@ class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
   final bool enablePurchase;
 
-  const WeaponDetailSheet({super.key, required this.weapon, this.enablePurchase = true});
+  const WeaponDetailSheet({
+    super.key,
+    required this.weapon,
+    this.enablePurchase = true,
+  });
 
   @override
   State<WeaponDetailSheet> createState() => _WeaponDetailSheetState();
@@ -36,33 +40,47 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
   }
 
   void _deleteWeapon(BuildContext context) async {
-    bool confirm = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Hapus Weapon?"),
-        content: const Text("Weapon ini bakal ancur dari database, yakin?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("GAK JADI")),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true), 
-            child: const Text("YA, HAPUS", style: TextStyle(color: Colors.red))
+    bool confirm =
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Hapus Weapon?"),
+            content: const Text("Weapon ini bakal ancur dari database, yakin?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("GAK JADI"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  "YA, HAPUS",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
 
     if (confirm) {
       try {
-        final success = await WeaponService().deleteWeapon(widget.weapon.weaponID);
+        final success = await WeaponService().deleteWeapon(
+          widget.weapon.weaponID,
+        );
         if (success && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Weapon musnah!")));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Weapon musnah!")));
           Navigator.pop(context); // Tutup Sheet
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +89,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     final rarity = _getRarityInt(weapon.rarity);
     final totalPrice = weapon.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       maxChildSize: 0.95,
@@ -292,22 +310,39 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                               children: [
                                 if (widget.enablePurchase)
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      8,
+                                      6,
+                                      12,
+                                      6,
+                                    ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.8)),
+                                      border: Border.all(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(Icons.inventory_2_outlined, size: 16),
+                                        const Icon(
+                                          Icons.inventory_2_outlined,
+                                          size: 16,
+                                        ),
                                         const SizedBox(width: 8),
-                                        Text('Stock : ${weapon.stock}',
-                                            style: const TextStyle(fontFamily: "HyWenhei", fontWeight: FontWeight.w500)),
+                                        Text(
+                                          'Stock : ${weapon.stock}',
+                                          style: const TextStyle(
+                                            fontFamily: "HyWenhei",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                
+
                                 /// TOMBOL EDIT (Muncul kalau mode admin/bukan purchase)
                                 if (UserViewModel.instance.isAdmin == true)
                                   ElevatedButton.icon(
@@ -315,18 +350,28 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                       final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => WeaponEditScreen(weapon : weapon),
+                                          builder: (context) =>
+                                              WeaponEditScreen(weapon: weapon),
                                         ),
                                       );
                                       // Kalau sukses edit, tutup sheet biar page utama refresh
                                       if (result == true && context.mounted) {
                                         Navigator.pop(context);
-                                        UserViewModel.instance.triggerInventoryRefresh();
+                                        UserViewModel.instance
+                                            .triggerInventoryRefresh();
                                       }
                                     },
-                                    icon: const Icon(Icons.edit_note, color: Colors.white),
-                                    label: const Text("Edit Artifact", style: TextStyle(color: Colors.white)),
-                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                                    icon: const Icon(
+                                      Icons.edit_note,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      "Edit Artifact",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueGrey,
+                                    ),
                                   ),
                               ],
                             ),
@@ -338,192 +383,211 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                 ),
               ),
 
-              
-
-              if(widget.enablePurchase)
-              Container(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                decoration: const BoxDecoration(color: Colors.transparent),
-                // 1. Ganti Row menjadi Column
-                child: Column(
-                  // Optional: Agar konten rata kiri (start) atau tengah (center)
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    /// QTY
-                    Container(
-                      height: 44, // Tentukan tinggi agar seragam
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : AppColors.bgDark.withValues(alpha: 0.07),
-                      ),
-                      child: Row(
-                        children: [
-                          /// BUTTON MINUS
-                          InkWell(
-                            onTap: quantity > 1
-                                ? () => setState(() => quantity--)
-                                : null,
-                            child: Container(
-                              width: 44,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  bottomLeft: Radius.circular(4),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.remove,
-                                size: 24,
-                                color: AppColors.textPrimaryLight,
-                              ),
-                            ),
-                          ),
-
-                          /// TEXT QTY
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                quantity.toString(),
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: "HyWenhei",
-                                  color: isDark
-                                      ? AppColors.textPrimaryDark
-                                      : AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          /// BUTTON PLUS
-                          InkWell(
-                            onTap: quantity < weapon.stock
-                                ? () => setState(() => quantity++)
-                                : null,
-                            child: Container(
-                              width: 44,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                // Radius hanya di sisi kanan
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(4),
-                                  bottomRight: Radius.circular(4),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                size: 24,
-                                color: AppColors.textPrimaryLight,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    if(UserViewModel.instance.isAdmin == true)
-                    OutlinedButton.icon(
-                      onPressed: () => _deleteWeapon(context),
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      label: const Text("DELETE WEAPON", style: TextStyle(color: Colors.red)),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
-                        minimumSize: const Size(double.infinity, 45),
-                      ),
-                    ),
-
-                    const SizedBox(height: 15,),
-
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark
-                            ? Colors.white
-                            : AppColors.textPrimaryLight,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
+              if (widget.enablePurchase)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  // 1. Ganti Row menjadi Column
+                  child: Column(
+                    // Optional: Agar konten rata kiri (start) atau tengah (center)
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      /// QTY
+                      Container(
+                        height: 44, // Tentukan tinggi agar seragam
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : AppColors.bgDark.withValues(alpha: 0.07),
+                        ),
+                        child: Row(
+                          children: [
+                            /// BUTTON MINUS
+                            InkWell(
+                              onTap: quantity > 1
+                                  ? () => setState(() => quantity--)
+                                  : null,
+                              child: Container(
+                                width: 44,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    bottomLeft: Radius.circular(4),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.remove,
+                                  size: 24,
+                                  color: AppColors.textPrimaryLight,
+                                ),
+                              ),
+                            ),
+
+                            /// TEXT QTY
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  quantity.toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: "HyWenhei",
+                                    color: isDark
+                                        ? AppColors.textPrimaryDark
+                                        : AppColors.textPrimaryLight,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            /// BUTTON PLUS
+                            InkWell(
+                              onTap: quantity < weapon.stock
+                                  ? () => setState(() => quantity++)
+                                  : null,
+                              child: Container(
+                                width: 44,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  // Radius hanya di sisi kanan
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(4),
+                                    bottomRight: Radius.circular(4),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 24,
+                                  color: AppColors.textPrimaryLight,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      onPressed: weapon.stock == 0
-                          ? null
-                          : () async {
-                              try {
-                                final success = await WeaponService()
-                                    .purchaseWeapon(weapon.weaponID, quantity);
+                      const SizedBox(height: 16),
 
-                                if (success) {
-                                  // Show success message
+                      if (UserViewModel.instance.isAdmin == true)
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFE00707),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          onPressed: () => _deleteWeapon(context),
+                          icon: const Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "Delete Weapon",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "HyWenhei",
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 15),
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark
+                              ? Colors.white
+                              : AppColors.textPrimaryLight,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        onPressed: weapon.stock == 0
+                            ? null
+                            : () async {
+                                try {
+                                  final success = await WeaponService()
+                                      .purchaseWeapon(
+                                        weapon.weaponID,
+                                        quantity,
+                                      );
+
+                                  if (success) {
+                                    // Show success message
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Purchase successful!'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    // Close the sheet
+                                    UserViewModel.instance.decreaseMoney(
+                                      totalPrice.toInt(),
+                                    );
+                                    UserViewModel.instance
+                                        .triggerInventoryRefresh();
+                                    if (context.mounted)
+                                      Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  // Show error message
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Purchase successful!'),
-                                      backgroundColor: Colors.green,
+                                    SnackBar(
+                                      content: Text('Purchase failed: $e'),
+                                      backgroundColor: Colors.red,
                                     ),
                                   );
-                                  // Close the sheet
-                                  UserViewModel.instance.decreaseMoney(totalPrice.toInt());
-                                  UserViewModel.instance.triggerInventoryRefresh();
-                                  if (context.mounted) Navigator.of(context).pop();
                                 }
-                              } catch (e) {
-                                // Show error message
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Purchase failed: $e'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Purchase ",
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.textPrimaryLight
-                                  : AppColors.textPrimaryDark,
-                              fontFamily: "HyWenhei",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
+                              },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Purchase ",
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
 
-                          /// 💰 ICON MATA UANG
-                          Image.asset(
-                            'assets/images/Item_Mora.webp',
-                            width: 26,
-                            height: 26,
-                          ),
-
-                          const SizedBox(width: 4),
-
-                          /// 💵 TOTAL PRICE
-                          Text(
-                            totalPrice.toStringAsFixed(0),
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.textPrimaryLight
-                                  : AppColors.textPrimaryDark,
-                              fontFamily: "HyWenhei",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
+                            /// 💰 ICON MATA UANG
+                            Image.asset(
+                              'assets/images/Item_Mora.webp',
+                              width: 26,
+                              height: 26,
                             ),
-                          ),
-                        ],
+
+                            const SizedBox(width: 4),
+
+                            /// 💵 TOTAL PRICE
+                            Text(
+                              totalPrice.toStringAsFixed(0),
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         );
