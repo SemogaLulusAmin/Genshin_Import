@@ -188,7 +188,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                               crossAxisCount: 2,
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
-                              childAspectRatio: 0.69,
+                              childAspectRatio: 0.72,
                             ),
                         itemBuilder: (context, index) {
                           final item = filteredItems[index];

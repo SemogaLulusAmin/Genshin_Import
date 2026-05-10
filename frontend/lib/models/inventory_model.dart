@@ -16,4 +16,17 @@ abstract class Inventory {
     required this.totalOwned,
     required this.itemType,
   });
+
+  String get formattedName {
+    if (name.isEmpty) return name;
+
+    return name
+        .split('-') // Memecah string berdasarkan tanda "-"
+        .map(
+          (word) => word.isNotEmpty
+              ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+              : word,
+        )
+        .join(' ');
+  }
 }

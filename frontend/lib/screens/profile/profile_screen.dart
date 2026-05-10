@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             backgroundColor: isDark
                                 ? Colors.white
                                 : AppColors.textPrimaryLight,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(80),
                             ),
@@ -175,7 +175,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             const Icon(Icons.palette, size: 20),
                             const SizedBox(width: 10),
-                            const Expanded(child: Text("Theme")),
+                            const Expanded(
+                              child: Text(
+                                "Theme",
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                            ),
                             Icon(
                               isDark ? Icons.dark_mode : Icons.light_mode,
                               size: 20,
@@ -187,50 +192,113 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 10),
 
                       /// APP INFO
-                      GestureDetector(
-                        onTap: () {
-                          setState(() => isExpanded = !isExpanded);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.05)
-                                : AppColors.bgLight,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info_rounded, size: 20),
-                              const SizedBox(width: 10),
-                              const Expanded(child: Text("App Info")),
-                              Icon(
-                                isExpanded
-                                    ? Icons.expand_less
-                                    : Icons.chevron_right,
-                                size: 20,
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : AppColors.bgLight,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() => isExpanded = !isExpanded);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.info_rounded, size: 20),
+
+                                    const SizedBox(width: 10),
+
+                                    const Expanded(
+                                      child: Text(
+                                        "App Info",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+
+                                    AnimatedRotation(
+                                      turns: isExpanded ? 0.25 : 0,
+                                      duration: const Duration(
+                                        milliseconds: 250,
+                                      ),
+                                      curve: Curves.easeInOut,
+                                      child: const Icon(
+                                        Icons.keyboard_arrow_right_rounded,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+
+                            AnimatedSize(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                              child: isExpanded
+                                  ? Container(
+                                      width: double.infinity,
+                                      margin: const EdgeInsets.fromLTRB(
+                                        8,
+                                        0,
+                                        8,
+                                        12,
+                                      ),
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: isDark
+                                            ? Colors.white.withValues(
+                                                alpha: 0.06,
+                                              )
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Genshin Import",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : AppColors.textPrimaryLight,
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 6),
+
+                                          Text(
+                                            "A fan-made companion app for managing artifacts, weapons, and inventories with a smooth and modern experience.",
+                                            style: TextStyle(
+                                              height: 1.5,
+                                              fontSize: 13,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                          ],
                         ),
                       ),
-
-                      if (isExpanded)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(top: 6),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : AppColors.bgLight,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text("App Desc....."),
-                        ),
 
                       const SizedBox(height: 10),
 
@@ -254,7 +322,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: const [
                               Icon(Icons.logout_rounded, size: 20),
                               SizedBox(width: 10),
-                              Expanded(child: Text("Log out")),
+                              Expanded(
+                                child: Text(
+                                  "Log out",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ),
                               Icon(Icons.chevron_right),
                             ],
                           ),

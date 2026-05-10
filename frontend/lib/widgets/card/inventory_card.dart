@@ -160,7 +160,7 @@ class InventoryCard extends StatelessWidget {
                 children: [
                   /// NAME
                   Text(
-                    item.name,
+                    item.formattedName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
