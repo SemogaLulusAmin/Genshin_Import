@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   String get _baseUrl {
@@ -13,6 +14,11 @@ class AuthService {
       return "http://localhost:3000/auth";
     }
   }
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: 'CLIENT_GOOGLE_ID.apps.googleusercontent.com',
+    scopes: ['email','profile', 'openid'],
+  );
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -95,15 +101,76 @@ class AuthService {
       };
     }
   }
+  Future<Map<String, dynamic>> loginToBackend(String accessToken) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/register/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'accessToken': accessToken, 
+        }),
+      );
 
+      if (response.statusCode == 200) {
+        // Gunakan helper _decodeJsonBody supaya konsisten
+        final data = _decodeJsonBody(response.body);
+        final token = data['token']?.toString();
+
+        if (token == null || token.isEmpty) {
+          return {"success": false, "message": "Google login response is invalid"};
+        }
+
+        // SIMPAN KE STORAGE (Pakai key 'jwt_token' biar sama!)
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', token); 
+        
+        print("Google Token berhasil disimpan di jwt_token: $token");
+
+        final user = data['user'];
+        // User dari Google biasanya sudah bawa email dari backend kita tadi
+        
+        return {
+          "success": true, 
+          "token": token, 
+          "user": user
+        };
+      } else {
+        // Handle error kalau token Google ditolak backend
+        final data = _decodeJsonBody(response.body);
+        return {
+          "success": false,
+          "message": data['message']?.toString() ?? "Google Auth Failed",
+        };
+      }
+    } catch (e) {
+      print("Error di loginToBackend: $e");
+      return {
+        "success": false, 
+        "message": "Failed to connect to server. Check connection.",
+      };
+    }
+  }
   Future<Map<String, dynamic>> loginWithGoogle() async {
-    // TODO: Implementasikan ulang Google Sign-In setelah konfigurasi client ID
-    // dan endpoint backend final sudah siap untuk semua platform.
-    return {
-      "success": false,
-      "message":
-          "Google Sign-In belum dikonfigurasi untuk arsitektur MVVM ini.",
-    };
+    try {
+      await _googleSignIn.signOut();
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return {"success": false, "message": "Login dibatalkan"};
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication; 
+
+      final String? accessToken = googleAuth.accessToken;
+
+      if (accessToken == null) {
+      return {"success": false, "message": "Gagal mendapatkan Access Token"};
+      }
+
+      // Panggil fungsi kirim ke backend
+      return await loginToBackend(accessToken);
+
+    } catch (e) {
+      return {"success": false, "message": e.toString()};
+    }
   }
 
   Map<String, dynamic> _decodeJsonBody(String body) {

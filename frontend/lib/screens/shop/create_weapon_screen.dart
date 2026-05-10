@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:convert';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +5,6 @@ import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../widgets/custom_form_field.dart';
-import '../../services/weapon_service.dart';
 
 class CreateWeaponScreen extends StatefulWidget {
   const CreateWeaponScreen({super.key});
@@ -19,10 +16,10 @@ class CreateWeaponScreen extends StatefulWidget {
 class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  typed_data.Uint8List? _imageBytes; 
+  typed_data.Uint8List? _imageBytes;
   XFile? _pickedFile;
   bool _isSubmitting = false;
-  
+
   // Controllers matching your Backend req.body exactly
   final _nameController = TextEditingController();
   final _typeController = TextEditingController(text: "Sword");
@@ -33,14 +30,14 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   final _passiveDescController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockController = TextEditingController(text: "99");
-  
+
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
 
     // 1. Pick the image from gallery
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70, 
+      imageQuality: 70,
     );
 
     if (image != null) {
@@ -49,8 +46,8 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
 
       // 3. Update state
       setState(() {
-        _imageBytes = bytes; 
-        _pickedFile = image; 
+        _imageBytes = bytes;
+        _pickedFile = image;
       });
     }
   }
@@ -110,7 +107,10 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : Colors.white,
       appBar: AppBar(
-        title: const Text("FORGE WEAPON", style: TextStyle(fontFamily: "HyWenhei")),
+        title: const Text(
+          "FORGE WEAPON",
+          style: TextStyle(fontFamily: "HyWenhei"),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -131,27 +131,52 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
 
               Row(
                 children: [
-                  Expanded(child: CustomFormField(label: "TYPE", controller: _typeController)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "TYPE",
+                      controller: _typeController,
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: CustomFormField(label: "RARITY", controller: _rarityController, keyboardType: TextInputType.number)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "RARITY",
+                      controller: _rarityController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
 
               Row(
                 children: [
-                  Expanded(child: CustomFormField(label: "BASE ATTACK", controller: _attackController, keyboardType: TextInputType.number)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "BASE ATTACK",
+                      controller: _attackController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: CustomFormField(label: "SUB STAT", controller: _subStatController)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "SUB STAT",
+                      controller: _subStatController,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
 
-              CustomFormField(label: "PASSIVE NAME", controller: _passiveNameController),
+              CustomFormField(
+                label: "PASSIVE NAME",
+                controller: _passiveNameController,
+              ),
               const SizedBox(height: 16),
 
               CustomFormField(
-                label: "PASSIVE DESCRIPTION", 
+                label: "PASSIVE DESCRIPTION",
                 controller: _passiveDescController,
                 hintText: "Enter the weapon's passive effect...",
               ),
@@ -159,9 +184,21 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
 
               Row(
                 children: [
-                  Expanded(child: CustomFormField(label: "PRICE", controller: _priceController, keyboardType: TextInputType.number)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "PRICE",
+                      controller: _priceController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: CustomFormField(label: "STOCK", controller: _stockController, keyboardType: TextInputType.number)),
+                  Expanded(
+                    child: CustomFormField(
+                      label: "STOCK",
+                      controller: _stockController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
                 ],
               ),
 
@@ -172,10 +209,18 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
                 height: 55,
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitData,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("CONFIRM FORGE", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      : const Text(
+                          "CONFIRM FORGE",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -184,7 +229,8 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
       ),
     );
   }
-Widget _buildImagePicker(bool isDark) {
+
+  Widget _buildImagePicker(bool isDark) {
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
@@ -205,8 +251,11 @@ Widget _buildImagePicker(bool isDark) {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo_outlined,
-                      color: AppColors.primary, size: 40),
+                  Icon(
+                    Icons.add_a_photo_outlined,
+                    color: AppColors.primary,
+                    size: 40,
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     "UPLOAD IMAGE",
