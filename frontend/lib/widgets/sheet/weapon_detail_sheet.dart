@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
-<<<<<<< HEAD
-import '../../services/auth_service.dart';
-import '../../states/user_state.dart';
-import '../../screens/admin/admin_weapon_form_screen.dart';
-=======
 import '../../view_models/user_viewmodel.dart';
->>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
@@ -21,23 +15,7 @@ class WeaponDetailSheet extends StatefulWidget {
 }
 
 class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
-  late Weapon _weapon;
   int quantity = 1;
-  bool _isAdmin = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _weapon = widget.weapon;
-    _loadAdminState();
-  }
-
-  Future<void> _loadAdminState() async {
-    final isAdmin = await AuthService().isAdmin();
-    if (mounted) {
-      setState(() => _isAdmin = isAdmin);
-    }
-  }
 
   List<Color> _getRarityGradient(String rarity) {
     switch (rarity) {
@@ -58,7 +36,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final weapon = _weapon;
+    final weapon = widget.weapon;
     final gradient = _getRarityGradient(weapon.rarity);
     final rarity = _getRarityInt(weapon.rarity);
     final totalPrice = weapon.price * quantity;
@@ -484,87 +462,6 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                         ],
                       ),
                     ),
-
-                    if (_isAdmin) ...[
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: () async {
-                          final updated = await Navigator.of(context).push<bool?>(
-                            MaterialPageRoute(
-                              builder: (_) => AdminWeaponFormScreen(weapon: weapon),
-                            ),
-                          );
-                          if (updated == true) {
-                            try {
-                              final refreshed = await WeaponService().getWeaponById(weapon.weaponID);
-                              if (refreshed != null && mounted) {
-                                setState(() => _weapon = refreshed);
-                              }
-                            } catch (_) {
-                              if (mounted) setState(() {});
-                            }
-                          }
-                        },
-                        child: const Text('Edit Weapon'),
-                      ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          side: const BorderSide(color: Colors.red),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        onPressed: () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (dialogContext) => AlertDialog(
-                              title: const Text('Delete Weapon'),
-                              content: const Text(
-                                  'Are you sure you want to delete this weapon?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(dialogContext).pop(false),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.of(dialogContext).pop(true),
-                                  child: const Text('Delete'),
-                                ),
-                              ],
-                            ),
-                          );
-
-                          if (confirmed != true) return;
-
-                          try {
-                            final success = await WeaponService().deleteWeapon(weapon.weaponID);
-                            if (success) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Weapon deleted'),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                                Navigator.of(context).pop();
-                              }
-                            }
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Delete failed: $e'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Delete Weapon'),
-                      ),
-                    ],
                   ],
                 ),
               ),

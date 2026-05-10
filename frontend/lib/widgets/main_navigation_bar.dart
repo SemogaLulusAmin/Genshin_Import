@@ -7,13 +7,11 @@ import '../core/app_colors.dart';
 class MainNavigationBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
-  final bool showAdmin;
 
   const MainNavigationBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
-    this.showAdmin = false,
   });
 
   @override
@@ -41,6 +39,13 @@ class MainNavigationBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(context, 0, AppIcons.cart, AppIcons.cartActive, "Shop"),
+          // _buildNavItem(
+          //   context,
+          //   1,
+          //   AppIcons.cart,
+          //   AppIcons.cartActive,
+          //   "Orders",
+          // ),
           _buildNavItem(
             context,
             1,
@@ -55,14 +60,6 @@ class MainNavigationBar extends StatelessWidget {
             AppIcons.profileActive,
             "Profile",
           ),
-          if (showAdmin)
-            _buildNavItem(
-              context,
-              3,
-              AppIcons.admin,
-              AppIcons.adminActive,
-              "Admin",
-            ),
         ],
       ),
     );

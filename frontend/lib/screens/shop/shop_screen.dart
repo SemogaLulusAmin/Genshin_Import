@@ -7,94 +7,20 @@ import '../../models/weapon_model.dart';
 import '../../models/artifact_model.dart';
 import '../../services/weapon_service.dart';
 import '../../services/artifact_service.dart';
-import '../../view_models/auth_viewmodel.dart';
-import '../../widgets/sheet/weapon_detail_sheet.dart';
-import '../../widgets/sheet/artifact_detail_sheet.dart';
-import '../admin/admin_weapon_form_screen.dart';
-import '../admin/admin_artifact_form_screen.dart';
 
-class ShopScreen extends StatefulWidget {
+class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
-
-  @override
-  State<ShopScreen> createState() => _ShopScreenState();
-}
-
-class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
-  late Future<List<Weapon>> _weaponsFuture;
-  late Future<List<Artifact>> _artifactsFuture;
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _reloadData();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      if (mounted) setState(() {});
-    });
-  }
-
-  void _reloadData() {
-    _weaponsFuture = WeaponService().getWeapons();
-    _artifactsFuture = ArtifactService().getArtifacts();
-  }
-
-  Future<void> _refresh() async {
-    setState(() {
-      _reloadData();
-    });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AnimatedBuilder(
-      animation: AuthViewModel.instance,
-      builder: (context, child) {
-        final authViewModel = AuthViewModel.instance;
-        final currentTab = _tabController.index;
-        final isAdmin = authViewModel.isAdmin;
-
-        return Scaffold(
-          backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
-          body: child,
-          floatingActionButton: isAdmin
-              ? FloatingActionButton.extended(
-                  icon: const Icon(Icons.add),
-                  label: Text(currentTab == 0 ? 'New Weapon' : 'New Artifact'),
-                  onPressed: () async {
-                    if (currentTab == 0) {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const AdminWeaponFormScreen(),
-                        ),
-                      );
-                    } else {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const AdminArtifactFormScreen(),
-                        ),
-                      );
-                    }
-                    if (mounted) {
-                      _refresh();
-                    }
-                  },
-                )
-              : null,
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-        );
-      },
-      child: SafeArea(
+    // DefaultTabController membungkus Scaffold agar state tab dikelola otomatis
+    return DefaultTabController(
+      length: 2, // Jumlah tab
+      child: Scaffold(
+        backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
+        body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -106,14 +32,15 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
                 child: TabBar(
                   dividerColor: Colors.transparent,
                   indicatorColor: AppColors.primary,
-                  labelColor: isDark ? Colors.white : AppColors.textPrimaryLight,
+                  labelColor: isDark
+                      ? Colors.white
+                      : AppColors.textPrimaryLight,
                   unselectedLabelColor: Colors.grey,
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontFamily: "HyWenhei",
                     fontSize: 15,
                   ),
-                  controller: _tabController,
                   tabs: const [
                     Tab(
                       child: Row(
@@ -144,9 +71,11 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
               /// 🔥 TAB BAR VIEW (Konten yang berubah-ubah)
               Expanded(
                 child: TabBarView(
-                  controller: _tabController,
                   children: [
+                    // --- TAB 1: WEAPONS (Existing Logic) ---
                     _buildWeaponsTab(isDark),
+
+                    // --- TAB 2: ARTIFACTS (Placeholder) ---
                     _buildArtifactsTab(isDark),
                   ],
                 ),
@@ -154,12 +83,14 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
             ],
           ),
         ),
-      );
+      ),
+    );
   }
 
+  /// FUNGSI UNTUK MERENDER HALAMAN WEAPONS
   Widget _buildWeaponsTab(bool isDark) {
     return FutureBuilder<List<Weapon>>(
-      future: _weaponsFuture,
+      future: WeaponService().getWeapons(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -198,14 +129,7 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
             return WeaponCard(
               weapon: weapon,
               onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => WeaponDetailSheet(weapon: weapon),
-                ).then((_) {
-                  if (mounted) _refresh();
-                });
+                // Navigasi detail
               },
             );
           },
@@ -214,9 +138,10 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
     );
   }
 
+  /// FUNGSI UNTUK MERENDER HALAMAN ARTIFACTS (Placeholder)
   Widget _buildArtifactsTab(bool isDark) {
     return FutureBuilder<List<Artifact>>(
-      future: _artifactsFuture,
+      future: ArtifactService().getArtifacts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -255,14 +180,7 @@ class _ShopScreenState extends State<ShopScreen> with TickerProviderStateMixin {
             return ArtifactCard(
               artifact: artifact,
               onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => ArtifactDetailSheet(artifact: artifact),
-                ).then((_) {
-                  if (mounted) _refresh();
-                });
+                // Navigasi detail
               },
             );
           },

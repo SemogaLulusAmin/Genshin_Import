@@ -37,13 +37,8 @@ dependencies:
   flutter_svg: ^2.2.3
   http: ^1.6.0
   shared_preferences: ^2.5.2
-<<<<<<< HEAD
-  file_picker: ^5.3.0
-=======
   google_sign_in: ^7.2.0
-  image_picker: ^1.0.4
 
->>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
 dev_dependencies:
   flutter_test:
     sdk: flutter

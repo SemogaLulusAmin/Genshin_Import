@@ -86,7 +86,7 @@ router.post('/register/google', async (req, res) => {
         }
 
         const tokenJWT = jwt.sign(
-            { id: user.userID, email: user.email, roles: user.roles }, 
+            { id: user.userID, email: user.email }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' }
         );
@@ -131,7 +131,7 @@ router.post('/login', async (req, res) => {
         const newBearerToken = crypto.randomBytes(20).toString('hex');
 
         const tokenJWT = jwt.sign(
-            { id: user.userID, email: user.email, roles: user.roles }, 
+            { id: user.userID, email: user.email }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' } 
         );

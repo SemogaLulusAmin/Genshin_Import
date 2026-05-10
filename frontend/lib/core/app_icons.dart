@@ -22,7 +22,4 @@ class AppIcons {
 
   static const profile = "assets/icons/profile.svg";
   static const profileActive = "assets/icons/profile_active.svg";
-
-  static const admin = "assets/icons/shopsign.svg";
-  static const adminActive = "assets/icons/shopsign_active.svg";
 }

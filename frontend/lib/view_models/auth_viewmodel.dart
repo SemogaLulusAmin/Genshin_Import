@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
 import 'package:frontend/models/user_model.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/user_service.dart';
 import 'package:frontend/view_models/user_viewmodel.dart';
->>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -13,24 +10,11 @@ class AuthViewModel extends ChangeNotifier {
 
   static final AuthViewModel instance = AuthViewModel._internal();
 
-<<<<<<< HEAD
-  bool _isAdmin = false;
-
-  bool get isAdmin => _isAdmin;
-
-  Future<void> refresh() async {
-    final prefs = await SharedPreferences.getInstance();
-    final roles = prefs.getString('roles') ?? '';
-    final newIsAdmin = roles.toLowerCase().contains('admin');
-    if (newIsAdmin != _isAdmin) {
-      _isAdmin = newIsAdmin;
-=======
   final AuthService _authService = AuthService();
   final UserService _userService = UserService();
 
   bool _isLoading = false;
   bool _isBootstrapping = false;
-  bool _isAdmin = false;
   String? _errorMessage;
   String? _nameError;
   String? _emailError;
@@ -39,7 +23,6 @@ class AuthViewModel extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   bool get isBootstrapping => _isBootstrapping;
-  bool get isAdmin => _isAdmin;
   String? get errorMessage => _errorMessage;
   String? get nameError => _nameError;
   String? get emailError => _emailError;
@@ -57,35 +40,24 @@ class AuthViewModel extends ChangeNotifier {
 
     if (token == null || token.isEmpty) {
       _currentUser = null;
-      _isAdmin = false;
       _isBootstrapping = false;
       notifyListeners();
       return;
     }
 
     try {
-      _isAdmin = await _authService.isAdmin();
       _currentUser = await _userService.getCurrentUser();
       UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
     } catch (e) {
       await _clearPersistedSession();
       _currentUser = null;
-      _isAdmin = false;
       _errorMessage = e.toString();
     } finally {
       _isBootstrapping = false;
->>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
       notifyListeners();
     }
   }
 
-<<<<<<< HEAD
-  void setAdmin(bool value) {
-    if (value != _isAdmin) {
-      _isAdmin = value;
-      notifyListeners();
-    }
-=======
   Future<bool> login(String email, String password) async {
     _clearAuthErrors();
 
@@ -110,7 +82,6 @@ class AuthViewModel extends ChangeNotifier {
         notifyListeners();
         return false;
       }
-      _isAdmin = await _authService.isAdmin();
       UserViewModel.instance.setMoney(_currentUser?.money ?? 0);
       notifyListeners();
       return true;
@@ -202,8 +173,6 @@ class AuthViewModel extends ChangeNotifier {
     await _clearPersistedSession();
     await UserViewModel.instance.reset();
     _currentUser = null;
-    _isAdmin = false;
-    _errorMessage = null;
     _clearAuthErrors();
     _isLoading = false;
     notifyListeners();
@@ -302,6 +271,5 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> _clearPersistedSession() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('jwt_token');
->>>>>>> 8a977c133c93a5f80c07f5726b46251369f739a9
   }
 }

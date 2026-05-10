@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import '../../widgets/custom_form_field.dart';
-import '../../view_models/auth_viewmodel.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -34,9 +33,11 @@ class _LoginFormState extends State<LoginForm> {
         _authViewModel.passwordError == null) {
       final message = _authViewModel.errorMessage ?? "Login Failed";
 
-      isLoggedIn.value = true;
-    } else {
-      _showMessage(result['message'], Colors.red);
+      if (message == "User not found" || message == "Wrong password") {
+        await _showLoginErrorDialog(message);
+      } else {
+        _showMessage(message, Colors.red);
+      }
     }
 
     _authViewModel.clearErrorMessage();
