@@ -80,7 +80,7 @@ async function seedDB() {
             const query = `
                 INSERT INTO User
                 (userID, username, email, password, provider, bearer_token, money, roles)
-                (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `
 
             const values = [
@@ -102,7 +102,7 @@ async function seedDB() {
             const query = `
                 INSERT INTO User
                 (userID, username, email, password, provider, bearer_token, money, roles)
-                (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `
 
             const values = [
