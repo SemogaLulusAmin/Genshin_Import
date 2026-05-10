@@ -4,7 +4,7 @@ class Artifact {
   final String setName;
   final String maxRarity;
   final int stock;
-  final String imageUrl;
+  String imageUrl;
   final double price;
   final String? pieceBonus2;
   final String? pieceBonus4;

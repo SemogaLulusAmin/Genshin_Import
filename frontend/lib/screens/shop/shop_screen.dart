@@ -1,191 +1,226 @@
 import 'package:flutter/material.dart';
-import '../../core/app_colors.dart';
-import '../../widgets/header/screen_header.dart';
-import '../../widgets/card/weapon_card.dart';
-import '../../widgets/card/artifact_card.dart';
-import '../../models/weapon_model.dart';
-import '../../models/artifact_model.dart';
-import '../../services/weapon_service.dart';
-import '../../services/artifact_service.dart';
+import 'package:frontend/core/app_colors.dart';
+import 'package:frontend/widgets/header/screen_header.dart';
+import 'package:frontend/widgets/card/weapon_card.dart';
+import 'package:frontend/widgets/card/artifact_card.dart';
+import 'package:frontend/models/weapon_model.dart';
+import 'package:frontend/models/artifact_model.dart';
+import 'package:frontend/services/weapon_service.dart';
+import 'package:frontend/services/artifact_service.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
+import 'create_artifact_screen.dart';
+import 'create_weapon_screen.dart';
 
-class ShopScreen extends StatelessWidget {
+class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
+
+  @override
+  State<ShopScreen> createState() => _ShopScreenState();
+}
+
+class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    // DefaultTabController is removed in favor of this managed controller 
+    // so the FloatingActionButton can listen to index changes.
+    _tabController = TabController(length: 2, vsync: this);
+    
+    // This ensures the FAB updates its text/icon when you swipe tabs
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // DefaultTabController membungkus Scaffold agar state tab dikelola otomatis
-    return DefaultTabController(
-      length: 2, // Jumlah tab
-      child: Scaffold(
-        backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const ScreenHeader(title: "Shop"),
+    return ListenableBuilder(
+      listenable: UserViewModel.instance,
+      builder: (context, _) {
+        final bool isAdmin = UserViewModel.instance.isAdmin;
 
-              /// TAB BAR SELECTION
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TabBar(
-                  dividerColor: Colors.transparent,
-                  indicatorColor: AppColors.primary,
-                  labelColor: isDark
-                      ? Colors.white
-                      : AppColors.textPrimaryLight,
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontFamily: "HyWenhei",
-                    fontSize: 15,
+        return Scaffold(
+          backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
+          
+          // --- DYNAMIC FLOATING ACTION BUTTON ---
+          floatingActionButton: isAdmin 
+              ? FloatingActionButton.extended(
+                  onPressed: () {
+                    if (_tabController.index == 0) {
+                      _openWeaponCreateForm(context);
+                    } else {
+                      _openArtifactCreateForm(context);
+                    }
+                  },
+                  backgroundColor: AppColors.primary,
+                  icon: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 24
                   ),
-                  tabs: const [
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.shield_moon, size: 20),
-                          SizedBox(width: 6),
-                          Text("Weapons"),
-                        ],
-                      ),
+                  label: Text(
+                    _tabController.index == 0 
+                        ? "CREATE WEAPON" 
+                        : "CREATE ARTIFACT",
+                    style: const TextStyle(
+                      color: Colors.white, 
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "HyWenhei",
                     ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.auto_awesome_rounded, size: 20),
-                          SizedBox(width: 6),
-                          Text("Artifacts"),
-                        ],
-                      ),
+                  ),
+                )
+              : null,
+
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const ScreenHeader(title: "Shop"),
+
+                /// TAB BAR
+/// TAB BAR
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TabBar(
+                    controller: _tabController,
+                    dividerColor: Colors.transparent,
+                    indicatorColor: AppColors.primary,
+                    labelColor: isDark ? Colors.white : AppColors.textPrimaryLight,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "HyWenhei",
+                      fontSize: 15,
                     ),
-                  ],
+                    tabs: const [
+                      // WEAPON TAB WITH ICON
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.shield_moon, size: 18),
+                            SizedBox(width: 8),
+                            Text("Weapons"),
+                          ],
+                        ),
+                      ),
+                      // ARTIFACT TAB WITH ICON
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.auto_awesome_rounded, size: 18),
+                            SizedBox(width: 8),
+                            Text("Artifacts"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 8),
+                const SizedBox(height: 8),
 
-              /// 🔥 TAB BAR VIEW (Konten yang berubah-ubah)
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    // --- TAB 1: WEAPONS (Existing Logic) ---
-                    _buildWeaponsTab(isDark),
-
-                    // --- TAB 2: ARTIFACTS (Placeholder) ---
-                    _buildArtifactsTab(isDark),
-                  ],
+                /// TAB CONTENT
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildWeaponsTab(),
+                      _buildArtifactsTab(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  /// FUNGSI UNTUK MERENDER HALAMAN WEAPONS
-  Widget _buildWeaponsTab(bool isDark) {
+  Widget _buildWeaponsTab() {
     return FutureBuilder<List<Weapon>>(
+      // Using UserViewModel.instance.inventoryRefreshKey as a trigger to reload
+      key: ValueKey(UserViewModel.instance.inventoryRefreshKey),
       future: WeaponService().getWeapons(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              "Error: ${snapshot.error}",
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-              ),
-            ),
-          );
+          return const Center(child: Text("Error loading weapons"));
         }
 
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No weapons found"));
-        }
-
-        final weapons = snapshot.data!;
-
+        final weapons = snapshot.data ?? [];
         return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 80), // Extra bottom padding for FAB
           itemCount: weapons.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 0.6,
+            childAspectRatio: 0.65,
           ),
-          itemBuilder: (context, index) {
-            final weapon = weapons[index];
-            return WeaponCard(
-              weapon: weapon,
-              onTap: () {
-                // Navigasi detail
-              },
-            );
-          },
+          itemBuilder: (context, index) => WeaponCard(weapon: weapons[index]),
         );
       },
     );
   }
 
-  /// FUNGSI UNTUK MERENDER HALAMAN ARTIFACTS (Placeholder)
-  Widget _buildArtifactsTab(bool isDark) {
+  Widget _buildArtifactsTab() {
     return FutureBuilder<List<Artifact>>(
+      key: ValueKey(UserViewModel.instance.inventoryRefreshKey),
       future: ArtifactService().getArtifacts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              "Error: ${snapshot.error}",
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-              ),
-            ),
-          );
+          return const Center(child: Text("Error loading artifacts"));
         }
 
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text("No Artifacts found"));
-        }
-
-        final artifacts = snapshot.data!;
-
+        final artifacts = snapshot.data ?? [];
         return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 80), // Extra bottom padding for FAB
           itemCount: artifacts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 0.6,
+            childAspectRatio: 0.65,
           ),
-          itemBuilder: (context, index) {
-            final artifact = artifacts[index];
-            return ArtifactCard(
-              artifact: artifact,
-              onTap: () {
-                // Navigasi detail
-              },
-            );
-          },
+          itemBuilder: (context, index) => ArtifactCard(artifact: artifacts[index]),
         );
       },
+    );
+  }
+
+  void _openWeaponCreateForm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CreateWeaponScreen(),
+      ),
+    );
+  }
+  // Inside ShopScreen class...
+  void _openArtifactCreateForm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CreateArtifactScreen()),
     );
   }
 }
