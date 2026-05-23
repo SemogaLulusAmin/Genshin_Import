@@ -6,6 +6,7 @@ import 'screens/inventory/inventory_screen.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
 import 'screens/shop/shop_screen.dart';
 import 'screens/profile/profile_screen.dart';
+import 'screens/theme/theme_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,34 +20,39 @@ class GenshinImportApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Genshin Import',
-      debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeManager(), 
+      builder: (context, isDark, child) {
+        return MaterialApp(
+          title: 'Genshin Import',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
 
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+          home: AnimatedBuilder(
+            animation: AuthViewModel.instance,
+            builder: (context, child) {
+              final authViewModel = AuthViewModel.instance;
 
-      home: AnimatedBuilder(
-        animation: AuthViewModel.instance,
-        builder: (context, child) {
-          final authViewModel = AuthViewModel.instance;
+              if (authViewModel.isBootstrapping) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
 
-          if (authViewModel.isBootstrapping) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
+              if (authViewModel.isLoggedIn) {
+                return const MainNavigationScreen();
+              }
 
-          if (authViewModel.isLoggedIn) {
-            return const MainNavigationScreen();
-          }
-
-          return const AuthScreen();
-        },
-      ),
+              return const AuthScreen();
+            },
+          ),
+        );
+      },
     );
   }
+
 }
 
 class MainNavigationScreen extends StatefulWidget {

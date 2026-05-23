@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../view_models/auth_viewmodel.dart';
+import '../theme/theme_manager.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -159,36 +160,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 12),
 
-                      /// THEME (read-only for now)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : AppColors.bgLight,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.palette, size: 20),
-                            const SizedBox(width: 10),
-                            const Expanded(
-                              child: Text(
-                                "Theme",
-                                style: TextStyle(fontWeight: FontWeight.w500),
+                      ValueListenableBuilder<bool>(
+                          valueListenable: ThemeManager(), 
+                          builder: (context, isDark, child) {
+                            return InkWell(
+                              onTap: () {
+                                ThemeManager().toggleTheme();
+                              },
+                              borderRadius: BorderRadius.circular(8), 
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.05)
+                                      : AppColors.bgLight,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.palette, size: 20),
+                                    const SizedBox(width: 10),
+                                    const Expanded(
+                                      child: Text(
+                                        "Theme",
+                                        style: TextStyle(fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Icon(
+                                      isDark ? Icons.dark_mode : Icons.light_mode,
+                                      size: 20,
+                                      color: isDark ? Colors.amber[400] : Colors.orange[400], 
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Icon(
-                              isDark ? Icons.dark_mode : Icons.light_mode,
-                              size: 20,
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      ),
-
+                      
                       const SizedBox(height: 10),
 
                       /// APP INFO
