@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
 import '../../view_models/auth_viewmodel.dart';
 import '../theme/theme_manager.dart';
+import '../../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,22 +14,28 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isExpanded = false;
+  final ValueNotifier<bool> isButtonLoading = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final authViewModel = AuthViewModel.instance;
+    final userViewModel = UserViewModel.instance;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
       body: AnimatedBuilder(
-        animation: authViewModel,
+        animation: Listenable.merge([authViewModel, userViewModel]),
         builder: (context, _) {
           final user = authViewModel.currentUser;
 
           if (user == null) {
             return const Center(child: Text("User session is not loaded yet"));
           }
+
+          final displayUsername = userViewModel.username.isNotEmpty 
+              ? userViewModel.username 
+              : user.username;
 
           return SingleChildScrollView(
             child: Column(
@@ -54,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       bottom: -50,
                       left: 20,
                       child: Container(
-                        padding: const EdgeInsets.all(4), // ketebalan outline
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -89,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user.username,
+                        displayUsername, 
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -110,42 +118,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 16),
 
                       /// EDIT BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isDark
-                                ? Colors.white
-                                : AppColors.textPrimaryLight,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(80),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.edit_rounded,
-                                color: isDark
-                                    ? AppColors.textPrimaryLight
-                                    : AppColors.textPrimaryDark,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                "Edit Profile",
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.textPrimaryLight
-                                      : AppColors.textPrimaryDark,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                      ValueListenableBuilder<bool>(
+                        valueListenable: ThemeManager(),
+                        builder: (context, isDark, child) {
+                          return ValueListenableBuilder<bool>(
+                            valueListenable: isButtonLoading,
+                            builder: (context, isLoading, child) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isDark
+                                        ? Colors.white
+                                        : AppColors.textPrimaryLight,
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(80),
+                                    ),
+                                  ),
+                                  onPressed: isLoading 
+                                      ? null 
+                                      : () => _showEditUsernameDialog(context, userViewModel, isButtonLoading, displayUsername),
+                                  child: isLoading
+                                      ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              isDark ? AppColors.textPrimaryLight : Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.edit_rounded,
+                                              color: isDark
+                                                  ? AppColors.textPrimaryLight
+                                                  : AppColors.textPrimaryDark,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              "Edit Profile",
+                                              style: TextStyle(
+                                                color: isDark
+                                                    ? AppColors.textPrimaryLight
+                                                    : AppColors.textPrimaryDark,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              );
+                            },
+                          );
+                        },
                       ),
 
                       const SizedBox(height: 24),
@@ -161,45 +192,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 12),
 
                       ValueListenableBuilder<bool>(
-                          valueListenable: ThemeManager(), 
-                          builder: (context, isDark, child) {
-                            return InkWell(
-                              onTap: () {
-                                ThemeManager().toggleTheme();
-                              },
-                              borderRadius: BorderRadius.circular(8), 
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.05)
-                                      : AppColors.bgLight,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.palette, size: 20),
-                                    const SizedBox(width: 10),
-                                    const Expanded(
-                                      child: Text(
-                                        "Theme",
-                                        style: TextStyle(fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                    Icon(
-                                      isDark ? Icons.dark_mode : Icons.light_mode,
-                                      size: 20,
-                                      color: isDark ? Colors.amber[400] : Colors.orange[400], 
-                                    ),
-                                  ],
-                                ),
+                        valueListenable: ThemeManager(), 
+                        builder: (context, isDark, child) {
+                          return InkWell(
+                            onTap: () {
+                              ThemeManager().toggleTheme();
+                            },
+                            borderRadius: BorderRadius.circular(8), 
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 16,
                               ),
-                            );
-                          },
-                        ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : AppColors.bgLight,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.palette, size: 20),
+                                  const SizedBox(width: 10),
+                                  const Expanded(
+                                    child: Text(
+                                      "Theme",
+                                      style: TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  Icon(
+                                    isDark ? Icons.dark_mode : Icons.light_mode,
+                                    size: 20,
+                                    color: isDark ? Colors.amber[400] : Colors.orange[400], 
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       
                       const SizedBox(height: 10),
 
@@ -227,9 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Row(
                                   children: [
                                     const Icon(Icons.info_rounded, size: 20),
-
                                     const SizedBox(width: 10),
-
                                     const Expanded(
                                       child: Text(
                                         "App Info",
@@ -238,12 +267,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ),
                                     ),
-
                                     AnimatedRotation(
                                       turns: isExpanded ? 0.25 : 0,
-                                      duration: const Duration(
-                                        milliseconds: 250,
-                                      ),
+                                      duration: const Duration(milliseconds: 250),
                                       curve: Curves.easeInOut,
                                       child: const Icon(
                                         Icons.keyboard_arrow_right_rounded,
@@ -261,24 +287,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: isExpanded
                                   ? Container(
                                       width: double.infinity,
-                                      margin: const EdgeInsets.fromLTRB(
-                                        8,
-                                        0,
-                                        8,
-                                        12,
-                                      ),
+                                      margin: const EdgeInsets.fromLTRB(8, 0, 8, 12),
                                       padding: const EdgeInsets.all(14),
                                       decoration: BoxDecoration(
                                         color: isDark
-                                            ? Colors.white.withValues(
-                                                alpha: 0.06,
-                                              )
+                                            ? Colors.white.withValues(alpha: 0.06)
                                             : Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             "Genshin Import",
@@ -290,9 +308,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   : AppColors.textPrimaryLight,
                                             ),
                                           ),
-
                                           const SizedBox(height: 6),
-
                                           Text(
                                             "A fan-made companion app for managing artifacts, weapons, and inventories with a smooth and modern experience.",
                                             style: TextStyle(
@@ -333,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Row(
                             children: const [
                               Icon(Icons.logout_rounded, size: 20),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   "Log out",
@@ -353,6 +369,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _showEditUsernameDialog(
+    BuildContext context, 
+    UserViewModel userViewModel,
+    ValueNotifier<bool> loadingNotifier,
+    String currentUsername, 
+  ) {
+    final TextEditingController usernameController = 
+        TextEditingController(text: currentUsername);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Change Username"),
+          content: TextField(
+            controller: usernameController,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: "Input a new username",
+              labelText: "Username",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newUsername = usernameController.text.trim();
+                
+                if (newUsername.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Username cannot be null")),
+                  );
+                  return;
+                }
+
+                Navigator.pop(context); // Tutup dialog
+                loadingNotifier.value = true;
+
+                try {
+                  final result = await UserService().editProfile(newUsername);
+
+                  if (result['success'] == true && context.mounted) {
+                    userViewModel.setUsername(newUsername); 
+                    await userViewModel.refreshUsername();
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Username successfully updated")),
+                    );
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(result['message'] ?? "Fail on update profil")),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("An Error Occurred: $e")),
+                    );
+                  }
+                } finally {
+                  loadingNotifier.value = false;
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

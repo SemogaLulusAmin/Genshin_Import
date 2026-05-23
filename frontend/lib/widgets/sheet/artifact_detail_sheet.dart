@@ -68,8 +68,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Artifact berhasil dihapus!")),
           );
-          Navigator.pop(context); // Tutup Sheet
-          // Panggil refresh list jika perlu
+          Navigator.pop(context); 
+          UserViewModel.instance.triggerInventoryRefresh();
         }
       } catch (e) {
         ScaffoldMessenger.of(
@@ -339,7 +339,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     ),
                                   ),
 
-                                /// TOMBOL EDIT (Muncul kalau mode admin/bukan purchase)
                                 if (UserViewModel.instance.isAdmin == true)
                                   ElevatedButton.icon(
                                     onPressed: () async {

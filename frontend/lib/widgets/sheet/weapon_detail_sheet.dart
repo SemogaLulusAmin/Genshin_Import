@@ -72,7 +72,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(const SnackBar(content: Text("Weapon musnah!")));
-          Navigator.pop(context); // Tutup Sheet
+          Navigator.pop(context); 
+          UserViewModel.instance.triggerInventoryRefresh();
         }
       } catch (e) {
         ScaffoldMessenger.of(

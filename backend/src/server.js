@@ -6,6 +6,7 @@ import itemRoutes from "./routes/weaponRoutes.js";
 import userweapon from "./routes/userWeaponRoutes.js";
 import userartifact from "./routes/userArtifactRoutes.js";
 import artifactRoutes from "./routes/ArtifactRoutes.js";
+import userRoutes from './routes/userRoutes.js';
 import cors from "cors";
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/userWeapon", userweapon);
 app.use("/weapon", itemRoutes);
 app.use("/userArtifact", userartifact);
 app.use("/artifact", artifactRoutes);
+app.use("/users", userRoutes);
 app.listen(PORT, () => {
   console.log(`Yeah server online on http://localhost:${PORT}`);
 });

@@ -12,12 +12,19 @@ class UserViewModel extends ChangeNotifier {
   String _role = 'user'; 
   int _inventoryRefreshKey = 0;
   bool _isMoneyLoading = false;
+  int _profileRefreshKey = 0;
+
+  String _username = '';
+  bool _isEditProfileLoading = false;
+  String? _editProfileError;
 
   int get money => _money;
   String get role => _role;
   bool get isAdmin => _role.toLowerCase() == 'admin';
   int get inventoryRefreshKey => _inventoryRefreshKey;
   bool get isMoneyLoading => _isMoneyLoading;
+  int get profileRefreshKey => _profileRefreshKey;
+  String get username => _username;
 
   void setRole(String newRole) {
     _role = newRole;
@@ -29,7 +36,11 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Restored refreshMoney for your MoneyBadge widget
+  void setUsername(String newUsername) {
+    _username = newUsername;
+    notifyListeners();
+  }
+
   Future<void> refreshMoney({bool showLoading = true}) async {
     if (_isMoneyLoading) return;
 
@@ -70,8 +81,27 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refreshUsername() async {
+    try {
+      final result = await _userService.getUserData();
+      
+      if (result['success'] == true && result['username'] != null) {
+        _username = result['username'].toString();
+      }
+    } catch (e) {
+      debugPrint("Error refreshing username: $e");
+    } finally {
+      notifyListeners(); 
+    }
+  }
+
   void triggerInventoryRefresh() {
     _inventoryRefreshKey++;
+    notifyListeners();
+  }
+
+  void triggerProfileRefresh() {
+    _profileRefreshKey++;
     notifyListeners();
   }
 
@@ -83,5 +113,40 @@ class UserViewModel extends ChangeNotifier {
     _inventoryRefreshKey = 0;
     _isMoneyLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> editProfile(String newUsername) async {
+    _isEditProfileLoading = true;
+    _editProfileError = null;
+    notifyListeners(); 
+
+    try {
+      
+      final result = await UserService().editProfile(newUsername);
+
+      if (result['success'] == true) {
+
+        _username = newUsername;
+        
+        if (result['user'] != null && result['user']['money'] != null) {
+          _money = num.parse(result['user']['money'].toString()).toInt();
+        }
+
+        _isEditProfileLoading = false;
+        notifyListeners(); 
+        return true;
+      } else {
+        
+        _editProfileError = result['message'] ?? "Failed to update username";
+        _isEditProfileLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _editProfileError = "An error occured: $e";
+      _isEditProfileLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 }

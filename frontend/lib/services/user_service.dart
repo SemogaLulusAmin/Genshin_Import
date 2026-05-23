@@ -91,4 +91,54 @@ class UserService {
 
     throw Exception(result['message']?.toString() ?? 'Failed to load user');
   }
+
+Future<Map<String, dynamic>> editProfile(String newUsername) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('jwt_token');
+
+      if (token == null || token.isEmpty) {
+        return {"success": false, "message": "No token found."};
+      }
+
+      final response = await http.patch(
+        Uri.parse("$baseUrl/users/edit-profile"), 
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'username': newUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        final userData = data['user'];
+
+        if (userData is Map<String, dynamic>) {
+          return {
+            "success": true,
+            "message": data['message'] ?? "Successfully update username",
+            "user": userData,
+          };
+        }
+
+        return {
+          "success": true,
+          "message": data['message'] ?? "Successfully update username",
+        };
+      }
+
+      final Map<String, dynamic> errorData = json.decode(response.body);
+      return {
+        "success": false,
+        "message": errorData['message'] ?? "Server error: ${response.statusCode}",
+      };
+
+    } catch (e) {
+      return {"success": false, "message": "Error: $e"};
+    }
+  }
 }
