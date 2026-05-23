@@ -14,7 +14,6 @@ class WeaponEditScreen extends StatefulWidget {
 class _WeaponEditScreenState extends State<WeaponEditScreen> {
   final _formKey = GlobalKey<FormState>();
   
-  // Controller auto-fill pake data weapon lama
   late TextEditingController nameController;
   late TextEditingController typeController;
   late TextEditingController rarityController;
@@ -50,7 +49,6 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
   void _submitUpdate() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Keys ini harus sama persis dengan destructuring di Backend lu (req.body)
     final fields = {
       'name': nameController.text,
       'type': typeController.text,
@@ -71,24 +69,41 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
       );
 
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Weapon Updated!")));
-        Navigator.pop(context, true);
+        // --- INI KUNCINYA ---
+        // Kita pake Navigator.pop biasa tanpa rootNavigator biar behaviornya 
+        // sama kayak tombol back. Kita kirim 'true'.
+        Navigator.of(context).pop(true); 
+
+        // Munculin SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Weapon Updated!")),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Weapon")),
+      appBar: AppBar(
+        title: const Text("Edit Weapon"),
+        // Tombol back manual di AppBar (otomatis ada, tapi kalau mau pastiin):
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // IMAGE PREVIEW
             if (_selectedImage != null) 
                Image.network(_selectedImage!.path, height: 120) 
             else 
@@ -100,9 +115,8 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
               label: const Text("Change Image (Optional)")
             ),
             
-            // INPUT FIELDS (Semua pake TextFormField biar bebas input apa aja)
             TextFormField(controller: nameController, decoration: const InputDecoration(labelText: "Weapon Name")),
-            TextFormField(controller: typeController, decoration: const InputDecoration(labelText: "Type (e.g. Sword, Data-Structures)")),
+            TextFormField(controller: typeController, decoration: const InputDecoration(labelText: "Type")),
             TextFormField(controller: rarityController, decoration: const InputDecoration(labelText: "Rarity"), keyboardType: TextInputType.number),
             TextFormField(controller: attackController, decoration: const InputDecoration(labelText: "Base Attack"), keyboardType: TextInputType.number),
             TextFormField(controller: subStatController, decoration: const InputDecoration(labelText: "Sub Stat")),
@@ -114,8 +128,11 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
             const SizedBox(height: 25),
             ElevatedButton(
               onPressed: _submitUpdate, 
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 45)),
-              child: const Text("Save Changes"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueGrey,
+                minimumSize: const Size(double.infinity, 45)
+              ),
+              child: const Text("Save Changes", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

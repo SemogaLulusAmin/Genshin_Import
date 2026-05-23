@@ -410,7 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   return;
                 }
 
-                Navigator.pop(context); // Tutup dialog
+                Navigator.pop(context); 
                 loadingNotifier.value = true;
 
                 try {
