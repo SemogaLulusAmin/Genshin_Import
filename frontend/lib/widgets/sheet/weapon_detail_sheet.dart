@@ -39,19 +39,19 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     return int.tryParse(rarity) ?? 1;
   }
 
-  void _deleteWeapon(BuildContext context) async {
-    bool confirm = await showDialog(
+  void _deleteWeapon() async {
+    bool confirm = await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (dialogContext) => AlertDialog(
             title: const Text("Hapus Weapon?"),
             content: const Text("Weapon ini bakal ancur dari database, yakin?"),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context, false),
+                onPressed: () => Navigator.pop(dialogContext, false),
                 child: const Text("GAK JADI"),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => Navigator.pop(dialogContext, true),
                 child: const Text(
                   "YA, HAPUS",
                   style: TextStyle(color: Colors.red),
@@ -63,29 +63,26 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
         false;
 
     if (confirm) {
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      Navigator.pop(context);
+
       try {
         final success = await WeaponService().deleteWeapon(
           widget.weapon.weaponID,
         );
         
-        if (!context.mounted) return;
+        UserViewModel.instance.triggerInventoryRefresh();
 
         if (success) {
-          // Tutup modal detail
-          Navigator.pop(context); 
-          // Paksa halaman utama refresh list
-          UserViewModel.instance.triggerInventoryRefresh();
-          
-          ScaffoldMessenger.of(context).showSnackBar(
+          messenger.showSnackBar(
             const SnackBar(content: Text("Weapon musnah!")),
           );
         }
       } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: $e")),
-          );
-        }
+        messenger.showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
       }
     }
   }
@@ -229,11 +226,11 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                         ),
                                       );
                                       
-                                      if (result == true && context.mounted) {
-                                        Navigator.pop(context);
-                                        UserViewModel.instance.triggerInventoryRefresh();
-                                        print("Sheet ditutup & refresh dipicu!"); 
-                                      }
+                                       if (result == true) {
+                                         if (!context.mounted) return;
+                                         Navigator.pop(context);
+                                         UserViewModel.instance.triggerInventoryRefresh();
+                                       }
                                     },
                                     icon: const Icon(Icons.edit_note, color: Colors.white),
                                     label: const Text("Edit Weapon", style: TextStyle(color: Colors.white)),
@@ -289,7 +286,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                       if (UserViewModel.instance.isAdmin == true) ...[
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFE00707), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-                          onPressed: () => _deleteWeapon(context),
+                          onPressed: _deleteWeapon,
                           icon: const Icon(Icons.delete_outline_outlined, color: Colors.white, size: 20),
                           label: const Text("Delete Weapon", style: TextStyle(color: Colors.white, fontFamily: "HyWenhei", fontWeight: FontWeight.w700, fontSize: 15)),
                         ),

@@ -45,19 +45,19 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
     return int.tryParse(rarity) ?? 1;
   }
 
-  void _deleteArtifact(BuildContext context) async {
-    bool confirm = await showDialog(
+  void _deleteArtifact() async {
+    bool confirm = await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (dialogContext) => AlertDialog(
             title: const Text("Hapus Artifact?"),
             content: const Text("Data ini akan hilang selamanya bang."),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context, false),
+                onPressed: () => Navigator.pop(dialogContext, false),
                 child: const Text("BATAL"),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => Navigator.pop(dialogContext, true),
                 child: const Text("HAPUS", style: TextStyle(color: Colors.red)),
               ),
             ],
@@ -66,19 +66,24 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
         false;
 
     if (confirm) {
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      Navigator.pop(context);
+
       try {
         final success = await ArtifactService().deleteArtifact(
           widget.artifact.artifactID,
         );
-        if (success && context.mounted) {
-          Navigator.pop(context); 
-          UserViewModel.instance.triggerInventoryRefresh();
-          ScaffoldMessenger.of(context).showSnackBar(
+        
+        UserViewModel.instance.triggerInventoryRefresh();
+
+        if (success) {
+          messenger.showSnackBar(
             const SnackBar(content: Text("Artifact berhasil dihapus!")),
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(content: Text("Error: $e")),
         );
       }
@@ -352,7 +357,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                           ),
                                         ),
                                       );
-                                      if (result == true && context.mounted) {
+                                      if (result == true) {
+                                        if (!context.mounted) return;
                                         Navigator.pop(context);
                                         UserViewModel.instance
                                             .triggerInventoryRefresh();
@@ -468,7 +474,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                          onPressed: () => _deleteArtifact(context),
+                          onPressed: _deleteArtifact,
                           icon: const Icon(
                             Icons.delete_outline_outlined,
                             color: Colors.white,

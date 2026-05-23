@@ -118,6 +118,10 @@ router.delete('/:artifactID', authenticateToken, isAdmin, async (req, res) => {
         if (rows.length === 0) return res.status(404).json({ message: "Artifact not found" });
 
         const imageUrl = rows[0].image_url;
+
+        // Delete referencing transactions first to avoid foreign key violations
+        await pool.execute("DELETE FROM ArtifactTransaction WHERE artifactID = ?", [artifactID]);
+
         await pool.execute("DELETE FROM Artifact WHERE artifactID = ?", [artifactID]);
 
         const filePath = `./public${imageUrl}`; 

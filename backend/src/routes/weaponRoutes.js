@@ -161,6 +161,9 @@ router.delete('/:weaponID', authenticateToken, isAdmin, async (req,res) => {
 
         const imageUrl = rows[0].image_url;
 
+        // Delete referencing transactions first to avoid foreign key violations
+        await pool.execute("DELETE FROM WeaponTransaction WHERE weaponID = ?", [weaponID]);
+
         await pool.execute("DELETE FROM Weapon WHERE weaponID = ?", [weaponID]);
 
         const filePath = `./public${imageUrl}`; 
