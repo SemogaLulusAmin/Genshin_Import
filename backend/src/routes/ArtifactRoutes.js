@@ -87,11 +87,11 @@ router.put('/:artifactID', authenticateToken, isAdmin, upload.single('image'), a
         if (rows.length === 0) return res.status(404).json({ message: "Data not found" });
 
         const oldImageUrl = rows[0].image_url;
-        let finalImageUrl = oldImageUrl; // Gunakan variabel yang jelas
+        let finalImageUrl = oldImageUrl; 
 
         if (req.file) {
             finalImageUrl = `/assets/${req.file.filename}`;
-            const oldPath = `./public${oldImageUrl}`; // Pakai ./ biar path-nya benar
+            const oldPath = `./public${oldImageUrl}`; 
             if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
         }
 
