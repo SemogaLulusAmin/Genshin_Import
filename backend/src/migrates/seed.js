@@ -93,8 +93,8 @@ async function seedDB() {
 
       const query = `
                 INSERT INTO User
-                (userID, username, email, password, provider, bearer_token, money, roles)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (userID, username, email, password, provider, money, roles)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `;
 
       const values = [
@@ -103,7 +103,6 @@ async function seedDB() {
         "ayamjago@gmail.com",
         hashPassword,
         "local",
-        "9a7b501d4130b88836f02607bd1ff186721e6ff5",
         100000,
         "admin",
       ];
@@ -118,8 +117,8 @@ async function seedDB() {
 
       const query = `
                 INSERT INTO User
-                (userID, username, email, password, provider, bearer_token, money, roles)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (userID, username, email, password, provider, money, roles)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `;
 
       const values = [
@@ -128,7 +127,6 @@ async function seedDB() {
         "maltzu@gmail.com",
         hashPassword,
         "local",
-        "0aa1fde3ce0399f87d0b0805b2dac83a6af6a309",
         10000,
         "user",
       ];

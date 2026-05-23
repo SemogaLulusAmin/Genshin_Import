@@ -9,7 +9,6 @@ async function initDB() {
                 email VARCHAR(200) NOT NULL UNIQUE,
                 password VARCHAR(255),
                 provider ENUM('local','google') NOT NULL,
-                bearer_token VARCHAR(255),
                 money DECIMAL(15, 4) DEFAULT 0,
                 roles ENUM('user', 'admin') DEFAULT 'user',
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

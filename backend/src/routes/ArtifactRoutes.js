@@ -71,7 +71,7 @@ router.post('/', authenticateToken, isAdmin, upload.single('image'), async (req,
         const values = [artifactID, name, set_name, max_rarity, stock, imageUrl, price, piece_bonus_2, piece_bonus_4];
         await pool.execute(query, values);
 
-        res.status(201).json({ message: "Success insert a new artifact" }); // Pakai 201 Created
+        res.status(201).json({ message: "Success insert a new artifact" }); 
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ message: error.message });
@@ -101,11 +101,10 @@ router.put('/:artifactID', authenticateToken, isAdmin, upload.single('image'), a
             WHERE artifactID = ? 
         `;
 
-        // FIX 2: Pakai finalImageUrl, bukan image_url dari req.body
         const values = [name, set_name, max_rarity, stock, finalImageUrl, price, piece_bonus_2, piece_bonus_4, artifactID];
 
         await pool.execute(query, values);
-        res.status(200).json({ message: "Artifact updated successfully" }); // FIX 3: Kirim JSON
+        res.status(200).json({ message: "Artifact updated successfully" }); 
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ message: error.message });
@@ -124,7 +123,7 @@ router.delete('/:artifactID', authenticateToken, isAdmin, async (req, res) => {
         const filePath = `./public${imageUrl}`; 
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-        res.status(200).json({ message: "Artifact deleted" }); // FIX 3: Kirim JSON
+        res.status(200).json({ message: "Artifact deleted" }); 
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ message: error.message });

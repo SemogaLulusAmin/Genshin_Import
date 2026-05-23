@@ -50,37 +50,29 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/register/google', async (req, res) => {
-    // Sekarang kita terima accessToken dari Flutter
     const { accessToken } = req.body; 
 
     try {
-        // 1. VERIFIKASI KE GOOGLE API (Cara Manual tapi Ampuh)
         const googleResponse = await axios.get(
             `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`
         );
         
         const payload = googleResponse.data;
         
-        // Data asli dari Google
         const email = payload.email;
         const username = payload.name;
 
         if (!email) {
-            return res.status(401).json({ success: false, message: "Token tidak valid" });
+            return res.status(401).json({ success: false, message: "Invalid token!" });
         }
 
-        // --- SISA KODENYA SAMA KAYAK PUNYA ABANG (CEK USER DI MYSQL) ---
         const [rows] = await pool.execute("SELECT * FROM User WHERE email = ?", [email]);
         let user = rows[0];
-        const newBearerToken = crypto.randomBytes(20).toString('hex');
 
-        if (user) {
-            await pool.execute("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
-            user.bearer_token = newBearerToken;
-        } else {
+        if (!user) {
             const userID = crypto.randomUUID();
-            const query = `INSERT INTO User (userID, username, email, password, provider, money, roles, bearer_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            const values = [userID, username, email, null, "google", 10000, "user", newBearerToken];
+            const query = `INSERT INTO User (userID, username, email, password, provider, money, roles) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            const values = [userID, username, email, null, "google", 10000, "user"];
             await pool.execute(query, values);
             const [newUserRows] = await pool.execute("SELECT * FROM User WHERE userID = ?", [userID]);
             user = newUserRows[0];
@@ -100,7 +92,7 @@ router.post('/register/google', async (req, res) => {
 
     } catch (error) {
         console.error("Auth Error:", error.message);
-        res.status(401).json({ success: false, message: "Gagal verifikasi ke Google" });
+        res.status(401).json({ success: false, message: "Fail verify to google" });
     }
 });
 
@@ -125,15 +117,11 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: "Wrong password"});
         }
 
-        const newBearerToken = crypto.randomBytes(20).toString('hex');
-
         const tokenJWT = jwt.sign(
             { id: user.userID, email: user.email }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' } 
         );
-
-        await pool.execute("UPDATE User SET bearer_token = ? WHERE userID = ?", [newBearerToken, user.userID]);
 
         res.status(200).json({
             token: tokenJWT,       
@@ -151,17 +139,6 @@ router.post('/login', async (req, res) => {
     }
 
 })
-
-router.post('/logout', async (req, res) => {
-    try {
-        const { userID } = req.body;
-        await pool.execute("UPDATE User SET bearer_token = NULL WHERE userID = ?", [userID]);
-        res.json({ message: "Logged out!" });
-    } catch (error){
-        console.error(error.message);
-        res.status(503);
-    }
-});
 
 router.get('/:userID', async (req, res) => {
     try{
@@ -181,5 +158,7 @@ router.get('/:userID', async (req, res) => {
         })
     }
 })
+
+
 
 export default router;

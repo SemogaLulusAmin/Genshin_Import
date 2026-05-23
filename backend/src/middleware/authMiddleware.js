@@ -21,12 +21,12 @@ const authenticateToken = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const [rows] = await pool.execute(
-            "SELECT userID, username, roles, bearer_token FROM User WHERE userID = ?", 
+            "SELECT userID, username, roles FROM User WHERE userID = ?", 
             [decoded.id]
         );
         const user = rows[0];
 
-        if (!user || !user.bearer_token) {
+        if (!user) {
             return res.status(401).json({ message: "Your session has ended, please re-login"});
         }
 
