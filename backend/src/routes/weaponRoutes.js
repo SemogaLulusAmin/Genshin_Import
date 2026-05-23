@@ -95,7 +95,7 @@ router.post('/',authenticateToken, isAdmin, upload.single('image'), async (req,r
 
     } catch (error){
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -141,11 +141,11 @@ router.put('/:weaponID', authenticateToken, isAdmin, upload.single('image'), asy
 
         await pool.execute(query, values);
 
-        res.status(200);
+        res.status(200).json({ message: "Weapon updated successfully" });
 
     } catch (error){
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -169,11 +169,11 @@ router.delete('/:weaponID', authenticateToken, isAdmin, async (req,res) => {
             fs.unlinkSync(filePath); 
         }
 
-        res.status(200);
+        res.status(200).json({ message: "Weapon deleted successfully" });
 
     } catch (error){
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
 })
 

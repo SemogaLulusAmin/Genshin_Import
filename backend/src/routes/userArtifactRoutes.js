@@ -44,7 +44,7 @@ router.post('/buy/:artifactID',authenticateToken, async (req,res) => {
     } catch (error){
         await connection.rollback();
         console.log(error.message);
-        res.status(500);
+        res.status(500).json({ message: error.message });
     } finally {
         connection.release();
     }

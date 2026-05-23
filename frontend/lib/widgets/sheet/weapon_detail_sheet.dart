@@ -229,11 +229,9 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                         ),
                                       );
                                       
-                                      if (context.mounted) {
+                                      if (result == true && context.mounted) {
                                         Navigator.pop(context);
-                                        
                                         UserViewModel.instance.triggerInventoryRefresh();
-                                        
                                         print("Sheet ditutup & refresh dipicu!"); 
                                       }
                                     },
