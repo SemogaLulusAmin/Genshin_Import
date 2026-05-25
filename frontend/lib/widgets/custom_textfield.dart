@@ -20,13 +20,12 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  // 1. Buat FocusNode untuk memantau status 'Selected'
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    // Re-render saat status focus berubah
+
     _focusNode.addListener(() {
       setState(() {});
     });
@@ -48,7 +47,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return TextFormField(
       controller: widget.controller,
-      focusNode: _focusNode, // 3. Pasang FocusNode-nya
+      focusNode: _focusNode, 
       obscureText: widget.isPassword,
       style: TextStyle(
         color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
@@ -56,8 +55,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
       ),
       decoration: InputDecoration(
         labelText: widget.label,
-
-        // Warna label saat diam (di tengah)
         labelStyle: TextStyle(
           color: isDark
               ? AppColors.textSecondaryDark
@@ -65,10 +62,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           fontSize: 15,
         ),
 
-        // 4. KUNCI: Warna label saat melayang (Floating)
         floatingLabelStyle: TextStyle(
           color:
-              activeLabelColor, // Menggunakan warna dinamis hasil deteksi FocusNode
+              activeLabelColor, 
           fontWeight: _focusNode.hasFocus ? FontWeight.w600 : FontWeight.w500,
           fontSize: 15,
         ),

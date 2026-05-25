@@ -57,12 +57,11 @@ class CustomFormField extends StatelessWidget {
 
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(
-            color: AppColors.primary, // warna saat aktif
+            color: AppColors.primary, 
             width: 2,
           ),
         ),
 
-        /// Optional styling
         labelStyle: TextStyle(
           color: isDark
               ? AppColors.textPrimaryDark.withValues(alpha: 0.8)

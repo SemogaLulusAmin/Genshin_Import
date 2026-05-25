@@ -95,7 +95,7 @@ class WeaponCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(
                           0.3,
-                        ), // Semi transparan gelap
+                        ), 
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

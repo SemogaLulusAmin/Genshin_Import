@@ -151,12 +151,12 @@ class ArtifactCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    artifact.setName, // Menggunakan Set Name sebagai sub-info
+                    artifact.setName, 
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize:
-                          11, // Sedikit lebih kecil karena set name biasanya panjang
+                          11, 
                       fontFamily: "HyWenhei",
                       fontWeight: FontWeight.w400,
                       color: isDark

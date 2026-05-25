@@ -95,10 +95,9 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 16),
 
-            // Checkbox disini
             Row(
               crossAxisAlignment: CrossAxisAlignment
-                  .start, // Agar teks panjang tetap sejajar atas dengan checkbox
+                  .start, 
               children: [
                 SizedBox(
                   height: 24,
@@ -108,7 +107,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     child: Checkbox(
                       value: _isChecked,
                       activeColor:
-                          AppColors.primary, // Sesuaikan dengan tema kamu
+                          AppColors.primary, 
                       checkColor: isDark
                           ? AppColors.textPrimaryLight
                           : AppColors.textPrimaryDark,
@@ -145,7 +144,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 ? AppColors.primary
                                 : AppColors.secondary,
                           ),
-                          // Tambahkan recognizer: TapGestureRecognizer() di sini jika ingin link bisa diklik
+                          
                         ),
                         const TextSpan(text: " and "),
                         TextSpan(
@@ -166,7 +165,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
             const SizedBox(height: 32),
 
-            // Submit Button
             AnimatedOpacity(
               duration: const Duration(milliseconds: 200),
               opacity: _isChecked ? 1.0 : (isDark ? 0.4 : 0.2),

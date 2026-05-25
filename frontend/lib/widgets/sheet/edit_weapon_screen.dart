@@ -69,12 +69,8 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
       );
 
       if (success && mounted) {
-        // --- INI KUNCINYA ---
-        // Kita pake Navigator.pop biasa tanpa rootNavigator biar behaviornya 
-        // sama kayak tombol back. Kita kirim 'true'.
         Navigator.of(context).pop(true); 
 
-        // Munculin SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Weapon Updated!")),
         );
@@ -93,7 +89,6 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Weapon"),
-        // Tombol back manual di AppBar (otomatis ada, tapi kalau mau pastiin):
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),

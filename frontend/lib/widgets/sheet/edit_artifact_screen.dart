@@ -14,7 +14,6 @@ class ArtifactEditScreen extends StatefulWidget {
 class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controller diisi pake data artifact yang mau diedit (Auto-fill)
   late TextEditingController nameController;
   late TextEditingController setController;
   late TextEditingController rarityController;
@@ -50,7 +49,6 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
   void _submitUpdate() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Data yang dikirim harus sama kayak destructuring di backend lu
     final fields = {
       'name': nameController.text,
       'set_name': setController.text,
@@ -66,14 +64,14 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
         widget.artifact.artifactID,
         fields,
         imageFile:
-            _selectedImage, // Ini opsional, kalau kosong backend lu pake image lama
+            _selectedImage, 
       );
 
       if (success && mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text("Updated!")));
-        Navigator.pop(context, true); // Balik sambil kasih info sukses
+        Navigator.pop(context, true); 
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -95,12 +93,12 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
               Image.network(
                 _selectedImage!.path,
                 height: 100,
-              ) // Preview image baru (Web)
+              ) 
             else
               Image.network(
                 widget.artifact.imageUrl,
                 height: 100,
-              ), // Preview image lama
+              ), 
 
             TextButton.icon(
               onPressed: _pickImage,

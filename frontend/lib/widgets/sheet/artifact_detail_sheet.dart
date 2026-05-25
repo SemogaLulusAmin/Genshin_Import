@@ -24,7 +24,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
   @override
   void initState() {
     super.initState();
-    // Safety check: If out of stock, initial quantity must be 0
     quantity = widget.artifact.stock > 0 ? 1 : 0;
   }
 

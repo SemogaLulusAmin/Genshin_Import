@@ -119,7 +119,6 @@ router.delete('/:artifactID', authenticateToken, isAdmin, async (req, res) => {
 
         const imageUrl = rows[0].image_url;
 
-        // Delete referencing transactions first to avoid foreign key violations
         await pool.execute("DELETE FROM ArtifactTransaction WHERE artifactID = ?", [artifactID]);
 
         await pool.execute("DELETE FROM Artifact WHERE artifactID = ?", [artifactID]);

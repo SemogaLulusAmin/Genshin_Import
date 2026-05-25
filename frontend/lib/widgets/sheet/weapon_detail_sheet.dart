@@ -218,7 +218,6 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                 if (UserViewModel.instance.isAdmin == true)
                                   ElevatedButton.icon(
                                     onPressed: () async {
-                                      // 1. PINDAH KE EDIT DAN TUNGGU RESULT
                                       final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
