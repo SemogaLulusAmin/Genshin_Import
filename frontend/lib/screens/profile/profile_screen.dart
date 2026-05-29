@@ -33,8 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return const Center(child: Text("User session is not loaded yet"));
           }
 
-          final displayUsername = userViewModel.username.isNotEmpty 
-              ? userViewModel.username 
+          final displayUsername = userViewModel.username.isNotEmpty
+              ? userViewModel.username
               : user.username;
 
           return SingleChildScrollView(
@@ -97,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        displayUsername, 
+                        displayUsername,
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -131,27 +131,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     backgroundColor: isDark
                                         ? Colors.white
                                         : AppColors.textPrimaryLight,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(80),
                                     ),
                                   ),
-                                  onPressed: isLoading 
-                                      ? null 
-                                      : () => _showEditUsernameDialog(context, userViewModel, isButtonLoading, displayUsername),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => _showEditUsernameDialog(
+                                          context,
+                                          userViewModel,
+                                          isButtonLoading,
+                                          displayUsername,
+                                        ),
                                   child: isLoading
                                       ? SizedBox(
-                                          height: 20,
+                                          height: 16,
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(
-                                              isDark ? AppColors.textPrimaryLight : Colors.white,
-                                            ),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  isDark
+                                                      ? AppColors
+                                                            .textPrimaryLight
+                                                      : Colors.white,
+                                                ),
                                           ),
                                         )
                                       : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               Icons.edit_rounded,
@@ -192,46 +204,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 12),
 
                       ValueListenableBuilder<bool>(
-                        valueListenable: ThemeManager(), 
+                        valueListenable: ThemeManager(),
                         builder: (context, isDark, child) {
-                          return InkWell(
-                            onTap: () {
-                              ThemeManager().toggleTheme();
-                            },
-                            borderRadius: BorderRadius.circular(8), 
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.05)
-                                    : AppColors.bgLight,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.palette, size: 20),
-                                  const SizedBox(width: 10),
-                                  const Expanded(
-                                    child: Text(
-                                      "Theme",
-                                      style: TextStyle(fontWeight: FontWeight.w500),
-                                    ),
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : AppColors.bgLight,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 250),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 16,
                                   ),
-                                  Icon(
+                                  child: Icon(
                                     isDark ? Icons.dark_mode : Icons.light_mode,
                                     size: 20,
-                                    color: isDark ? Colors.amber[400] : Colors.orange[400], 
+                                    color: isDark
+                                        ? AppColors.textPrimaryDark
+                                        : AppColors.textPrimaryLight,
                                   ),
-                                ],
-                              ),
+                                ),
+
+                                const Expanded(
+                                  child: Text(
+                                    "Theme",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+
+                                Transform.scale(
+                                  scale: 0.9,
+                                  child: Switch(
+                                    value: isDark,
+                                    onChanged: (value) {
+                                      ThemeManager().toggleTheme();
+                                    },
+                                    activeColor: Colors.white,
+                                    activeTrackColor: AppColors.secondary,
+                                    inactiveThumbColor: Colors.white,
+                                    inactiveTrackColor: Colors.grey.shade300,
+
+                                    trackOutlineColor: WidgetStateProperty.all(
+                                      Colors.transparent,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
                       ),
-                      
+
                       const SizedBox(height: 10),
 
                       /// APP INFO
@@ -269,7 +300,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     AnimatedRotation(
                                       turns: isExpanded ? 0.25 : 0,
-                                      duration: const Duration(milliseconds: 250),
+                                      duration: const Duration(
+                                        milliseconds: 250,
+                                      ),
                                       curve: Curves.easeInOut,
                                       child: const Icon(
                                         Icons.keyboard_arrow_right_rounded,
@@ -287,16 +320,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: isExpanded
                                   ? Container(
                                       width: double.infinity,
-                                      margin: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+                                      margin: const EdgeInsets.fromLTRB(
+                                        8,
+                                        0,
+                                        8,
+                                        12,
+                                      ),
                                       padding: const EdgeInsets.all(14),
                                       decoration: BoxDecoration(
                                         color: isDark
-                                            ? Colors.white.withValues(alpha: 0.06)
+                                            ? Colors.white.withValues(
+                                                alpha: 0.06,
+                                              )
                                             : Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             "Genshin Import",
@@ -373,36 +414,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showEditUsernameDialog(
-    BuildContext context, 
+    BuildContext context,
     UserViewModel userViewModel,
     ValueNotifier<bool> loadingNotifier,
-    String currentUsername, 
+    String currentUsername,
   ) {
-    final TextEditingController usernameController = 
-        TextEditingController(text: currentUsername);
+    final TextEditingController usernameController = TextEditingController(
+      text: currentUsername,
+    );
 
     showDialog(
       context: context,
       builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
         return AlertDialog(
-          title: const Text("Change Username"),
+          backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(
+            "Change Username",
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimaryLight,
+            ),
+          ),
           content: TextField(
             controller: usernameController,
             autofocus: true,
-            decoration: const InputDecoration(
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimaryLight,
+            ),
+            decoration: InputDecoration(
               hintText: "Input a new username",
               labelText: "Username",
+              labelStyle: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryLight.withValues(alpha: 0.8)
+                    : AppColors.textSecondaryLight,
+              ),
+              hintStyle: TextStyle(
+                color: isDark ? Colors.white30 : Colors.grey.shade400,
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: isDark ? Colors.white24 : Colors.grey.shade300,
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  width: 2,
+                ),
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? AppColors.textSecondaryLight
+                      : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                ),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimaryLight,
+                foregroundColor: isDark
+                    ? AppColors.textPrimaryLight
+                    : Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(60),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 6,
+                ),
+              ),
               onPressed: () async {
                 final newUsername = usernameController.text.trim();
-                
+
                 if (newUsername.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Username cannot be null")),
@@ -410,22 +517,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   return;
                 }
 
-                Navigator.pop(context); 
+                Navigator.pop(context);
                 loadingNotifier.value = true;
 
                 try {
                   final result = await UserService().editProfile(newUsername);
 
                   if (result['success'] == true && context.mounted) {
-                    userViewModel.setUsername(newUsername); 
+                    userViewModel.setUsername(newUsername);
                     await userViewModel.refreshUsername();
-                    
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Username successfully updated")),
+                      const SnackBar(
+                        content: Text("Username successfully updated"),
+                      ),
                     );
                   } else if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(result['message'] ?? "Fail on update profil")),
+                      SnackBar(
+                        content: Text(
+                          result['message'] ?? "Fail on update profil",
+                        ),
+                      ),
                     );
                   }
                 } catch (e) {
@@ -438,7 +551,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   loadingNotifier.value = false;
                 }
               },
-              child: const Text("Save"),
+              child: const Text(
+                "Save",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         );
