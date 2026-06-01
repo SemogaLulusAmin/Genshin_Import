@@ -51,7 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         image: DecorationImage(
                           image: AssetImage(
                             isDark
-                                ? 'assets/images/Background_Dark.jpg'
+                                ? 'assets/images/Background_Dark.webp'
                                 : 'assets/images/Background_Light.jpg',
                           ),
                           fit: BoxFit.cover,
