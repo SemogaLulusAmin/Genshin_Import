@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
+import 'package:frontend/widgets/app_message_dialog.dart';
 import '../../widgets/custom_form_field.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -49,10 +50,18 @@ class _RegisterFormState extends State<RegisterForm> {
     _authViewModel.clearErrorMessage();
   }
 
-  void _showMessage(String message, Color color) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  Future<void> _showMessage(String message, Color color) {
+    return showAppMessageDialog(
+      context: context,
+      title: 'Register Failed',
+      message: message,
+      confirmText: 'Oke',
+      icon: Icons.error_outline_outlined,
+      iconColor: color,
+    );
+    // ScaffoldMessenger.of(
+    //   context,
+    // ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
   }
 
   @override
@@ -96,8 +105,7 @@ class _RegisterFormState extends State<RegisterForm> {
             const SizedBox(height: 16),
 
             Row(
-              crossAxisAlignment: CrossAxisAlignment
-                  .start, 
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 24,
@@ -106,8 +114,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     scale: 0.9,
                     child: Checkbox(
                       value: _isChecked,
-                      activeColor:
-                          AppColors.primary, 
+                      activeColor: AppColors.primary,
                       checkColor: isDark
                           ? AppColors.textPrimaryLight
                           : AppColors.textPrimaryDark,
@@ -144,7 +151,6 @@ class _RegisterFormState extends State<RegisterForm> {
                                 ? AppColors.primary
                                 : AppColors.secondary,
                           ),
-                          
                         ),
                         const TextSpan(text: " and "),
                         TextSpan(

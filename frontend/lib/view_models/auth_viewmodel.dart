@@ -31,10 +31,33 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoggedIn => _currentUser != null;
 
   // --- UI State Management Methods ---
-  void clearNameError() { if (_nameError != null) { _nameError = null; notifyListeners(); } }
-  void clearEmailError() { if (_emailError != null) { _emailError = null; notifyListeners(); } }
-  void clearPasswordError() { if (_passwordError != null) { _passwordError = null; notifyListeners(); } }
-  void clearErrorMessage() { if (_errorMessage != null) { _errorMessage = null; notifyListeners(); } }
+  void clearNameError() {
+    if (_nameError != null) {
+      _nameError = null;
+      notifyListeners();
+    }
+  }
+
+  void clearEmailError() {
+    if (_emailError != null) {
+      _emailError = null;
+      notifyListeners();
+    }
+  }
+
+  void clearPasswordError() {
+    if (_passwordError != null) {
+      _passwordError = null;
+      notifyListeners();
+    }
+  }
+
+  void clearErrorMessage() {
+    if (_errorMessage != null) {
+      _errorMessage = null;
+      notifyListeners();
+    }
+  }
 
   // --- Session Management ---
   Future<void> bootstrapSession() async {
@@ -106,8 +129,20 @@ class AuthViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final result = await _authService.register(trimmedName, trimmedEmail, password);
+    final result = await _authService.register(
+      trimmedName,
+      trimmedEmail,
+      password,
+    );
     if (result['success'] != true) {
+      if (result['message'] !=
+          'Failed to register. Please check your connection.') {
+        _isLoading = false;
+        _errorMessage =
+            'This email is already registered. Please use a different email or log in to your account.';
+        notifyListeners();
+        return false;
+      }
       _isLoading = false;
       _errorMessage = result['message'];
       notifyListeners();
@@ -173,12 +208,18 @@ class AuthViewModel extends ChangeNotifier {
   Future<UserModel?> _resolveUserFromResult(Map<String, dynamic> result) async {
     final userJson = result['user'];
     if (userJson is Map<String, dynamic>) return UserModel.fromJson(userJson);
-    try { return await _userService.getCurrentUser(); } catch (_) { return null; }
+    try {
+      return await _userService.getCurrentUser();
+    } catch (_) {
+      return null;
+    }
   }
 
   bool _validateLoginFields(String email, String password) {
-    if (email.isEmpty) _emailError = "Email is required";
-    else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) _emailError = "Invalid email";
+    if (email.isEmpty)
+      _emailError = "Email is required";
+    else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email))
+      _emailError = "Invalid email";
     if (password.isEmpty) _passwordError = "Password is required";
     return _emailError == null && _passwordError == null;
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/view_models/auth_viewmodel.dart';
+import 'package:frontend/widgets/app_message_dialog.dart';
 import '../../widgets/custom_form_field.dart';
 
 class LoginForm extends StatefulWidget {
@@ -50,24 +51,32 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Future<void> _showLoginErrorDialog(String message) {
-    return showDialog<void>(
+    return showAppMessageDialog(
       context: context,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-
-        return AlertDialog(
-          backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-          title: const Text("Login Failed"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Oke"),
-            ),
-          ],
-        );
-      },
+      title: 'Login Failed',
+      message: message,
+      confirmText: 'Oke',
+      icon: Icons.error_outline_outlined,
+      iconColor: Colors.red,
     );
+    // return showDialog<void>(
+    //   context: context,
+    //   builder: (context) {
+    //     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    //     return AlertDialog(
+    //       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+    //       title: const Text("Login Failed"),
+    //       content: Text(message),
+    //       actions: [
+    //         TextButton(
+    //           onPressed: () => Navigator.of(context).pop(),
+    //           child: const Text("Oke"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   @override
