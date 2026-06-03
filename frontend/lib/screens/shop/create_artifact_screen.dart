@@ -36,7 +36,7 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
     // 1. Pick the image from gallery
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70, 
+      imageQuality: 70,
     );
 
     if (image != null) {
@@ -45,8 +45,8 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
 
       // 3. Update state
       setState(() {
-        _imageBytes = bytes; 
-        _pickedFile = image; 
+        _imageBytes = bytes;
+        _pickedFile = image;
       });
     }
   }
@@ -78,7 +78,10 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
       };
 
       // 4. Call the Service
-      final success = await ArtifactService().createArtifact(fields, _pickedFile!);
+      final success = await ArtifactService().createArtifact(
+        fields,
+        _pickedFile!,
+      );
 
       if (success) {
         UserViewModel.instance.triggerInventoryRefresh();
@@ -114,8 +117,10 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : Colors.white,
       appBar: AppBar(
-        title: const Text("CREATE AN ARTIFACT",
-            style: TextStyle(fontFamily: "HyWenhei", letterSpacing: 1.2)),
+        title: const Text(
+          "CREATE ARTIFACT",
+          style: TextStyle(fontFamily: "HyWenhei", letterSpacing: 1.2),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -138,7 +143,8 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
                 label: "SET NAME",
                 controller: _setController,
                 hintText: "e.g. Viridescent Venerer",
-                validator: (val) => val!.isEmpty ? "Set name is required" : null,
+                validator: (val) =>
+                    val!.isEmpty ? "Set name is required" : null,
               ),
               const SizedBox(height: 16),
               Row(
@@ -169,9 +175,13 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
                 validator: (val) => val!.isEmpty ? "Price is required" : null,
               ),
               const SizedBox(height: 25),
-              const Text("SET BONUSES",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: AppColors.primary)),
+              const Text(
+                "SET BONUSES",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
               const SizedBox(height: 10),
               CustomFormField(
                 label: "2-PIECE BONUS",
@@ -195,15 +205,19 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("CONFIRM CREATE",
+                      : const Text(
+                          "CONFIRM CREATE",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -234,8 +248,11 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo_outlined,
-                      color: AppColors.primary, size: 40),
+                  Icon(
+                    Icons.add_a_photo_outlined,
+                    color: AppColors.primary,
+                    size: 40,
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     "UPLOAD IMAGE",
