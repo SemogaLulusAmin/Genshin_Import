@@ -3,7 +3,7 @@ import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
 import '../../view_models/user_viewmodel.dart';
-import 'edit_weapon_screen.dart';
+import '../../screens/shop/edit_weapon_screen.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;

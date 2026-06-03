@@ -3,7 +3,7 @@ import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
-import 'edit_artifact_screen.dart';
+import '../../screens/shop/edit_artifact_screen.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
