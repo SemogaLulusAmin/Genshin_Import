@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_button.dart';
+import 'package:frontend/widgets/custom_input_field.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/weapon_model.dart';
 import '../../services/weapon_service.dart';
@@ -122,62 +124,66 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
               label: const Text("Change Image (Optional)"),
             ),
 
-            TextFormField(
+            CustomInputField(
+              label: 'Weapon Name',
+              hintText: 'Weapon Name',
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Weapon Name"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Weapon Type',
+              hintText: 'Weapon Type',
               controller: typeController,
-              decoration: const InputDecoration(labelText: "Type"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Rarity',
+              hintText: 'Rarity',
               controller: rarityController,
-              decoration: const InputDecoration(labelText: "Rarity"),
-              keyboardType: TextInputType.number,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Base Attack',
+              hintText: 'Base Attack',
               controller: attackController,
-              decoration: const InputDecoration(labelText: "Base Attack"),
-              keyboardType: TextInputType.number,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Sub Stat',
+              hintText: 'Sub Stat',
               controller: subStatController,
-              decoration: const InputDecoration(labelText: "Sub Stat"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Passive Name',
+              hintText: 'Passive Name',
               controller: passiveNameController,
-              decoration: const InputDecoration(labelText: "Passive Name"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Passive Description',
+              hintText: 'Passive Description',
               controller: passiveDescController,
-              decoration: const InputDecoration(
-                labelText: "Passive Description",
-              ),
               maxLines: 2,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Price',
+              hintText: 'Price',
               controller: priceController,
-              decoration: const InputDecoration(labelText: "Price"),
               keyboardType: TextInputType.number,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Stock',
+              hintText: 'Stock',
               controller: stockController,
-              decoration: const InputDecoration(labelText: "Stock"),
               keyboardType: TextInputType.number,
             ),
 
             const SizedBox(height: 25),
-            ElevatedButton(
-              onPressed: _submitUpdate,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,
-                minimumSize: const Size(double.infinity, 45),
-              ),
-              child: const Text(
-                "Save Changes",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+
+            CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
           ],
         ),
       ),
