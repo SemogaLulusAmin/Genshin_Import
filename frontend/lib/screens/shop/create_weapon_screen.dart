@@ -86,7 +86,7 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
         UserViewModel.instance.triggerInventoryRefresh();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Weapon successfully forged!")),
+            const SnackBar(content: Text("Weapon successfully created!")),
           );
           Navigator.pop(context);
         }
@@ -108,7 +108,7 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
       backgroundColor: isDark ? AppColors.bgDark : Colors.white,
       appBar: AppBar(
         title: const Text(
-          "FORGE WEAPON",
+          "CREATE WEAPON",
           style: TextStyle(fontFamily: "HyWenhei"),
         ),
         centerTitle: true,
@@ -215,7 +215,7 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                          "CONFIRM FORGE",
+                          "CONFIRM CREATE",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
