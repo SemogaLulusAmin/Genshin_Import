@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_button.dart';
+import 'package:frontend/widgets/custom_input_field.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
@@ -63,15 +65,14 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
       final success = await ArtifactService().updateArtifact(
         widget.artifact.artifactID,
         fields,
-        imageFile:
-            _selectedImage, 
+        imageFile: _selectedImage,
       );
 
       if (success && mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text("Updated!")));
-        Navigator.pop(context, true); 
+        Navigator.pop(context, true);
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -90,15 +91,9 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             if (_selectedImage != null)
-              Image.network(
-                _selectedImage!.path,
-                height: 100,
-              ) 
+              Image.network(_selectedImage!.path, height: 100)
             else
-              Image.network(
-                widget.artifact.imageUrl,
-                height: 100,
-              ), 
+              Image.network(widget.artifact.imageUrl, height: 100),
 
             TextButton.icon(
               onPressed: _pickImage,
@@ -106,42 +101,53 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
               label: const Text("Change Image (Optional)"),
             ),
 
-            TextFormField(
+            CustomInputField(
+              label: 'Artifact Name',
+              hintText: 'Artifact Name',
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Set Name',
+              hintText: 'Set Name',
               controller: setController,
-              decoration: const InputDecoration(labelText: "Set Name"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Max Rarity',
+              hintText: 'Max Rarity',
               controller: rarityController,
-              decoration: const InputDecoration(labelText: "Max Rarity"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Stock',
+              hintText: 'Stock',
               controller: stockController,
-              decoration: const InputDecoration(labelText: "Stock"),
               keyboardType: TextInputType.number,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: 'Price',
+              hintText: 'Price',
               controller: priceController,
-              decoration: const InputDecoration(labelText: "Price"),
               keyboardType: TextInputType.number,
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: '2-Piece Bonus',
+              hintText: 'The effect',
               controller: bonus2Controller,
-              decoration: const InputDecoration(labelText: "2-Piece Bonus"),
             ),
-            TextFormField(
+
+            CustomInputField(
+              label: '4-Piece Bonus',
+              hintText: 'The effect',
               controller: bonus4Controller,
-              decoration: const InputDecoration(labelText: "4-Piece Bonus"),
             ),
 
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitUpdate,
-              child: const Text("Save Changes"),
-            ),
+
+            CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
           ],
         ),
       ),
