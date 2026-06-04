@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
 import 'money_badge.dart';
 
@@ -32,7 +33,7 @@ class ScreenHeader extends StatelessWidget {
           ),
 
           // Money Badge
-          const MoneyBadge(),
+          if (!UserViewModel.instance.isAdmin) const MoneyBadge(),
         ],
       ),
     );
