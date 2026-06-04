@@ -18,16 +18,17 @@ class ShopScreen extends StatefulWidget {
   State<ShopScreen> createState() => _ShopScreenState();
 }
 
-class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateMixin {
+class _ShopScreenState extends State<ShopScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    // DefaultTabController is removed in favor of this managed controller 
+    // DefaultTabController is removed in favor of this managed controller
     // so the FloatingActionButton can listen to index changes.
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // This ensures the FAB updates its text/icon when you swipe tabs
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -53,9 +54,9 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
 
         return Scaffold(
           backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
-          
+
           // --- DYNAMIC FLOATING ACTION BUTTON ---
-          floatingActionButton: isAdmin 
+          floatingActionButton: isAdmin
               ? FloatingActionButton.extended(
                   onPressed: () {
                     if (_tabController.index == 0) {
@@ -65,17 +66,13 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                     }
                   },
                   backgroundColor: AppColors.primary,
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 24
-                  ),
+                  icon: Icon(Icons.add, color: Colors.white, size: 24),
                   label: Text(
-                    _tabController.index == 0 
-                        ? "CREATE WEAPON" 
+                    _tabController.index == 0
+                        ? "CREATE WEAPON"
                         : "CREATE ARTIFACT",
                     style: const TextStyle(
-                      color: Colors.white, 
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontFamily: "HyWenhei",
                     ),
@@ -90,14 +87,16 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                 const ScreenHeader(title: "Shop"),
 
                 /// TAB BAR
-/// TAB BAR
+                /// TAB BAR
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TabBar(
                     controller: _tabController,
                     dividerColor: Colors.transparent,
                     indicatorColor: AppColors.primary,
-                    labelColor: isDark ? Colors.white : AppColors.textPrimaryLight,
+                    labelColor: isDark
+                        ? Colors.white
+                        : AppColors.textPrimaryLight,
                     unselectedLabelColor: Colors.grey,
                     labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600,
@@ -137,10 +136,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children: [
-                      _buildWeaponsTab(),
-                      _buildArtifactsTab(),
-                    ],
+                    children: [_buildWeaponsTab(), _buildArtifactsTab()],
                   ),
                 ),
               ],
@@ -152,6 +148,8 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildWeaponsTab() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 96;
+
     return FutureBuilder<List<Weapon>>(
       // Using UserViewModel.instance.inventoryRefreshKey as a trigger to reload
       key: ValueKey(UserViewModel.instance.inventoryRefreshKey),
@@ -166,7 +164,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
 
         final weapons = snapshot.data ?? [];
         return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 80), // Extra bottom padding for FAB
+          padding: EdgeInsets.fromLTRB(12, 8, 12, bottomPadding),
           itemCount: weapons.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -181,6 +179,8 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildArtifactsTab() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 96;
+
     return FutureBuilder<List<Artifact>>(
       key: ValueKey(UserViewModel.instance.inventoryRefreshKey),
       future: ArtifactService().getArtifacts(),
@@ -194,7 +194,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
 
         final artifacts = snapshot.data ?? [];
         return GridView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 80), // Extra bottom padding for FAB
+          padding: EdgeInsets.fromLTRB(12, 8, 12, bottomPadding),
           itemCount: artifacts.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -202,7 +202,8 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
             crossAxisSpacing: 12,
             childAspectRatio: 0.65,
           ),
-          itemBuilder: (context, index) => ArtifactCard(artifact: artifacts[index]),
+          itemBuilder: (context, index) =>
+              ArtifactCard(artifact: artifacts[index]),
         );
       },
     );
@@ -211,11 +212,10 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
   void _openWeaponCreateForm(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const CreateWeaponScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const CreateWeaponScreen()),
     );
   }
+
   // Inside ShopScreen class...
   void _openArtifactCreateForm(BuildContext context) {
     Navigator.push(
