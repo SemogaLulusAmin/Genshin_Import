@@ -72,6 +72,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
@@ -181,7 +182,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                       }
 
                       return GridView.builder(
-                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                        padding: EdgeInsets.fromLTRB(12, 0, 12, bottomPadding),
                         itemCount: filteredItems.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
