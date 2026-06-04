@@ -83,72 +83,80 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding =
+        MediaQuery.of(context).padding.bottom +
+        MediaQuery.of(context).viewInsets.bottom +
+        16;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Edit Artifact")),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_selectedImage != null)
-              Image.network(_selectedImage!.path, height: 100)
-            else
-              Image.network(widget.artifact.imageUrl, height: 100),
+      body: SafeArea(
+        top: false,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPadding),
+            children: [
+              if (_selectedImage != null)
+                Image.network(_selectedImage!.path, height: 100)
+              else
+                Image.network(widget.artifact.imageUrl, height: 100),
 
-            TextButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.image),
-              label: const Text("Change Image (Optional)"),
-            ),
+              TextButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: const Text("Change Image (Optional)"),
+              ),
 
-            CustomInputField(
-              label: 'Artifact Name',
-              hintText: 'Artifact Name',
-              controller: nameController,
-            ),
+              CustomInputField(
+                label: 'Artifact Name',
+                hintText: 'Artifact Name',
+                controller: nameController,
+              ),
 
-            CustomInputField(
-              label: 'Set Name',
-              hintText: 'Set Name',
-              controller: setController,
-            ),
+              CustomInputField(
+                label: 'Set Name',
+                hintText: 'Set Name',
+                controller: setController,
+              ),
 
-            CustomInputField(
-              label: 'Max Rarity',
-              hintText: 'Max Rarity',
-              controller: rarityController,
-            ),
+              CustomInputField(
+                label: 'Max Rarity',
+                hintText: 'Max Rarity',
+                controller: rarityController,
+              ),
 
-            CustomInputField(
-              label: 'Stock',
-              hintText: 'Stock',
-              controller: stockController,
-              keyboardType: TextInputType.number,
-            ),
+              CustomInputField(
+                label: 'Stock',
+                hintText: 'Stock',
+                controller: stockController,
+                keyboardType: TextInputType.number,
+              ),
 
-            CustomInputField(
-              label: 'Price',
-              hintText: 'Price',
-              controller: priceController,
-              keyboardType: TextInputType.number,
-            ),
+              CustomInputField(
+                label: 'Price',
+                hintText: 'Price',
+                controller: priceController,
+                keyboardType: TextInputType.number,
+              ),
 
-            CustomInputField(
-              label: '2-Piece Bonus',
-              hintText: 'The effect',
-              controller: bonus2Controller,
-            ),
+              CustomInputField(
+                label: '2-Piece Bonus',
+                hintText: 'The effect',
+                controller: bonus2Controller,
+              ),
 
-            CustomInputField(
-              label: '4-Piece Bonus',
-              hintText: 'The effect',
-              controller: bonus4Controller,
-            ),
+              CustomInputField(
+                label: '4-Piece Bonus',
+                hintText: 'The effect',
+                controller: bonus4Controller,
+              ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
-          ],
+              CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
+            ],
+          ),
         ),
       ),
     );
