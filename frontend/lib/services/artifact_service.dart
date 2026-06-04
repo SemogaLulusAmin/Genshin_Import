@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data' as typed_data;
+import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/artifact_model.dart';
 
 class ArtifactService {
-  // Gunakan localhost untuk Web, atau 10.0.2.2 untuk Emulator Android
-  static const String serverUrl = 'http://localhost:3000';
-  static const String apiBaseUrl = '$serverUrl/artifact';
+  static String get serverUrl => ApiConfig.baseUrl;
+  static String get apiBaseUrl => '$serverUrl/artifact';
 
   // Helper untuk ambil Token
   Future<String> _getToken() async {
