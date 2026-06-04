@@ -100,6 +100,11 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding =
+        MediaQuery.of(context).padding.bottom +
+        MediaQuery.of(context).viewInsets.bottom +
+        16;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Weapon"),
@@ -108,83 +113,86 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_selectedImage != null)
-              Image.network(_selectedImage!.path, height: 120)
-            else
-              Image.network(widget.weapon.imageUrl, height: 120),
+      body: SafeArea(
+        top: false,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, bottomPadding),
+            children: [
+              if (_selectedImage != null)
+                Image.network(_selectedImage!.path, height: 120)
+              else
+                Image.network(widget.weapon.imageUrl, height: 120),
 
-            TextButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.image),
-              label: const Text("Change Image (Optional)"),
-            ),
+              TextButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: const Text("Change Image (Optional)"),
+              ),
 
-            CustomInputField(
-              label: 'Weapon Name',
-              hintText: 'Weapon Name',
-              controller: nameController,
-            ),
+              CustomInputField(
+                label: 'Weapon Name',
+                hintText: 'Weapon Name',
+                controller: nameController,
+              ),
 
-            CustomInputField(
-              label: 'Weapon Type',
-              hintText: 'Weapon Type',
-              controller: typeController,
-            ),
+              CustomInputField(
+                label: 'Weapon Type',
+                hintText: 'Weapon Type',
+                controller: typeController,
+              ),
 
-            CustomInputField(
-              label: 'Rarity',
-              hintText: 'Rarity',
-              controller: rarityController,
-            ),
+              CustomInputField(
+                label: 'Rarity',
+                hintText: 'Rarity',
+                controller: rarityController,
+              ),
 
-            CustomInputField(
-              label: 'Base Attack',
-              hintText: 'Base Attack',
-              controller: attackController,
-            ),
+              CustomInputField(
+                label: 'Base Attack',
+                hintText: 'Base Attack',
+                controller: attackController,
+              ),
 
-            CustomInputField(
-              label: 'Sub Stat',
-              hintText: 'Sub Stat',
-              controller: subStatController,
-            ),
+              CustomInputField(
+                label: 'Sub Stat',
+                hintText: 'Sub Stat',
+                controller: subStatController,
+              ),
 
-            CustomInputField(
-              label: 'Passive Name',
-              hintText: 'Passive Name',
-              controller: passiveNameController,
-            ),
+              CustomInputField(
+                label: 'Passive Name',
+                hintText: 'Passive Name',
+                controller: passiveNameController,
+              ),
 
-            CustomInputField(
-              label: 'Passive Description',
-              hintText: 'Passive Description',
-              controller: passiveDescController,
-              maxLines: 2,
-            ),
+              CustomInputField(
+                label: 'Passive Description',
+                hintText: 'Passive Description',
+                controller: passiveDescController,
+                maxLines: 2,
+              ),
 
-            CustomInputField(
-              label: 'Price',
-              hintText: 'Price',
-              controller: priceController,
-              keyboardType: TextInputType.number,
-            ),
+              CustomInputField(
+                label: 'Price',
+                hintText: 'Price',
+                controller: priceController,
+                keyboardType: TextInputType.number,
+              ),
 
-            CustomInputField(
-              label: 'Stock',
-              hintText: 'Stock',
-              controller: stockController,
-              keyboardType: TextInputType.number,
-            ),
+              CustomInputField(
+                label: 'Stock',
+                hintText: 'Stock',
+                controller: stockController,
+                keyboardType: TextInputType.number,
+              ),
 
-            const SizedBox(height: 25),
+              const SizedBox(height: 25),
 
-            CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
-          ],
+              CustomButton(text: 'Save Changes', onPressed: _submitUpdate),
+            ],
+          ),
         ),
       ),
     );
