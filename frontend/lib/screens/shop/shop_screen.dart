@@ -55,39 +55,12 @@ class _ShopScreenState extends State<ShopScreen>
         return Scaffold(
           backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
 
-          // --- DYNAMIC FLOATING ACTION BUTTON ---
-          floatingActionButton: isAdmin
-              ? FloatingActionButton.extended(
-                  onPressed: () {
-                    if (_tabController.index == 0) {
-                      _openWeaponCreateForm(context);
-                    } else {
-                      _openArtifactCreateForm(context);
-                    }
-                  },
-                  backgroundColor: AppColors.primary,
-                  icon: Icon(Icons.add, color: Colors.white, size: 24),
-                  label: Text(
-                    _tabController.index == 0
-                        ? "CREATE WEAPON"
-                        : "CREATE ARTIFACT",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "HyWenhei",
-                    ),
-                  ),
-                )
-              : null,
-
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const ScreenHeader(title: "Shop"),
 
-                /// TAB BAR
-                /// TAB BAR
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TabBar(
