@@ -4,6 +4,7 @@ import '../../services/artifact_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
 import '../../screens/shop/edit_artifact_screen.dart';
+import '../quantity_selector.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
@@ -45,7 +46,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
   }
 
   void _deleteArtifact() async {
-    bool confirm = await showDialog<bool>(
+    bool confirm =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
             title: const Text("Hapus Artifact?"),
@@ -73,7 +75,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
         final success = await ArtifactService().deleteArtifact(
           widget.artifact.artifactID,
         );
-        
+
         UserViewModel.instance.triggerInventoryRefresh();
 
         if (success) {
@@ -82,9 +84,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
           );
         }
       } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
+        messenger.showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -96,6 +96,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
     final rarity = _getRarityInt(artifact.maxRarity);
     final totalPrice = artifact.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -154,10 +155,10 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
                                     const Icon(
-                                  Icons.broken_image,
-                                  size: 100,
-                                  color: Colors.white30,
-                                ),
+                                      Icons.broken_image,
+                                      size: 100,
+                                      color: Colors.white30,
+                                    ),
                               ),
                             ),
 
@@ -316,7 +317,12 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               children: [
                                 if (widget.enablePurchase)
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      8,
+                                      6,
+                                      12,
+                                      6,
+                                    ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
@@ -352,8 +358,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               ArtifactEditScreen(
-                                            artifact: artifact,
-                                          ),
+                                                artifact: artifact,
+                                              ),
                                         ),
                                       );
                                       if (result == true) {
@@ -388,78 +394,29 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
               /// BOTTOM SECTION (PURCHASE)
               if (widget.enablePurchase)
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       /// QTY SELECTOR
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.1)
-                              : AppColors.bgDark.withValues(alpha: 0.07),
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: quantity > 1
-                                  ? () => setState(() => quantity--)
-                                  : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: quantity > 1 ? AppColors.primary : Colors.grey.shade400,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    bottomLeft: Radius.circular(4),
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.remove,
-                                  color: AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  quantity.toString(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: "HyWenhei",
-                                    color: isDark
-                                        ? AppColors.textPrimaryDark
-                                        : AppColors.textPrimaryLight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: quantity < artifact.stock
-                                  ? () => setState(() => quantity++)
-                                  : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: quantity < artifact.stock ? AppColors.primary : Colors.grey.shade400,
-                                  borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(4),
-                                    bottomRight: Radius.circular(4),
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      QuantitySelector(
+                        value: quantity,
+                        onDecrement: quantity > 1
+                            ? () => setState(() => quantity--)
+                            : null,
+                        onIncrement:
+                            quantity < artifact.stock &&
+                                quantity * artifact.price <=
+                                    UserViewModel.instance.money
+                            ? () => setState(() => quantity++)
+                            : null,
+                        onValueChanged: (value) {
+                          setState(() {
+                            quantity = artifact.stock <= 0
+                                ? 0
+                                : value.clamp(1, artifact.stock).toInt();
+                          });
+                        },
                       ),
 
                       const SizedBox(height: 16),
@@ -495,9 +452,12 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                       /// PURCHASE BUTTON
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: artifact.stock == 0 
-                              ? Colors.grey 
-                              : (isDark ? Colors.white : AppColors.textPrimaryLight),
+                          backgroundColor:
+                              artifact.stock == 0 && widget.enablePurchase
+                              ? Colors.grey
+                              : (isDark
+                                    ? Colors.white
+                                    : AppColors.textPrimaryLight),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
@@ -539,11 +499,15 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              artifact.stock == 0 ? "Out of Stock " : "Purchase ",
+                              artifact.stock == 0
+                                  ? "Out of Stock "
+                                  : "Purchase ",
                               style: TextStyle(
                                 color: artifact.stock == 0
                                     ? Colors.white70
-                                    : (isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark),
+                                    : (isDark
+                                          ? AppColors.textPrimaryLight
+                                          : AppColors.textPrimaryDark),
                                 fontFamily: "HyWenhei",
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
@@ -554,12 +518,16 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                 'assets/images/Item_Mora.webp',
                                 width: 26,
                                 height: 26,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.monetization_on, size: 20),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 totalPrice.toStringAsFixed(0),
                                 style: TextStyle(
-                                  color: isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark,
+                                  color: isDark
+                                      ? AppColors.textPrimaryLight
+                                      : AppColors.textPrimaryDark,
                                   fontFamily: "HyWenhei",
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
