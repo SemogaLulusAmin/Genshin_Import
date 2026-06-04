@@ -4,6 +4,7 @@ import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../screens/shop/edit_weapon_screen.dart';
+import '../quantity_selector.dart';
 
 class WeaponDetailSheet extends StatefulWidget {
   final Weapon weapon;
@@ -40,7 +41,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
   }
 
   void _deleteWeapon() async {
-    bool confirm = await showDialog<bool>(
+    bool confirm =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
             title: const Text("Hapus Weapon?"),
@@ -71,7 +73,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
         final success = await WeaponService().deleteWeapon(
           widget.weapon.weaponID,
         );
-        
+
         UserViewModel.instance.triggerInventoryRefresh();
 
         if (success) {
@@ -80,9 +82,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
           );
         }
       } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
+        messenger.showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -94,6 +94,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
     final rarity = _getRarityInt(weapon.rarity);
     final totalPrice = weapon.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -165,16 +166,53 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Sub Stat", style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: "HyWenhei")),
+                                  const Text(
+                                    "Sub Stat",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                      fontFamily: "HyWenhei",
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text(weapon.subStat, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: "HyWenhei")),
+                                  Text(
+                                    weapon.subStat,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: "HyWenhei",
+                                    ),
+                                  ),
                                   const SizedBox(height: 16),
-                                  const Text("Base ATK", style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: "HyWenhei")),
+                                  const Text(
+                                    "Base ATK",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                      fontFamily: "HyWenhei",
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text(weapon.baseAttack, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w600, fontFamily: "HyWenhei")),
+                                  Text(
+                                    weapon.baseAttack,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: "HyWenhei",
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   Row(
-                                    children: List.generate(rarity, (_) => const Icon(Icons.star, color: Color(0xFFFFCD38), size: 28)),
+                                    children: List.generate(
+                                      rarity,
+                                      (_) => const Icon(
+                                        Icons.star,
+                                        color: Color(0xFFFFCD38),
+                                        size: 28,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -187,31 +225,92 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(weapon.name, style: TextStyle(color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight, fontSize: 21, fontWeight: FontWeight.bold, fontFamily: "HyWenhei")),
+                            Text(
+                              weapon.name,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimaryLight,
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "HyWenhei",
+                              ),
+                            ),
                             const SizedBox(height: 6),
-                            Text(weapon.type, style: TextStyle(color: isDark ? Colors.white70 : AppColors.textPrimaryLight.withOpacity(0.6), fontSize: 14, fontFamily: "HyWenhei")),
+                            Text(
+                              weapon.type,
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.white70
+                                    : AppColors.textPrimaryLight.withOpacity(
+                                        0.6,
+                                      ),
+                                fontSize: 14,
+                                fontFamily: "HyWenhei",
+                              ),
+                            ),
                             const SizedBox(height: 20),
                             if (weapon.passiveName.isNotEmpty) ...[
-                              Text(weapon.passiveName, style: TextStyle(color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight, fontWeight: FontWeight.bold, fontSize: 15, fontFamily: "HyWenhei")),
+                              Text(
+                                weapon.passiveName,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimaryLight,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  fontFamily: "HyWenhei",
+                                ),
+                              ),
                               const SizedBox(height: 6),
                             ],
-                            Text(weapon.passiveDesc.isNotEmpty ? weapon.passiveDesc : "No description available.", style: TextStyle(color: isDark ? Colors.white70 : AppColors.textPrimaryLight.withOpacity(0.8), height: 1.4)),
+                            Text(
+                              weapon.passiveDesc.isNotEmpty
+                                  ? weapon.passiveDesc
+                                  : "No description available.",
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.white70
+                                    : AppColors.textPrimaryLight.withOpacity(
+                                        0.8,
+                                      ),
+                                height: 1.4,
+                              ),
+                            ),
                             const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 if (widget.enablePurchase)
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      8,
+                                      6,
+                                      12,
+                                      6,
+                                    ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: AppColors.primary.withOpacity(0.8)),
+                                      border: Border.all(
+                                        color: AppColors.primary.withOpacity(
+                                          0.8,
+                                        ),
+                                      ),
                                     ),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.inventory_2_outlined, size: 16),
+                                        const Icon(
+                                          Icons.inventory_2_outlined,
+                                          size: 16,
+                                        ),
                                         const SizedBox(width: 8),
-                                        Text('Stock : ${weapon.stock}', style: const TextStyle(fontFamily: "HyWenhei", fontWeight: FontWeight.w500)),
+                                        Text(
+                                          'Stock : ${weapon.stock}',
+                                          style: const TextStyle(
+                                            fontFamily: "HyWenhei",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -221,19 +320,29 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                       final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => WeaponEditScreen(weapon: weapon),
+                                          builder: (context) =>
+                                              WeaponEditScreen(weapon: weapon),
                                         ),
                                       );
-                                      
-                                       if (result == true) {
-                                         if (!context.mounted) return;
-                                         Navigator.pop(context);
-                                         UserViewModel.instance.triggerInventoryRefresh();
-                                       }
+
+                                      if (result == true) {
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                        UserViewModel.instance
+                                            .triggerInventoryRefresh();
+                                      }
                                     },
-                                    icon: const Icon(Icons.edit_note, color: Colors.white),
-                                    label: const Text("Edit Weapon", style: TextStyle(color: Colors.white)),
-                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                                    icon: const Icon(
+                                      Icons.edit_note,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      "Edit Weapon",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blueGrey,
+                                    ),
                                   ),
                               ],
                             ),
@@ -246,74 +355,136 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
               ),
               if (widget.enablePurchase)
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: isDark ? Colors.white.withOpacity(0.1) : AppColors.bgDark.withOpacity(0.07),
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: quantity > 1 ? () => setState(() => quantity--) : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(color: AppColors.primary, borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4))),
-                                child: Icon(Icons.remove, size: 24, color: AppColors.textPrimaryLight),
-                              ),
-                            ),
-                            Expanded(child: Center(child: Text(quantity.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, fontFamily: "HyWenhei", color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight)))),
-                            InkWell(
-                              onTap: quantity < weapon.stock ? () => setState(() => quantity++) : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(color: AppColors.primary, borderRadius: const BorderRadius.only(topRight: Radius.circular(4), bottomRight: Radius.circular(4))),
-                                child: Icon(Icons.add, size: 24, color: AppColors.textPrimaryLight),
-                              ),
-                            ),
-                          ],
-                        ),
+                      QuantitySelector(
+                        value: quantity,
+                        onDecrement: quantity > 1
+                            ? () => setState(() => quantity--)
+                            : null,
+                        onIncrement:
+                            quantity < weapon.stock &&
+                                quantity * weapon.price <=
+                                    UserViewModel.instance.money
+                            ? () => setState(() => quantity++)
+                            : null,
+                        onValueChanged: (value) {
+                          setState(() {
+                            quantity = weapon.stock <= 0
+                                ? 0
+                                : value.clamp(1, weapon.stock).toInt();
+                          });
+                        },
                       ),
                       const SizedBox(height: 16),
                       if (UserViewModel.instance.isAdmin == true) ...[
                         ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFE00707), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE00707),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           onPressed: _deleteWeapon,
-                          icon: const Icon(Icons.delete_outline_outlined, color: Colors.white, size: 20),
-                          label: const Text("Delete Weapon", style: TextStyle(color: Colors.white, fontFamily: "HyWenhei", fontWeight: FontWeight.w700, fontSize: 15)),
+                          icon: const Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "Delete Weapon",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "HyWenhei",
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 15),
                       ],
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: isDark ? Colors.white : AppColors.textPrimaryLight, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-                        onPressed: weapon.stock == 0 ? null : () async {
-                          try {
-                            final success = await WeaponService().purchaseWeapon(weapon.weaponID, quantity);
-                            if (!context.mounted) return;
-                            if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Purchase successful!'), backgroundColor: Colors.green));
-                              UserViewModel.instance.decreaseMoney(totalPrice.toInt());
-                              UserViewModel.instance.triggerInventoryRefresh();
-                              Navigator.of(context).pop();
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Purchase failed: $e'), backgroundColor: Colors.red));
-                            }
-                          }
-                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark
+                              ? Colors.white
+                              : AppColors.textPrimaryLight,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        onPressed: weapon.stock == 0 && widget.enablePurchase
+                            ? null
+                            : () async {
+                                try {
+                                  final success = await WeaponService()
+                                      .purchaseWeapon(
+                                        weapon.weaponID,
+                                        quantity,
+                                      );
+                                  if (!context.mounted) return;
+                                  if (success) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Purchase successful!'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    UserViewModel.instance.decreaseMoney(
+                                      totalPrice.toInt(),
+                                    );
+                                    UserViewModel.instance
+                                        .triggerInventoryRefresh();
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Purchase failed: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Purchase ", style: TextStyle(color: isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark, fontFamily: "HyWenhei", fontWeight: FontWeight.w700, fontSize: 15)),
-                            Image.asset('assets/images/Item_Mora.webp', width: 26, height: 26, errorBuilder: (context, error, stackTrace) => const Icon(Icons.monetization_on, size: 20)),
+                            Text(
+                              "Purchase ",
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Image.asset(
+                              'assets/images/Item_Mora.webp',
+                              width: 26,
+                              height: 26,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.monetization_on, size: 20),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              totalPrice.toStringAsFixed(0),
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textPrimaryLight
+                                    : AppColors.textPrimaryDark,
+                                fontFamily: "HyWenhei",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
                           ],
                         ),
                       ),
