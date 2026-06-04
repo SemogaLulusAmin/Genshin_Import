@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_button.dart';
 import '../../models/weapon_model.dart';
 import '../../core/app_colors.dart';
 import '../../services/weapon_service.dart';
@@ -45,7 +46,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
         await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            title: const Text("Hapus Weapon?"),
+            title: const Text("Delete Weapon"),
             content: const Text("Weapon ini bakal ancur dari database, yakin?"),
             actions: [
               TextButton(
@@ -314,36 +315,6 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                       ],
                                     ),
                                   ),
-                                if (UserViewModel.instance.isAdmin == true)
-                                  ElevatedButton.icon(
-                                    onPressed: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              WeaponEditScreen(weapon: weapon),
-                                        ),
-                                      );
-
-                                      if (result == true) {
-                                        if (!context.mounted) return;
-                                        Navigator.pop(context);
-                                        UserViewModel.instance
-                                            .triggerInventoryRefresh();
-                                      }
-                                    },
-                                    icon: const Icon(
-                                      Icons.edit_note,
-                                      color: Colors.white,
-                                    ),
-                                    label: const Text(
-                                      "Edit Weapon",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blueGrey,
-                                    ),
-                                  ),
                               ],
                             ),
                           ],
@@ -353,13 +324,16 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                   ),
                 ),
               ),
-              if (widget.enablePurchase)
-                Container(
-                  padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 16),
+
+                    if (UserViewModel.instance.isAdmin == false &&
+                        widget.enablePurchase) ...[
                       QuantitySelector(
                         value: quantity,
                         onDecrement: quantity > 1
@@ -380,42 +354,20 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      if (UserViewModel.instance.isAdmin == true) ...[
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE00707),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          onPressed: _deleteWeapon,
-                          icon: const Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          label: const Text(
-                            "Delete Weapon",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "HyWenhei",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                      ],
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark
-                              ? Colors.white
-                              : AppColors.textPrimaryLight,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                      CustomButton(
+                        backgroundColor: isDark
+                            ? Colors.white
+                            : AppColors.textPrimaryLight,
+                        borderRadius: 4,
+                        iconTextGap: 4,
+                        leadingText: 'Purchase',
+                        text: '${quantity * weapon.price}',
+                        leadingIcon: Image.asset(
+                          'assets/images/Item_Mora.webp',
+                          width: 26,
+                          height: 26,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.monetization_on, size: 20),
                         ),
                         onPressed: weapon.stock == 0 && widget.enablePurchase
                             ? null
@@ -452,45 +404,50 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                   }
                                 }
                               },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Purchase ",
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppColors.textPrimaryLight
-                                    : AppColors.textPrimaryDark,
-                                fontFamily: "HyWenhei",
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Image.asset(
-                              'assets/images/Item_Mora.webp',
-                              width: 26,
-                              height: 26,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.monetization_on, size: 20),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              totalPrice.toStringAsFixed(0),
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppColors.textPrimaryLight
-                                    : AppColors.textPrimaryDark,
-                                fontFamily: "HyWenhei",
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (UserViewModel.instance.isAdmin == true) ...[
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.delete_outline_outlined,
+                          color: Colors.white,
+                          size: 20,
                         ),
+                        text: 'Delete Weapon',
+                        fontWeight: FontWeight.w700,
+                        backgroundColor: const Color(0xFFE00707),
+                        onPressed: _deleteWeapon,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.edit_note,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        text: 'Edit Weapon',
+                        fontWeight: FontWeight.w700,
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  WeaponEditScreen(weapon: weapon),
+                            ),
+                          );
+
+                          if (result == true) {
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            UserViewModel.instance.triggerInventoryRefresh();
+                          }
+                        },
                       ),
                     ],
-                  ),
+                  ],
                 ),
+              ),
             ],
           ),
         );
