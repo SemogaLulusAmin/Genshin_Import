@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data' as typed_data;
+import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart'; // Pakai XFile biar universal
 import '../models/weapon_model.dart';
 
 class WeaponService {
-  // Samakan dengan Artifact, localhost untuk Web, 10.0.2.2 untuk Emulator Android
-  static const String serverUrl = 'http://localhost:3000';
-  static const String apiBaseUrl = '$serverUrl/weapon';
+  static String get serverUrl => ApiConfig.baseUrl;
+  static String get apiBaseUrl => '$serverUrl/weapon';
 
   // Helper ambil token biar nggak ngetik ulang
   Future<String> _getToken() async {
