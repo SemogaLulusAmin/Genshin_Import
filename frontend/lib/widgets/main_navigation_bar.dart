@@ -18,48 +18,57 @@ class MainNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final navTheme = Theme.of(context).bottomNavigationBarTheme;
 
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: navTheme.backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02), 
-            blurRadius: 10, 
-            offset: const Offset(0, -4), 
-            spreadRadius: 0, 
+    return SafeArea(
+      top: false,
+      child: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: navTheme.backgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, -4),
+              spreadRadius: 0,
+            ),
+          ],
+          border: Border(
+            top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 2),
           ),
-        ],
-        border: Border(
-          top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 2),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(context, 0, AppIcons.cart, AppIcons.cartActive, "Shop"),
-          // _buildNavItem(
-          //   context,
-          //   1,
-          //   AppIcons.cart,
-          //   AppIcons.cartActive,
-          //   "Orders",
-          // ),
-          _buildNavItem(
-            context,
-            1,
-            AppIcons.bag,
-            AppIcons.bagActive,
-            "Inventory",
-          ),
-          _buildNavItem(
-            context,
-            2,
-            AppIcons.profile,
-            AppIcons.profileActive,
-            "Profile",
-          ),
-        ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              context,
+              0,
+              AppIcons.cart,
+              AppIcons.cartActive,
+              "Shop",
+            ),
+            // _buildNavItem(
+            //   context,
+            //   1,
+            //   AppIcons.cart,
+            //   AppIcons.cartActive,
+            //   "Orders",
+            // ),
+            _buildNavItem(
+              context,
+              1,
+              AppIcons.bag,
+              AppIcons.bagActive,
+              "Inventory",
+            ),
+            _buildNavItem(
+              context,
+              2,
+              AppIcons.profile,
+              AppIcons.profileActive,
+              "Profile",
+            ),
+          ],
+        ),
       ),
     );
   }
