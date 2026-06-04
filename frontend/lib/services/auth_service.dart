@@ -1,19 +1,11 @@
 import 'dart:convert';
+import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  String get _baseUrl {
-    if (kIsWeb) {
-      return "http://localhost:3000/auth";
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
-      return "http://10.0.2.2:3000/auth";
-    } else {
-      return "http://localhost:3000/auth";
-    }
-  }
+  String get _baseUrl => '${ApiConfig.baseUrl}/auth';
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: 'CLIENT_GOOGLE_ID.apps.googleusercontent.com',
