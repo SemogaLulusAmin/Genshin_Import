@@ -21,7 +21,7 @@ class GenshinImportApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: ThemeManager(), 
+      valueListenable: ThemeManager(),
       builder: (context, isDark, child) {
         return MaterialApp(
           title: 'Genshin Import',
@@ -52,7 +52,6 @@ class GenshinImportApp extends StatelessWidget {
       },
     );
   }
-
 }
 
 class MainNavigationScreen extends StatefulWidget {
@@ -68,8 +67,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final pages = <Widget>[
-      const Center(child: ShopScreen()),
-      const Center(child: InventoryScreen()),
+      const ShopScreen(),
+      const InventoryScreen(),
       const ProfileScreen(),
     ];
 
