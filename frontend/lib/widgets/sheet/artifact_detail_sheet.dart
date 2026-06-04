@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_button.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
 import '../../view_models/user_viewmodel.dart';
@@ -349,38 +350,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                       ],
                                     ),
                                   ),
-
-                                if (UserViewModel.instance.isAdmin == true)
-                                  ElevatedButton.icon(
-                                    onPressed: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ArtifactEditScreen(
-                                                artifact: artifact,
-                                              ),
-                                        ),
-                                      );
-                                      if (result == true) {
-                                        if (!context.mounted) return;
-                                        Navigator.pop(context);
-                                        UserViewModel.instance
-                                            .triggerInventoryRefresh();
-                                      }
-                                    },
-                                    icon: const Icon(
-                                      Icons.edit_note,
-                                      color: Colors.white,
-                                    ),
-                                    label: const Text(
-                                      "Edit Artifact",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blueGrey,
-                                    ),
-                                  ),
                               ],
                             ),
                           ],
@@ -391,14 +360,15 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                 ),
               ),
 
-              /// BOTTOM SECTION (PURCHASE)
-              if (widget.enablePurchase)
-                Container(
-                  padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      /// QTY SELECTOR
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 16),
+
+                    if (UserViewModel.instance.isAdmin == false &&
+                        widget.enablePurchase) ...[
                       QuantitySelector(
                         value: quantity,
                         onDecrement: quantity > 1
@@ -418,52 +388,23 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                           });
                         },
                       ),
-
                       const SizedBox(height: 16),
-
-                      if (UserViewModel.instance.isAdmin == true) ...[
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE00707),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          onPressed: _deleteArtifact,
-                          icon: const Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          label: const Text(
-                            "Delete Artifact",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "HyWenhei",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
+                      CustomButton(
+                        backgroundColor: isDark
+                            ? Colors.white
+                            : AppColors.textPrimaryLight,
+                        borderRadius: 4,
+                        iconTextGap: 4,
+                        leadingText: 'Purchase',
+                        text: '${quantity * artifact.price}',
+                        leadingIcon: Image.asset(
+                          'assets/images/Item_Mora.webp',
+                          width: 26,
+                          height: 26,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.monetization_on, size: 20),
                         ),
-                        const SizedBox(height: 15),
-                      ],
-
-                      /// PURCHASE BUTTON
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              artifact.stock == 0 && widget.enablePurchase
-                              ? Colors.grey
-                              : (isDark
-                                    ? Colors.white
-                                    : AppColors.textPrimaryLight),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: artifact.stock == 0
+                        onPressed: artifact.stock == 0 && widget.enablePurchase
                             ? null
                             : () async {
                                 try {
@@ -472,7 +413,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                         artifact.artifactID,
                                         quantity,
                                       );
-                                  if (success && context.mounted) {
+                                  if (!context.mounted) return;
+                                  if (success) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Purchase successful!'),
@@ -487,59 +429,62 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     Navigator.of(context).pop();
                                   }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Purchase failed: $e'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Purchase failed: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              artifact.stock == 0
-                                  ? "Out of Stock "
-                                  : "Purchase ",
-                              style: TextStyle(
-                                color: artifact.stock == 0
-                                    ? Colors.white70
-                                    : (isDark
-                                          ? AppColors.textPrimaryLight
-                                          : AppColors.textPrimaryDark),
-                                fontFamily: "HyWenhei",
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                            if (artifact.stock > 0) ...[
-                              Image.asset(
-                                'assets/images/Item_Mora.webp',
-                                width: 26,
-                                height: 26,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.monetization_on, size: 20),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                totalPrice.toStringAsFixed(0),
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.textPrimaryLight
-                                      : AppColors.textPrimaryDark,
-                                  fontFamily: "HyWenhei",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                       ),
+                      const SizedBox(height: 16),
                     ],
-                  ),
+
+                    if (UserViewModel.instance.isAdmin == true) ...[
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.delete_outline_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        text: 'Delete Artifact',
+                        fontWeight: FontWeight.w700,
+                        backgroundColor: const Color(0xFFE00707),
+                        onPressed: _deleteArtifact,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.edit_note,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        text: 'Edit Artifact',
+                        fontWeight: FontWeight.w700,
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ArtifactEditScreen(artifact: artifact),
+                            ),
+                          );
+
+                          if (result == true) {
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            UserViewModel.instance.triggerInventoryRefresh();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ],
                 ),
+              ),
             ],
           ),
         );
