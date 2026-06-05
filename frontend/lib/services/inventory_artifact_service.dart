@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class InventoryArtifactService {
   static String get baseUrl => ApiConfig.baseUrl;
 
-  // 1. Ganti return type-nya
+  // 1. Update the return type
   Future<List<InventoryArtifact>> getInventory() async { 
     try {
       final prefs = await SharedPreferences.getInstance();
