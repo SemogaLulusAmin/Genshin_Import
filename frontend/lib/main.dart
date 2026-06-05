@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/create/create_item_screen.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
@@ -68,7 +70,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     final pages = <Widget>[
       const ShopScreen(),
-      const InventoryScreen(),
+      if (UserViewModel.instance.isAdmin == false) const InventoryScreen(),
+      if (UserViewModel.instance.isAdmin == true) const CreateItemScreen(),
       const ProfileScreen(),
     ];
 
