@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/create/create_item_screen.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 import 'core/app_theme.dart';
 import 'widgets/main_navigation_bar.dart';
 import 'screens/auth/auth_screen.dart';
@@ -21,7 +23,7 @@ class GenshinImportApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: ThemeManager(), 
+      valueListenable: ThemeManager(),
       builder: (context, isDark, child) {
         return MaterialApp(
           title: 'Genshin Import',
@@ -52,7 +54,6 @@ class GenshinImportApp extends StatelessWidget {
       },
     );
   }
-
 }
 
 class MainNavigationScreen extends StatefulWidget {
@@ -68,8 +69,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final pages = <Widget>[
-      const Center(child: ShopScreen()),
-      const Center(child: InventoryScreen()),
+      const ShopScreen(),
+      if (UserViewModel.instance.isAdmin == false) const InventoryScreen(),
+      if (UserViewModel.instance.isAdmin == true) const CreateItemScreen(),
       const ProfileScreen(),
     ];
 

@@ -92,7 +92,7 @@ class ArtifactCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -120,7 +120,7 @@ class ArtifactCard extends StatelessWidget {
                           color: const Color(0xFFFFCD38),
                           shadows: [
                             Shadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),
@@ -151,17 +151,16 @@ class ArtifactCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    artifact.setName, 
+                    artifact.setName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize:
-                          11, 
+                      fontSize: 11,
                       fontFamily: "HyWenhei",
                       fontWeight: FontWeight.w400,
                       color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : Colors.black.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

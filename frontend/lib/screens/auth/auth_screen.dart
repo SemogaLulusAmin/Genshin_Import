@@ -17,6 +17,12 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
@@ -72,10 +78,11 @@ class _AuthScreenState extends State<AuthScreen> {
               /// 🧾 TITLE
               Text(
                 isLogin ? "Welcome Back" : "Create Account",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   fontFamily: "HyWenhei",
+                  color: textColor,
                 ),
               ),
 
@@ -86,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 isLogin
                     ? "Sign-in to your account to continue"
                     : "Please fill this form to register",
-                style: const TextStyle(color: AppColors.textSecondaryLight),
+                style: TextStyle(color: secondaryTextColor),
               ),
 
               const SizedBox(height: 24),
@@ -119,6 +126,13 @@ class _AuthScreenState extends State<AuthScreen> {
     required VoidCallback onTap,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -134,13 +148,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ? Row(
                         key: const ValueKey("icon"),
                         children: [
-                          Icon(
-                            icon,
-                            size: 18,
-                            color: isDark
-                                ? AppColors.textPrimaryDark
-                                : AppColors.textPrimaryLight,
-                          ),
+                          Icon(icon, size: 18, color: textColor),
                           const SizedBox(width: 6),
                         ],
                       )
@@ -153,11 +161,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isActive
-                      ? (isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimaryLight)
-                      : AppColors.textSecondaryLight,
+                  color: isActive ? textColor : secondaryTextColor,
                 ),
               ),
             ],

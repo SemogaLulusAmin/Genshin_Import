@@ -39,68 +39,93 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return TextFormField(
-      controller: widget.controller,
-      obscureText: _obscureText,
-      keyboardType: widget.keyboardType,
-      validator: widget.validator,
-      onChanged: widget.onChanged,
-      style: TextStyle(
-        fontSize: 14,
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-      ),
-      decoration: InputDecoration(
-        labelText: widget.label,
-        hintText: widget.hintText,
-        errorText: widget.errorText,
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
-        filled: true,
-        fillColor: isDark
-            ? AppColors.fieldBackgroundDark
-            : AppColors.fieldBackground,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            controller: widget.controller,
+            obscureText: _obscureText,
+            keyboardType: widget.keyboardType,
+            validator: widget.validator,
+            onChanged: widget.onChanged,
+            style: TextStyle(fontSize: 14, color: textColor),
+            decoration: InputDecoration(
+              // labelText: widget.label,
+              hintText: widget.hintText,
+              hintStyle: TextStyle(
+                color: secondaryTextColor.withValues(alpha: 0.7),
+                fontSize: 14,
+              ),
+              errorText: widget.errorText,
+              errorStyle: const TextStyle(fontSize: 12),
 
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 15,
-        ),
+              filled: true,
+              fillColor: isDark
+                  ? AppColors.fieldBackgroundDark
+                  : AppColors.fieldBackground,
 
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 1),
-        ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 15,
+              ),
 
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
-        ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent, width: 1),
+              ),
 
-        labelStyle: TextStyle(
-          color: isDark
-              ? AppColors.textPrimaryDark.withValues(alpha: 0.8)
-              : AppColors.textPrimaryLight.withValues(alpha: 0.6),
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-        ),
-        floatingLabelStyle: TextStyle(
-          color: isDark
-              ? AppColors.textPrimaryDark.withValues(alpha: 0.8)
-              : AppColors.textPrimaryLight.withValues(alpha: 0.6),
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        suffixIcon: widget.obscureText
-            ? Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: IconButton(
-                  icon: Icon(
-                    _obscureText ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-              )
-            : null,
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.primary, width: 2),
+              ),
+
+              labelStyle: TextStyle(
+                color: secondaryTextColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+              floatingLabelStyle: TextStyle(
+                color: secondaryTextColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+              suffixIcon: widget.obscureText
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: secondaryTextColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    )
+                  : null,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,23 +1,15 @@
 import 'dart:convert';
+import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  String get _baseUrl {
-    if (kIsWeb) {
-      return "http://localhost:3000/auth";
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
-      return "http://10.0.2.2:3000/auth";
-    } else {
-      return "http://localhost:3000/auth";
-    }
-  }
+  String get _baseUrl => '${ApiConfig.baseUrl}/auth';
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: 'CLIENT_GOOGLE_ID.apps.googleusercontent.com',
-    scopes: ['email','profile', 'openid'],
+    scopes: ['email', 'profile', 'openid'],
   );
 
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -101,14 +93,13 @@ class AuthService {
       };
     }
   }
+
   Future<Map<String, dynamic>> loginToBackend(String accessToken) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/register/google'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'accessToken': accessToken, 
-        }),
+        body: jsonEncode({'accessToken': accessToken}),
       );
 
       if (response.statusCode == 200) {
@@ -117,60 +108,119 @@ class AuthService {
         final token = data['token']?.toString();
 
         if (token == null || token.isEmpty) {
-          return {"success": false, "message": "Google login response is invalid"};
+          return {
+            "success": false,
+            "message":
+                "Google sign-in worked, but the server response was incomplete. Please try again.",
+          };
         }
 
         // SIMPAN KE STORAGE (Pakai key 'jwt_token' biar sama!)
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', token); 
-        
-        print("Google Token berhasil disimpan di jwt_token: $token");
+        await prefs.setString('jwt_token', token);
 
         final user = data['user'];
         // User dari Google biasanya sudah bawa email dari backend kita tadi
-        
-        return {
-          "success": true, 
-          "token": token, 
-          "user": user
-        };
+
+        return {"success": true, "token": token, "user": user};
       } else {
         // Handle error kalau token Google ditolak backend
         final data = _decodeJsonBody(response.body);
         return {
           "success": false,
-          "message": data['message']?.toString() ?? "Google Auth Failed",
+          "message": _readableGoogleBackendMessage(data['message']),
         };
       }
     } catch (e) {
-      print("Error di loginToBackend: $e");
       return {
-        "success": false, 
-        "message": "Failed to connect to server. Check connection.",
+        "success": false,
+        "message":
+            "We could not connect to the server after Google sign-in. Please check your internet connection and try again.",
       };
     }
   }
+
   Future<Map<String, dynamic>> loginWithGoogle() async {
     try {
       await _googleSignIn.signOut();
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return {"success": false, "message": "Login dibatalkan"};
+      if (googleUser == null) {
+        return {
+          "success": false,
+          "message": "Google sign-in was canceled. Please try again.",
+        };
+      }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication; 
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final String? accessToken = googleAuth.accessToken;
 
       if (accessToken == null) {
-      return {"success": false, "message": "Gagal mendapatkan Access Token"};
+        return {
+          "success": false,
+          "message":
+              "Google did not return the required sign-in credentials. Please try again.",
+        };
       }
 
       // Panggil fungsi kirim ke backend
       return await loginToBackend(accessToken);
-
     } catch (e) {
-      return {"success": false, "message": e.toString()};
+      return {"success": false, "message": _readableGoogleSignInError(e)};
     }
+  }
+
+  String _readableGoogleBackendMessage(dynamic message) {
+    final rawMessage = message?.toString().trim();
+    if (rawMessage == null || rawMessage.isEmpty) {
+      return "Google sign-in failed on the server. Please try again.";
+    }
+
+    final lowerMessage = rawMessage.toLowerCase();
+    if (lowerMessage.contains('invalid') ||
+        lowerMessage.contains('token') ||
+        lowerMessage.contains('unauthorized')) {
+      return "Your Google session could not be verified. Please sign in with Google again.";
+    }
+
+    if (lowerMessage.contains('network') ||
+        lowerMessage.contains('connection') ||
+        lowerMessage.contains('timeout')) {
+      return "We could not reach the server. Please check your internet connection and try again.";
+    }
+
+    return rawMessage;
+  }
+
+  String _readableGoogleSignInError(Object error) {
+    final rawError = error.toString().toLowerCase();
+
+    if (rawError.contains('network') ||
+        rawError.contains('socket') ||
+        rawError.contains('timeout')) {
+      return "We could not reach Google. Please check your internet connection and try again.";
+    }
+
+    if (rawError.contains('sign_in_canceled') ||
+        rawError.contains('canceled') ||
+        rawError.contains('cancelled')) {
+      return "Google sign-in was canceled. Please try again.";
+    }
+
+    if (rawError.contains('sign_in_failed') ||
+        rawError.contains('developer_error') ||
+        rawError.contains('api_exception: 10') ||
+        rawError.contains('client')) {
+      return "Google sign-in is not configured correctly. Please contact support.";
+    }
+
+    if (rawError.contains('popup') || rawError.contains('browser')) {
+      return "Google sign-in could not open properly. Please try again.";
+    }
+
+    return "Google sign-in failed. Please try again in a moment.";
   }
 
   Map<String, dynamic> _decodeJsonBody(String body) {

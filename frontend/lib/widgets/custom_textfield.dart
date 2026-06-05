@@ -47,7 +47,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return TextFormField(
       controller: widget.controller,
-      focusNode: _focusNode, 
+      focusNode: _focusNode,
       obscureText: widget.isPassword,
       style: TextStyle(
         color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
@@ -63,8 +63,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
 
         floatingLabelStyle: TextStyle(
-          color:
-              activeLabelColor, 
+          color: activeLabelColor,
           fontWeight: _focusNode.hasFocus ? FontWeight.w600 : FontWeight.w500,
           fontSize: 15,
         ),
@@ -76,23 +75,25 @@ class _CustomTextFieldState extends State<CustomTextField> {
               (isDark
                       ? AppColors.textSecondaryDark
                       : AppColors.textSecondaryLight)
-                  .withOpacity(0.4),
+                  .withValues(alpha: 0.4),
         ),
 
         filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.fieldBackground,
+        fillColor: isDark
+            ? AppColors.fieldBackgroundDark
+            : AppColors.fieldBackground,
         contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
 
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: isDark ? Colors.white10 : Colors.grey.shade200,
+            color: isDark ? Colors.white12 : AppColors.border,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: isDark ? Colors.white10 : Colors.grey.shade200,
+            color: isDark ? Colors.white12 : AppColors.border,
           ),
         ),
         focusedBorder: OutlineInputBorder(

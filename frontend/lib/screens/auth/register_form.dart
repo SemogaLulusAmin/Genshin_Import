@@ -24,7 +24,7 @@ class _RegisterFormState extends State<RegisterForm> {
     }
 
     if (!_isChecked) {
-      _showMessage("Please agree to the terms first", Colors.red);
+      _showMessage("Please agree to the terms first", AppMessageType.error);
       return;
     }
 
@@ -37,27 +37,25 @@ class _RegisterFormState extends State<RegisterForm> {
     if (!mounted) return;
 
     if (success == true) {
-      _showMessage("Registration Success!", Colors.green);
+      _showMessage("Registration Success!", AppMessageType.success);
     } else if (_authViewModel.nameError == null &&
         _authViewModel.emailError == null &&
         _authViewModel.passwordError == null) {
       _showMessage(
         _authViewModel.errorMessage ?? "Registration Failed",
-        Colors.red,
+        AppMessageType.error,
       );
     }
 
     _authViewModel.clearErrorMessage();
   }
 
-  Future<void> _showMessage(String message, Color color) {
+  Future<void> _showMessage(String message, AppMessageType type) {
     return showAppMessageDialog(
       context: context,
-      title: 'Register Failed',
       message: message,
-      confirmText: 'Oke',
-      icon: Icons.error_outline_outlined,
-      iconColor: color,
+      confirmText: 'OK',
+      type: type,
     );
     // ScaffoldMessenger.of(
     //   context,
@@ -75,6 +73,10 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+
     return AnimatedBuilder(
       animation: _authViewModel,
       builder: (context, child) {
@@ -137,7 +139,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     text: TextSpan(
                       text: "I agree to the ",
                       style: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: textColor.withValues(alpha: 0.86),
                         fontSize: 14,
                         height: 1.5,
                         fontFamily: "Rubik",

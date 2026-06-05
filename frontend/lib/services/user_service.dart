@@ -1,19 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/models/user_model.dart';
 
 class UserService {
-  String get baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3000';
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3000';
-    } else {
-      return 'http://localhost:3000';
-    }
-  }
+  String get baseUrl => ApiConfig.baseUrl;
 
   Future<Map<String, dynamic>> getUserData() async {
     try {

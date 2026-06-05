@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/custom_button.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
 import '../../view_models/user_viewmodel.dart';
 import '../../core/app_colors.dart';
-import 'edit_artifact_screen.dart';
+import '../../screens/shop/edit_artifact_screen.dart';
+import '../quantity_selector.dart';
 
 class ArtifactDetailSheet extends StatefulWidget {
   final Artifact artifact;
@@ -45,7 +47,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
   }
 
   void _deleteArtifact() async {
-    bool confirm = await showDialog<bool>(
+    bool confirm =
+        await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
             title: const Text("Hapus Artifact?"),
@@ -73,7 +76,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
         final success = await ArtifactService().deleteArtifact(
           widget.artifact.artifactID,
         );
-        
+
         UserViewModel.instance.triggerInventoryRefresh();
 
         if (success) {
@@ -82,9 +85,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
           );
         }
       } catch (e) {
-        messenger.showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
+        messenger.showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -96,6 +97,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
     final rarity = _getRarityInt(artifact.maxRarity);
     final totalPrice = artifact.price * quantity;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 16;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -154,10 +156,10 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
                                     const Icon(
-                                  Icons.broken_image,
-                                  size: 100,
-                                  color: Colors.white30,
-                                ),
+                                      Icons.broken_image,
+                                      size: 100,
+                                      color: Colors.white30,
+                                    ),
                               ),
                             ),
 
@@ -316,7 +318,12 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               children: [
                                 if (widget.enablePurchase)
                                   Container(
-                                    padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      8,
+                                      6,
+                                      12,
+                                      6,
+                                    ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
@@ -343,38 +350,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                       ],
                                     ),
                                   ),
-
-                                if (UserViewModel.instance.isAdmin == true)
-                                  ElevatedButton.icon(
-                                    onPressed: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ArtifactEditScreen(
-                                            artifact: artifact,
-                                          ),
-                                        ),
-                                      );
-                                      if (result == true) {
-                                        if (!context.mounted) return;
-                                        Navigator.pop(context);
-                                        UserViewModel.instance
-                                            .triggerInventoryRefresh();
-                                      }
-                                    },
-                                    icon: const Icon(
-                                      Icons.edit_note,
-                                      color: Colors.white,
-                                    ),
-                                    label: const Text(
-                                      "Edit Artifact",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blueGrey,
-                                    ),
-                                  ),
                               ],
                             ),
                           ],
@@ -385,125 +360,59 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                 ),
               ),
 
-              /// BOTTOM SECTION (PURCHASE)
-              if (widget.enablePurchase)
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      /// QTY SELECTOR
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.1)
-                              : AppColors.bgDark.withValues(alpha: 0.07),
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: quantity > 1
-                                  ? () => setState(() => quantity--)
-                                  : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: quantity > 1 ? AppColors.primary : Colors.grey.shade400,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    bottomLeft: Radius.circular(4),
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.remove,
-                                  color: AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  quantity.toString(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: "HyWenhei",
-                                    color: isDark
-                                        ? AppColors.textPrimaryDark
-                                        : AppColors.textPrimaryLight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: quantity < artifact.stock
-                                  ? () => setState(() => quantity++)
-                                  : null,
-                              child: Container(
-                                width: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: quantity < artifact.stock ? AppColors.primary : Colors.grey.shade400,
-                                  borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(4),
-                                    bottomRight: Radius.circular(4),
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 16),
+
+                    if (UserViewModel.instance.isAdmin == false &&
+                        widget.enablePurchase) ...[
+                      QuantitySelector(
+                        value: quantity,
+                        onDecrement: quantity > 1
+                            ? () => setState(() => quantity--)
+                            : null,
+                        onIncrement:
+                            quantity < artifact.stock &&
+                                quantity * artifact.price <=
+                                    UserViewModel.instance.money
+                            ? () => setState(() => quantity++)
+                            : null,
+                        onValueChanged: (value) {
+                          setState(() {
+                            quantity = artifact.stock <= 0
+                                ? 0
+                                : value.clamp(1, artifact.stock).toInt();
+                          });
+                        },
                       ),
-
                       const SizedBox(height: 16),
-
-                      if (UserViewModel.instance.isAdmin == true) ...[
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE00707),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          onPressed: _deleteArtifact,
-                          icon: const Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.white,
+                      CustomButton(
+                        backgroundColor: isDark
+                            ? Colors.white
+                            : AppColors.textPrimaryLight,
+                        foregroundColor: isDark
+                            ? AppColors.textPrimaryLight
+                            : AppColors.textPrimaryDark,
+                        borderRadius: 4,
+                        iconTextGap: 4,
+                        leadingText: 'Purchase',
+                        text: '${quantity * artifact.price}',
+                        leadingIcon: Image.asset(
+                          'assets/images/Item_Mora.webp',
+                          width: 26,
+                          height: 26,
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.monetization_on,
                             size: 20,
-                          ),
-                          label: const Text(
-                            "Delete Artifact",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "HyWenhei",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                            color: isDark
+                                ? AppColors.textPrimaryLight
+                                : AppColors.textPrimaryDark,
                           ),
                         ),
-                        const SizedBox(height: 15),
-                      ],
-
-                      /// PURCHASE BUTTON
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: artifact.stock == 0 
-                              ? Colors.grey 
-                              : (isDark ? Colors.white : AppColors.textPrimaryLight),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: artifact.stock == 0
+                        onPressed: artifact.stock == 0 && widget.enablePurchase
                             ? null
                             : () async {
                                 try {
@@ -512,7 +421,8 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                         artifact.artifactID,
                                         quantity,
                                       );
-                                  if (success && context.mounted) {
+                                  if (!context.mounted) return;
+                                  if (success) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Purchase successful!'),
@@ -527,51 +437,62 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                                     Navigator.of(context).pop();
                                   }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Purchase failed: $e'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Purchase failed: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 }
                               },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              artifact.stock == 0 ? "Out of Stock " : "Purchase ",
-                              style: TextStyle(
-                                color: artifact.stock == 0
-                                    ? Colors.white70
-                                    : (isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark),
-                                fontFamily: "HyWenhei",
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                              ),
-                            ),
-                            if (artifact.stock > 0) ...[
-                              Image.asset(
-                                'assets/images/Item_Mora.webp',
-                                width: 26,
-                                height: 26,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                totalPrice.toStringAsFixed(0),
-                                style: TextStyle(
-                                  color: isDark ? AppColors.textPrimaryLight : AppColors.textPrimaryDark,
-                                  fontFamily: "HyWenhei",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                       ),
+                      const SizedBox(height: 16),
                     ],
-                  ),
+
+                    if (UserViewModel.instance.isAdmin == true) ...[
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.delete_outline_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        text: 'Delete Artifact',
+                        fontWeight: FontWeight.w700,
+                        backgroundColor: const Color(0xFFE00707),
+                        onPressed: _deleteArtifact,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        icon: const Icon(
+                          Icons.edit_note,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        text: 'Edit Artifact',
+                        fontWeight: FontWeight.w700,
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ArtifactEditScreen(artifact: artifact),
+                            ),
+                          );
+
+                          if (result == true) {
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                            UserViewModel.instance.triggerInventoryRefresh();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ],
                 ),
+              ),
             ],
           ),
         );

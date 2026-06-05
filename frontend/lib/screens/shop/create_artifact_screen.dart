@@ -36,7 +36,7 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
     // 1. Pick the image from gallery
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70, 
+      imageQuality: 70,
     );
 
     if (image != null) {
@@ -45,8 +45,8 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
 
       // 3. Update state
       setState(() {
-        _imageBytes = bytes; 
-        _pickedFile = image; 
+        _imageBytes = bytes;
+        _pickedFile = image;
       });
     }
   }
@@ -78,7 +78,10 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
       };
 
       // 4. Call the Service
-      final success = await ArtifactService().createArtifact(fields, _pickedFile!);
+      final success = await ArtifactService().createArtifact(
+        fields,
+        _pickedFile!,
+      );
 
       if (success) {
         UserViewModel.instance.triggerInventoryRefresh();
@@ -110,103 +113,123 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding =
+        MediaQuery.of(context).padding.bottom +
+        MediaQuery.of(context).viewInsets.bottom +
+        24;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.bgDark : Colors.white,
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
       appBar: AppBar(
-        title: const Text("CREATE AN ARTIFACT",
-            style: TextStyle(fontFamily: "HyWenhei", letterSpacing: 1.2)),
+        title: const Text(
+          "Create Artifact",
+          style: TextStyle(fontFamily: "HyWenhei", letterSpacing: 1.2),
+        ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImagePicker(isDark),
-              const SizedBox(height: 25),
-              CustomFormField(
-                label: "ARTIFACT NAME",
-                controller: _nameController,
-                hintText: "Enter artifact name...",
-                validator: (val) => val!.isEmpty ? "Name is required" : null,
-              ),
-              const SizedBox(height: 16),
-              CustomFormField(
-                label: "SET NAME",
-                controller: _setController,
-                hintText: "e.g. Viridescent Venerer",
-                validator: (val) => val!.isEmpty ? "Set name is required" : null,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomFormField(
-                      label: "MAX RARITY",
-                      controller: _rarityController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomFormField(
-                      label: "STOCK",
-                      controller: _stockController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              CustomFormField(
-                label: "PRICE (MORA)",
-                controller: _priceController,
-                keyboardType: TextInputType.number,
-                hintText: "0",
-                validator: (val) => val!.isEmpty ? "Price is required" : null,
-              ),
-              const SizedBox(height: 25),
-              const Text("SET BONUSES",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: AppColors.primary)),
-              const SizedBox(height: 10),
-              CustomFormField(
-                label: "2-PIECE BONUS",
-                controller: _bonus2Controller,
-                hintText: "Effect when wearing 2 pieces...",
-                validator: (val) => val!.isEmpty ? "Bonus is required" : null,
-              ),
-              const SizedBox(height: 16),
-              CustomFormField(
-                label: "4-PIECE BONUS",
-                controller: _bonus4Controller,
-                hintText: "Effect when wearing 4 pieces...",
-                validator: (val) => val!.isEmpty ? "Bonus is required" : null,
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitData,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                  ),
-                  child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("CONFIRM CREATE",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, bottomPadding),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImagePicker(isDark),
+                const SizedBox(height: 25),
+                CustomFormField(
+                  label: "ARTIFACT NAME",
+                  controller: _nameController,
+                  hintText: "Enter artifact name...",
+                  validator: (val) => val!.isEmpty ? "Name is required" : null,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                CustomFormField(
+                  label: "SET NAME",
+                  controller: _setController,
+                  hintText: "e.g. Viridescent Venerer",
+                  validator: (val) =>
+                      val!.isEmpty ? "Set name is required" : null,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFormField(
+                        label: "MAX RARITY",
+                        controller: _rarityController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomFormField(
+                        label: "STOCK",
+                        controller: _stockController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                CustomFormField(
+                  label: "PRICE (MORA)",
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  hintText: "0",
+                  validator: (val) => val!.isEmpty ? "Price is required" : null,
+                ),
+                const SizedBox(height: 25),
+                const Text(
+                  "SET BONUSES",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                CustomFormField(
+                  label: "2-PIECE BONUS",
+                  controller: _bonus2Controller,
+                  hintText: "Effect when wearing 2 pieces...",
+                  validator: (val) => val!.isEmpty ? "Bonus is required" : null,
+                ),
+                const SizedBox(height: 16),
+                CustomFormField(
+                  label: "4-PIECE BONUS",
+                  controller: _bonus4Controller,
+                  hintText: "Effect when wearing 4 pieces...",
+                  validator: (val) => val!.isEmpty ? "Bonus is required" : null,
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _submitData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: _isSubmitting
+                        ? const CircularProgressIndicator(
+                            color: AppColors.textPrimaryDark,
+                          )
+                        : const Text(
+                            "CONFIRM CREATE",
+                            style: TextStyle(
+                              color: AppColors.textPrimaryDark,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -234,8 +257,11 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo_outlined,
-                      color: AppColors.primary, size: 40),
+                  Icon(
+                    Icons.add_a_photo_outlined,
+                    color: AppColors.primary,
+                    size: 40,
+                  ),
                   const SizedBox(height: 8),
                   const Text(
                     "UPLOAD IMAGE",

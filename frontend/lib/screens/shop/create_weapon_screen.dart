@@ -86,15 +86,17 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
         UserViewModel.instance.triggerInventoryRefresh();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Weapon successfully forged!")),
+            const SnackBar(content: Text("Weapon successfully created!")),
           );
           Navigator.pop(context);
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -103,127 +105,136 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding =
+        MediaQuery.of(context).padding.bottom +
+        MediaQuery.of(context).viewInsets.bottom +
+        24;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.bgDark : Colors.white,
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
       appBar: AppBar(
         title: const Text(
-          "FORGE WEAPON",
+          "CREATE WEAPON",
           style: TextStyle(fontFamily: "HyWenhei"),
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildImagePicker(isDark),
-              const SizedBox(height: 25),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, bottomPadding),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildImagePicker(isDark),
+                const SizedBox(height: 25),
 
-              CustomFormField(
-                label: "WEAPON NAME",
-                controller: _nameController,
-                validator: (val) => val!.isEmpty ? "Required" : null,
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomFormField(
-                      label: "TYPE",
-                      controller: _typeController,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomFormField(
-                      label: "RARITY",
-                      controller: _rarityController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomFormField(
-                      label: "BASE ATTACK",
-                      controller: _attackController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomFormField(
-                      label: "SUB STAT",
-                      controller: _subStatController,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              CustomFormField(
-                label: "PASSIVE NAME",
-                controller: _passiveNameController,
-              ),
-              const SizedBox(height: 16),
-
-              CustomFormField(
-                label: "PASSIVE DESCRIPTION",
-                controller: _passiveDescController,
-                hintText: "Enter the weapon's passive effect...",
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomFormField(
-                      label: "PRICE",
-                      controller: _priceController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomFormField(
-                      label: "STOCK",
-                      controller: _stockController,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 40),
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitData,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                  ),
-                  child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          "CONFIRM FORGE",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                CustomFormField(
+                  label: "WEAPON NAME",
+                  controller: _nameController,
+                  validator: (val) => val!.isEmpty ? "Required" : null,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFormField(
+                        label: "TYPE",
+                        controller: _typeController,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomFormField(
+                        label: "RARITY",
+                        controller: _rarityController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFormField(
+                        label: "BASE ATTACK",
+                        controller: _attackController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomFormField(
+                        label: "SUB STAT",
+                        controller: _subStatController,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                CustomFormField(
+                  label: "PASSIVE NAME",
+                  controller: _passiveNameController,
+                ),
+                const SizedBox(height: 16),
+
+                CustomFormField(
+                  label: "PASSIVE DESCRIPTION",
+                  controller: _passiveDescController,
+                  hintText: "Enter the weapon's passive effect...",
+                ),
+                const SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFormField(
+                        label: "PRICE",
+                        controller: _priceController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomFormField(
+                        label: "STOCK",
+                        controller: _stockController,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _submitData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                    ),
+                    child: _isSubmitting
+                        ? const CircularProgressIndicator(
+                            color: AppColors.textPrimaryDark,
+                          )
+                        : const Text(
+                            "CONFIRM CREATE",
+                            style: TextStyle(
+                              color: AppColors.textPrimaryDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

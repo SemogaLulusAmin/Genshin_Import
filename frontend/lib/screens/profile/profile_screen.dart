@@ -21,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final authViewModel = AuthViewModel.instance;
     final userViewModel = UserViewModel.instance;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 24;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
@@ -38,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               : user.username;
 
           return SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: bottomPadding),
             child: Column(
               children: [
                 /// HEADER

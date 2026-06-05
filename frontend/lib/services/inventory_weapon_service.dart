@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:frontend/core/api_config.dart';
 import 'package:frontend/models/weapon_inventory_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InventoryWeaponService {
-  static const String baseUrl = 'http://localhost:3000';
+  static String get baseUrl => ApiConfig.baseUrl;
 
   Future<List<InventoryWeapon>> getInventory() async { 
     try {

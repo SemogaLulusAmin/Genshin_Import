@@ -179,6 +179,10 @@ class AuthViewModel extends ChangeNotifier {
         notifyListeners();
         return true;
       }
+      _errorMessage =
+          "Google sign-in worked, but we could not load your account profile. Please try again.";
+      notifyListeners();
+      return false;
     }
 
     _errorMessage = result['message'] ?? "Google login failed";
@@ -216,10 +220,11 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   bool _validateLoginFields(String email, String password) {
-    if (email.isEmpty)
+    if (email.isEmpty) {
       _emailError = "Email is required";
-    else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email))
+    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
       _emailError = "Invalid email";
+    }
     if (password.isEmpty) _passwordError = "Password is required";
     return _emailError == null && _passwordError == null;
   }

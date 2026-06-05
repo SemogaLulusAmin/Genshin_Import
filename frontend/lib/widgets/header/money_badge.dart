@@ -34,14 +34,18 @@ class _MoneyBadgeState extends State<MoneyBadge> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: () => _refreshMoney(showLoading: true),
       child: Container(
         padding: const EdgeInsets.fromLTRB(4, 2, 12, 2),
         decoration: BoxDecoration(
-          color: const Color(0xC51D2A54),
+          color: isDark
+              ? AppColors.fieldBackgroundDark
+              : AppColors.secondary.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(60),
-          border: Border.all(color: AppColors.primary.withOpacity(0.8)),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.8)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -61,13 +65,15 @@ class _MoneyBadgeState extends State<MoneyBadge> {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 1.5,
-                        color: Colors.white,
+                        color: AppColors.primary,
                       ),
                     )
                   : Text(
                       _userViewModel.money.toString(),
                       style: TextStyle(
-                        color: AppColors.textPrimaryDark,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
                         fontFamily: "HyWenhei",
                         fontWeight: FontWeight.bold,
                       ),
