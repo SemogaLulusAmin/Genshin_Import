@@ -62,7 +62,9 @@ async function initDB() {
                 image_url VARCHAR(255) NOT NULL,
                 price DECIMAL(15,4) NOT NULL,
                 piece_bonus_2 TEXT,
-                piece_bonus_4 TEXT
+                piece_bonus_4 TEXT,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `)
 
