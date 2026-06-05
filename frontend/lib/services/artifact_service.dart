@@ -10,7 +10,7 @@ class ArtifactService {
   static String get serverUrl => ApiConfig.baseUrl;
   static String get apiBaseUrl => '$serverUrl/artifact';
 
-  // Helper untuk ambil Token
+  // Helper to get the token
   Future<String> _getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
@@ -34,7 +34,7 @@ class ArtifactService {
         final List<dynamic> jsonResponse = json.decode(response.body);
         
         return jsonResponse.map((data) {
-          // Benerin path gambar sebelum di-convert ke Model
+          // Fix the image path before converting it to the model
           if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
             data['image_url'] = '$serverUrl${data['image_url']}';
           }
@@ -59,7 +59,7 @@ class ArtifactService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // Benerin path gambar
+        // Fix the image path
         if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
           data['image_url'] = '$serverUrl${data['image_url']}';
         }
@@ -132,7 +132,7 @@ class ArtifactService {
 
     Future<bool> updateArtifact(String artifactID, Map<String, String> fields, {XFile? imageFile}) async {
     final token = await _getToken();
-    // URL sesuai backend lu: /artifact/:artifactID
+    // URL matches the backend: /artifact/:artifactID
     var request = http.MultipartRequest('PUT', Uri.parse('$apiBaseUrl/$artifactID'));
     request.headers['Authorization'] = 'Bearer $token';
     
@@ -152,7 +152,7 @@ class ArtifactService {
     try {
       final token = await _getToken();
       
-      // Method-nya DELETE, URL-nya: /artifact/:artifactID
+      // Uses the DELETE method at /artifact/:artifactID
       final response = await http.delete(
         Uri.parse('$apiBaseUrl/$artifactID'),
         headers: {
