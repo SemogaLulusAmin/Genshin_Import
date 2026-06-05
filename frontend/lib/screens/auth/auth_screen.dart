@@ -141,7 +141,7 @@ class _AuthScreenState extends State<AuthScreen> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// ICON (muncul kalau aktif)
+              /// ICON (shown when active)
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: isActive
