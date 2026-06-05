@@ -76,9 +76,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ];
 
     return Scaffold(
-      // Menggunakan IndexedStack agar state halaman tidak hilang saat pindah tab
+      // Use IndexedStack to preserve page state when switching tabs
       body: IndexedStack(index: _selectedIndex, children: pages),
-      // Memanggil komponen Navbar terpisah
+      // Use the separate navbar component
       bottomNavigationBar: MainNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
