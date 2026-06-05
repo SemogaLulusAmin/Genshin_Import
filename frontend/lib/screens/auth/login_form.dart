@@ -29,7 +29,7 @@ class _LoginFormState extends State<LoginForm> {
     if (!mounted) return;
 
     if (success == true) {
-      _showMessage("Login Success!", Colors.green);
+      _showMessage("Login Success!", AppMessageType.success);
     } else if (_authViewModel.emailError == null &&
         _authViewModel.passwordError == null) {
       final message = _authViewModel.errorMessage ?? "Login Failed";
@@ -37,17 +37,20 @@ class _LoginFormState extends State<LoginForm> {
       if (message == "User not found" || message == "Wrong password") {
         await _showLoginErrorDialog(message);
       } else {
-        _showMessage(message, Colors.red);
+        _showMessage(message, AppMessageType.error);
       }
     }
 
     _authViewModel.clearErrorMessage();
   }
 
-  void _showMessage(String message, Color color) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
+  Future<void> _showMessage(String message, AppMessageType type) {
+    return showAppMessageDialog(
+      context: context,
+      message: message,
+      confirmText: 'OK',
+      type: type,
+    );
   }
 
   Future<void> _showLoginErrorDialog(String message) {
@@ -55,9 +58,8 @@ class _LoginFormState extends State<LoginForm> {
       context: context,
       title: 'Login Failed',
       message: message,
-      confirmText: 'Oke',
-      icon: Icons.error_outline_outlined,
-      iconColor: Colors.red,
+      confirmText: 'OK',
+      type: AppMessageType.error,
     );
     // return showDialog<void>(
     //   context: context,
@@ -150,12 +152,15 @@ class _LoginFormState extends State<LoginForm> {
                         if (!context.mounted) return;
 
                         if (success) {
-                          _showMessage("Google Login Success!", Colors.green);
+                          _showMessage(
+                            "Google Login Success!",
+                            AppMessageType.success,
+                          );
                         } else {
                           _showMessage(
                             _authViewModel.errorMessage ??
                                 "Google Login Failed",
-                            Colors.red,
+                            AppMessageType.error,
                           );
                         }
                       },
