@@ -18,6 +18,7 @@ class MainNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navTheme = Theme.of(context).bottomNavigationBarTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
       top: false,
@@ -27,14 +28,21 @@ class MainNavigationBar extends StatelessWidget {
           color: navTheme.backgroundColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.18)
+                  : Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, -4),
               spreadRadius: 0,
             ),
           ],
           border: Border(
-            top: BorderSide(color: Colors.grey.withOpacity(0.1), width: 2),
+            top: BorderSide(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : AppColors.border.withValues(alpha: 0.8),
+              width: 2,
+            ),
           ),
         ),
         child: Row(
@@ -106,10 +114,10 @@ class MainNavigationBar extends StatelessWidget {
                 (isDark
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondaryLight))
-            .withOpacity(0.6);
+            .withValues(alpha: 0.6);
 
     final Color activeTextColor = isDark
-        ? Colors.white
+        ? AppColors.textPrimaryDark
         : AppColors.textPrimaryLight;
 
     final Color inactiveTextColor = isDark
@@ -154,7 +162,7 @@ class MainNavigationBar extends StatelessWidget {
                   child: Icon(
                     isSelected ? filledIconData : outlineIconData,
                     size: 22,
-                    color: isSelected ? Colors.white : iconColor,
+                    color: isSelected ? AppColors.textPrimaryDark : iconColor,
                   ),
                 ),
                 //   child: isSelected
