@@ -92,9 +92,11 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -109,7 +111,7 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
         24;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.bgDark : Colors.white,
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
       appBar: AppBar(
         title: const Text(
           "CREATE WEAPON",
@@ -219,11 +221,13 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
                       backgroundColor: AppColors.primary,
                     ),
                     child: _isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(
+                            color: AppColors.textPrimaryDark,
+                          )
                         : const Text(
                             "CONFIRM CREATE",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimaryDark,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
