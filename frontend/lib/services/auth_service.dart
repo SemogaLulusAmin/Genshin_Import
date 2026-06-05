@@ -103,7 +103,7 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        // Gunakan helper _decodeJsonBody supaya konsisten
+        // Use the _decodeJsonBody helper for consistency
         final data = _decodeJsonBody(response.body);
         final token = data['token']?.toString();
 
@@ -115,16 +115,16 @@ class AuthService {
           };
         }
 
-        // SIMPAN KE STORAGE (Pakai key 'jwt_token' biar sama!)
+        // Save to storage using the same 'jwt_token' key
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
 
         final user = data['user'];
-        // User dari Google biasanya sudah bawa email dari backend kita tadi
+        // Google users usually already include the email from the backend
 
         return {"success": true, "token": token, "user": user};
       } else {
-        // Handle error kalau token Google ditolak backend
+        // Handle errors when the backend rejects the Google token
         final data = _decodeJsonBody(response.body);
         return {
           "success": false,
@@ -165,7 +165,7 @@ class AuthService {
         };
       }
 
-      // Panggil fungsi kirim ke backend
+      // Send the token to the backend
       return await loginToBackend(accessToken);
     } catch (e) {
       return {"success": false, "message": _readableGoogleSignInError(e)};
