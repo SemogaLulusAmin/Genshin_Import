@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/app_colors.dart';
 
 class CustomInputField extends StatelessWidget {
   const CustomInputField({
@@ -18,6 +19,14 @@ class CustomInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -28,26 +37,46 @@ class CustomInputField extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: textColor,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           TextFormField(
             controller: controller,
             maxLines: maxLines,
             keyboardType: keyboardType,
+            style: TextStyle(color: textColor, fontSize: 14),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+              hintStyle: TextStyle(color: secondaryTextColor, fontSize: 14),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: isDark
+                  ? AppColors.fieldBackgroundDark
+                  : AppColors.fieldBackground,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 14,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(color: Colors.yellow, width: 1),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.white12 : AppColors.border,
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.white12 : AppColors.border,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
               ),
             ),
           ),
