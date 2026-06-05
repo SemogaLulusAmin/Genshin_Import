@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/app_colors.dart';
 import 'package:frontend/widgets/custom_button.dart';
-import 'package:frontend/widgets/custom_input_field.dart';
+import 'package:frontend/widgets/custom_form_field.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/artifact_model.dart';
 import '../../services/artifact_service.dart';
@@ -75,9 +76,11 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
         Navigator.pop(context, true);
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
     }
   }
 
@@ -105,50 +108,69 @@ class _ArtifactEditScreenState extends State<ArtifactEditScreen> {
               TextButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image),
-                label: const Text("Change Image (Optional)"),
+                label: const Text("Change Image"),
               ),
 
-              CustomInputField(
-                label: 'Artifact Name',
-                hintText: 'Artifact Name',
+              CustomFormField(
+                label: 'ARTIFACT NAME',
+                hintText: 'Enter artifact name',
                 controller: nameController,
               ),
 
-              CustomInputField(
-                label: 'Set Name',
-                hintText: 'Set Name',
+              CustomFormField(
+                label: 'SET NAME',
+                hintText: 'Enter artifact set name',
                 controller: setController,
               ),
 
-              CustomInputField(
-                label: 'Max Rarity',
-                hintText: 'Max Rarity',
-                controller: rarityController,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'MAX RARITY',
+                      hintText: 'Enter max artifact rarity',
+                      controller: rarityController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'STOCK',
+                      hintText: 'Enter artifact stock',
+                      controller: stockController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
 
-              CustomInputField(
-                label: 'Stock',
-                hintText: 'Stock',
-                controller: stockController,
-                keyboardType: TextInputType.number,
-              ),
-
-              CustomInputField(
-                label: 'Price',
-                hintText: 'Price',
+              CustomFormField(
+                label: 'PRICE ',
+                hintText: 'Enter artifact price',
                 controller: priceController,
                 keyboardType: TextInputType.number,
               ),
 
-              CustomInputField(
-                label: '2-Piece Bonus',
-                hintText: 'The effect',
+              const SizedBox(height: 9),
+              const Text(
+                "SET BONUSES",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              CustomFormField(
+                label: '2-PIECE BONUS',
+                hintText: 'Effect when wearing 2 pieces',
                 controller: bonus2Controller,
               ),
 
-              CustomInputField(
-                label: '4-Piece Bonus',
-                hintText: 'The effect',
+              CustomFormField(
+                label: '4-PIECE BONUS',
+                hintText: 'Effect when wearing 4 pieces',
                 controller: bonus4Controller,
               ),
 
