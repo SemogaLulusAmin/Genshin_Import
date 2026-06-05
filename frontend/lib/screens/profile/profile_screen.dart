@@ -538,7 +538,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          result['message'] ?? "Fail on update profil",
+                          result['message'] ?? "Failed to update profile",
                         ),
                       ),
                     );
