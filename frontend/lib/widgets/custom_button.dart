@@ -12,6 +12,7 @@ class CustomButton extends StatelessWidget {
   final FontWeight fontWeight;
   final double iconSize;
   final Color? backgroundColor;
+  final Color foregroundColor;
   final Widget? leadingIcon;
   final double borderRadius;
 
@@ -26,6 +27,7 @@ class CustomButton extends StatelessWidget {
     this.iconTextGap = 8,
     this.fontWeight = FontWeight.w600,
     this.backgroundColor = AppColors.primary,
+    this.foregroundColor = AppColors.textPrimaryDark,
     this.iconSize = 20,
     this.leadingIcon,
     this.borderRadius = 12,
@@ -33,8 +35,6 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return SizedBox(
       width: double.infinity,
       height: 48,
@@ -43,7 +43,7 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
 
-          foregroundColor: AppColors.textPrimaryDark,
+          foregroundColor: foregroundColor,
 
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -56,7 +56,7 @@ class CustomButton extends StatelessWidget {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                    color: isDark ? Colors.black : Colors.white,
+                    color: foregroundColor,
                     strokeWidth: 2,
                   ),
                 )
