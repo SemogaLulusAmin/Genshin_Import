@@ -100,11 +100,11 @@ class CreateSubmitButton extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
         child: isSubmitting
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const CircularProgressIndicator(color: AppColors.textPrimaryDark)
             : const Text(
                 "CONFIRM CREATE",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimaryDark,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
