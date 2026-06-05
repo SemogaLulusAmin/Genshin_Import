@@ -50,8 +50,12 @@ class _CreateItemScreenState extends State<CreateItemScreen>
                 controller: _tabController,
                 dividerColor: Colors.transparent,
                 indicatorColor: AppColors.primary,
-                labelColor: isDark ? Colors.white : AppColors.textPrimaryLight,
-                unselectedLabelColor: Colors.grey,
+                labelColor: isDark
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimaryLight,
+                unselectedLabelColor: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
                 labelStyle: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontFamily: "HyWenhei",
