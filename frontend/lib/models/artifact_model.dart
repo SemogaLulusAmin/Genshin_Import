@@ -55,7 +55,7 @@ class Artifact {
     if (name.isEmpty) return name;
 
     return name
-        .split('-') // Memecah string berdasarkan tanda "-"
+        .split('-') // Split the string by "-"
         .map(
           (word) => word.isNotEmpty
               ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
