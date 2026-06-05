@@ -93,9 +93,7 @@ class WeaponCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(
-                          0.3,
-                        ), 
+                        color: Colors.black.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -123,7 +121,7 @@ class WeaponCard extends StatelessWidget {
                           color: const Color(0xFFFFCD38),
                           shadows: [
                             Shadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),
