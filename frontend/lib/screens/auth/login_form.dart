@@ -91,6 +91,9 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return AnimatedBuilder(
       animation: _authViewModel,
@@ -119,22 +122,19 @@ class _LoginFormState extends State<LoginForm> {
               children: [
                 Expanded(
                   child: Divider(
-                    color: isDark ? Colors.white12 : Colors.grey.shade300,
+                    color: isDark ? Colors.white12 : AppColors.border,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     "or you could",
-                    style: TextStyle(
-                      color: AppColors.textSecondaryLight,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(color: secondaryTextColor, fontSize: 15),
                   ),
                 ),
                 Expanded(
                   child: Divider(
-                    color: isDark ? Colors.white12 : Colors.grey.shade300,
+                    color: isDark ? Colors.white12 : AppColors.border,
                   ),
                 ),
               ],
@@ -167,7 +167,7 @@ class _LoginFormState extends State<LoginForm> {
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     color: isDark
-                        ? AppColors.textSecondaryLight.withValues(alpha: 0.6)
+                        ? AppColors.textSecondaryDark.withValues(alpha: 0.6)
                         : AppColors.border,
                     width: 2,
                   ),
