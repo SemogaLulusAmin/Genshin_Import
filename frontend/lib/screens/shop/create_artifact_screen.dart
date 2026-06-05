@@ -119,7 +119,7 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
         24;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.bgDark : Colors.white,
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
       appBar: AppBar(
         title: const Text(
           "Create Artifact",
@@ -215,11 +215,13 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
                       ),
                     ),
                     child: _isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(
+                            color: AppColors.textPrimaryDark,
+                          )
                         : const Text(
                             "CONFIRM CREATE",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimaryDark,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
