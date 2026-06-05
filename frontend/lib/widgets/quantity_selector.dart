@@ -65,6 +65,10 @@ class _QuantitySelectorState extends State<QuantitySelector> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final bool canDecrement = widget.onDecrement != null;
     final bool canIncrement = widget.onIncrement != null;
+    final disabledButtonColor = isDark
+        ? AppColors.fieldBackgroundDark
+        : AppColors.inactive;
+    final buttonIconColor = AppColors.textPrimaryDark;
 
     return Container(
       height: 44,
@@ -82,13 +86,13 @@ class _QuantitySelectorState extends State<QuantitySelector> {
               width: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: canDecrement ? AppColors.primary : Colors.grey.shade400,
+                color: canDecrement ? AppColors.primary : disabledButtonColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
                   bottomLeft: Radius.circular(4),
                 ),
               ),
-              child: Icon(Icons.remove, color: AppColors.textPrimaryLight),
+              child: Icon(Icons.remove, color: buttonIconColor),
             ),
           ),
           Expanded(
@@ -132,13 +136,13 @@ class _QuantitySelectorState extends State<QuantitySelector> {
               width: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: canIncrement ? AppColors.primary : Colors.grey.shade400,
+                color: canIncrement ? AppColors.primary : disabledButtonColor,
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(4),
                   bottomRight: Radius.circular(4),
                 ),
               ),
-              child: Icon(Icons.add, color: AppColors.textPrimaryLight),
+              child: Icon(Icons.add, color: buttonIconColor),
             ),
           ),
         ],
