@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/custom_button.dart';
-import 'package:frontend/widgets/custom_input_field.dart';
+import 'package:frontend/widgets/custom_form_field.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/weapon_model.dart';
 import '../../services/weapon_service.dart';
@@ -128,64 +128,89 @@ class _WeaponEditScreenState extends State<WeaponEditScreen> {
               TextButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image),
-                label: const Text("Change Image (Optional)"),
+                label: const Text("Change Image"),
               ),
 
-              CustomInputField(
-                label: 'Weapon Name',
-                hintText: 'Weapon Name',
+              CustomFormField(
+                label: 'WEAPON NAME',
+                hintText: 'Enter weapon name',
                 controller: nameController,
               ),
 
-              CustomInputField(
-                label: 'Weapon Type',
-                hintText: 'Weapon Type',
-                controller: typeController,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'TYPE',
+                      hintText: 'Enter weapon type',
+                      controller: typeController,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'RARITY',
+                      hintText: 'Enter weapon rarity',
+                      controller: rarityController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
 
-              CustomInputField(
-                label: 'Rarity',
-                hintText: 'Rarity',
-                controller: rarityController,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'BASE ATTACK',
+                      hintText: 'Enter weapon base attack',
+                      controller: attackController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'SUB STAT',
+                      hintText: 'Enter weapon sub stat',
+                      controller: subStatController,
+                    ),
+                  ),
+                ],
               ),
 
-              CustomInputField(
-                label: 'Base Attack',
-                hintText: 'Base Attack',
-                controller: attackController,
-              ),
-
-              CustomInputField(
-                label: 'Sub Stat',
-                hintText: 'Sub Stat',
-                controller: subStatController,
-              ),
-
-              CustomInputField(
-                label: 'Passive Name',
-                hintText: 'Passive Name',
+              CustomFormField(
+                label: 'PASSIVE NAME',
+                hintText: "Enter the weapon's passive name",
                 controller: passiveNameController,
               ),
 
-              CustomInputField(
-                label: 'Passive Description',
-                hintText: 'Passive Description',
+              CustomFormField(
+                label: 'PASSIVE DESCRIPTION',
+                hintText: "Enter the weapon's passive effect",
                 controller: passiveDescController,
-                maxLines: 2,
               ),
 
-              CustomInputField(
-                label: 'Price',
-                hintText: 'Price',
-                controller: priceController,
-                keyboardType: TextInputType.number,
-              ),
-
-              CustomInputField(
-                label: 'Stock',
-                hintText: 'Stock',
-                controller: stockController,
-                keyboardType: TextInputType.number,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'PRICE',
+                      hintText: 'Enter weapon price',
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomFormField(
+                      label: 'STOCK',
+                      hintText: 'Enter weapon stock',
+                      controller: stockController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 25),
