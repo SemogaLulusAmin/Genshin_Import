@@ -152,7 +152,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.black.withOpacity(0.2),
+                                      Colors.black.withValues(alpha: 0.2),
                                       Colors.transparent,
                                     ],
                                     begin: Alignment.centerLeft,
@@ -243,8 +243,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                               style: TextStyle(
                                 color: isDark
                                     ? Colors.white70
-                                    : AppColors.textPrimaryLight.withOpacity(
-                                        0.6,
+                                    : AppColors.textPrimaryLight.withValues(
+                                        alpha: 0.6,
                                       ),
                                 fontSize: 14,
                                 fontFamily: "HyWenhei",
@@ -272,8 +272,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                               style: TextStyle(
                                 color: isDark
                                     ? Colors.white70
-                                    : AppColors.textPrimaryLight.withOpacity(
-                                        0.8,
+                                    : AppColors.textPrimaryLight.withValues(
+                                        alpha: 0.8,
                                       ),
                                 height: 1.4,
                               ),
@@ -293,8 +293,8 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
-                                        color: AppColors.primary.withOpacity(
-                                          0.8,
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.8,
                                         ),
                                       ),
                                     ),
@@ -358,6 +358,9 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                         backgroundColor: isDark
                             ? Colors.white
                             : AppColors.textPrimaryLight,
+                        foregroundColor: isDark
+                            ? AppColors.textPrimaryLight
+                            : AppColors.textPrimaryDark,
                         borderRadius: 4,
                         iconTextGap: 4,
                         leadingText: 'Purchase',
@@ -366,8 +369,13 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
                           'assets/images/Item_Mora.webp',
                           width: 26,
                           height: 26,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.monetization_on, size: 20),
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.monetization_on,
+                            size: 20,
+                            color: isDark
+                                ? AppColors.textPrimaryLight
+                                : AppColors.textPrimaryDark,
+                          ),
                         ),
                         onPressed: weapon.stock == 0 && widget.enablePurchase
                             ? null
