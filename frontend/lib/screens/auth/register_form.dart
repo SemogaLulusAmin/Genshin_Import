@@ -73,6 +73,10 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+
     return AnimatedBuilder(
       animation: _authViewModel,
       builder: (context, child) {
@@ -135,7 +139,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     text: TextSpan(
                       text: "I agree to the ",
                       style: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: textColor.withValues(alpha: 0.86),
                         fontSize: 14,
                         height: 1.5,
                         fontFamily: "Rubik",
