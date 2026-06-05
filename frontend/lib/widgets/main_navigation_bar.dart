@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:frontend/view_models/user_viewmodel.dart';
 
 import '../core/app_icons.dart';
 import '../core/app_colors.dart';
@@ -40,11 +41,11 @@ class MainNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(
-              context,
-              0,
-              AppIcons.cart,
-              AppIcons.cartActive,
-              "Shop",
+              context: context,
+              index: 0,
+              outlineIcon: AppIcons.cart,
+              filledIcon: AppIcons.cartActive,
+              label: "Shop",
             ),
             // _buildNavItem(
             //   context,
@@ -53,19 +54,28 @@ class MainNavigationBar extends StatelessWidget {
             //   AppIcons.cartActive,
             //   "Orders",
             // ),
+            if (UserViewModel.instance.isAdmin == false)
+              _buildNavItem(
+                context: context,
+                index: 1,
+                outlineIcon: AppIcons.bag,
+                filledIcon: AppIcons.bagActive,
+                label: "Inventory",
+              ),
+            if (UserViewModel.instance.isAdmin == true)
+              _buildNavItem(
+                context: context,
+                index: 1,
+                outlineIconData: Icons.add,
+                filledIconData: Icons.add_outlined,
+                label: "Create",
+              ),
             _buildNavItem(
-              context,
-              1,
-              AppIcons.bag,
-              AppIcons.bagActive,
-              "Inventory",
-            ),
-            _buildNavItem(
-              context,
-              2,
-              AppIcons.profile,
-              AppIcons.profileActive,
-              "Profile",
+              context: context,
+              index: 2,
+              outlineIcon: AppIcons.profile,
+              filledIcon: AppIcons.profileActive,
+              label: "Profile",
             ),
           ],
         ),
@@ -73,13 +83,15 @@ class MainNavigationBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(
-    BuildContext context,
-    int index,
-    String outlineIcon,
-    String filledIcon,
-    String label,
-  ) {
+  Widget _buildNavItem({
+    required BuildContext context,
+    required int index,
+    String? outlineIcon,
+    String? filledIcon,
+    IconData? outlineIconData,
+    IconData? filledIconData,
+    required String label,
+  }) {
     final bool isSelected = currentIndex == index;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -112,19 +124,45 @@ class MainNavigationBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// ICON
-          AnimatedScale(
-            duration: const Duration(milliseconds: 200),
-            scale: isSelected ? 1.7 : 1.4,
-            curve: Curves.easeOutBack,
-            child: SvgPicture.asset(
-              isSelected ? filledIcon : outlineIcon,
-              width: 25,
-              height: 25,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+          if (outlineIcon != null && filledIcon != null)
+            /// ICON
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: isSelected ? 1.7 : 1.4,
+              curve: Curves.easeOutBack,
+              child: SvgPicture.asset(
+                isSelected ? filledIcon : outlineIcon,
+                width: 25,
+                height: 25,
+                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+              ),
             ),
-          ),
 
+          if (outlineIconData != null && filledIconData != null)
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: isSelected ? 1.7 : 1.4,
+              curve: Curves.easeOutBack,
+              child: Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? AppColors.primary : Colors.transparent,
+                ),
+                child: Center(
+                  child: Icon(
+                    isSelected ? filledIconData : outlineIconData,
+                    size: 22,
+                    color: isSelected ? Colors.white : iconColor,
+                  ),
+                ),
+                //   child: isSelected
+                //       ? Icon(filledIconData, size: 25, color: iconColor)
+                //       : Icon(outlineIconData, size: 25, color: iconColor),
+                // ),
+              ),
+            ),
           const SizedBox(height: 8),
 
           /// LABEL
