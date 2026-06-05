@@ -393,6 +393,9 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         backgroundColor: isDark
                             ? Colors.white
                             : AppColors.textPrimaryLight,
+                        foregroundColor: isDark
+                            ? AppColors.textPrimaryLight
+                            : AppColors.textPrimaryDark,
                         borderRadius: 4,
                         iconTextGap: 4,
                         leadingText: 'Purchase',
@@ -401,8 +404,13 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                           'assets/images/Item_Mora.webp',
                           width: 26,
                           height: 26,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.monetization_on, size: 20),
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.monetization_on,
+                            size: 20,
+                            color: isDark
+                                ? AppColors.textPrimaryLight
+                                : AppColors.textPrimaryDark,
+                          ),
                         ),
                         onPressed: artifact.stock == 0 && widget.enablePurchase
                             ? null
