@@ -8,8 +8,6 @@ import 'package:frontend/models/artifact_model.dart';
 import 'package:frontend/services/weapon_service.dart';
 import 'package:frontend/services/artifact_service.dart';
 import 'package:frontend/view_models/user_viewmodel.dart';
-import 'create_artifact_screen.dart';
-import 'create_weapon_screen.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -50,8 +48,6 @@ class _ShopScreenState extends State<ShopScreen>
     return ListenableBuilder(
       listenable: UserViewModel.instance,
       builder: (context, _) {
-        final bool isAdmin = UserViewModel.instance.isAdmin;
-
         return Scaffold(
           backgroundColor: isDark ? AppColors.bgDark : AppColors.surfaceLight,
 
@@ -68,9 +64,11 @@ class _ShopScreenState extends State<ShopScreen>
                     dividerColor: Colors.transparent,
                     indicatorColor: AppColors.primary,
                     labelColor: isDark
-                        ? Colors.white
+                        ? AppColors.textPrimaryDark
                         : AppColors.textPrimaryLight,
-                    unselectedLabelColor: Colors.grey,
+                    unselectedLabelColor: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
                     labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontFamily: "HyWenhei",
@@ -179,21 +177,6 @@ class _ShopScreenState extends State<ShopScreen>
               ArtifactCard(artifact: artifacts[index]),
         );
       },
-    );
-  }
-
-  void _openWeaponCreateForm(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CreateWeaponScreen()),
-    );
-  }
-
-  // Inside ShopScreen class...
-  void _openArtifactCreateForm(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const CreateArtifactScreen()),
     );
   }
 }
