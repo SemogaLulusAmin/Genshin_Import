@@ -51,16 +51,19 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
         await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            title: const Text("Hapus Artifact?"),
-            content: const Text("Data ini akan hilang selamanya bang."),
+            title: const Text("Delete Artifact"),
+            content: const Text("Are you sure you want to delete this artifact?"),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text("BATAL"),
+                child: const Text("Cancel"),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text("HAPUS", style: TextStyle(color: Colors.red)),
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
             ],
           ),
@@ -81,7 +84,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
 
         if (success) {
           messenger.showSnackBar(
-            const SnackBar(content: Text("Artifact berhasil dihapus!")),
+            const SnackBar(content: Text("Artifact deleted successfully!")),
           );
         }
       } catch (e) {
@@ -179,7 +182,7 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               ),
                             ),
 
-                            /// INFO KIRI
+                            /// LEFT INFO
                             Positioned(
                               left: 16,
                               bottom: 16,
