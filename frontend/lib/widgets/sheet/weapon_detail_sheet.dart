@@ -47,16 +47,16 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
           context: context,
           builder: (dialogContext) => AlertDialog(
             title: const Text("Delete Weapon"),
-            content: const Text("Weapon ini bakal ancur dari database, yakin?"),
+            content: const Text("Are you sure you want to delete this weapon?"),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text("GAK JADI"),
+                child: const Text("Cancel"),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
                 child: const Text(
-                  "YA, HAPUS",
+                  "Delete",
                   style: TextStyle(color: Colors.red),
                 ),
               ),
@@ -79,7 +79,7 @@ class _WeaponDetailSheetState extends State<WeaponDetailSheet> {
 
         if (success) {
           messenger.showSnackBar(
-            const SnackBar(content: Text("Weapon musnah!")),
+            const SnackBar(content: Text("Weapon deleted successfully!")),
           );
         }
       } catch (e) {
