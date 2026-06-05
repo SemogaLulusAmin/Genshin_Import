@@ -39,26 +39,43 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 4),
           TextFormField(
             controller: widget.controller,
             obscureText: _obscureText,
             keyboardType: widget.keyboardType,
             validator: widget.validator,
             onChanged: widget.onChanged,
-            style: TextStyle(
-              fontSize: 14,
-              color: isDark
-                  ? AppColors.textPrimaryDark
-                  : AppColors.textPrimaryLight,
-            ),
+            style: TextStyle(fontSize: 14, color: textColor),
             decoration: InputDecoration(
-              labelText: widget.label,
+              // labelText: widget.label,
               hintText: widget.hintText,
+              hintStyle: TextStyle(
+                color: secondaryTextColor.withValues(alpha: 0.7),
+                fontSize: 14,
+              ),
               errorText: widget.errorText,
+              errorStyle: const TextStyle(fontSize: 12),
 
               filled: true,
               fillColor: isDark
@@ -79,16 +96,12 @@ class _CustomFormFieldState extends State<CustomFormField> {
               ),
 
               labelStyle: TextStyle(
-                color: isDark
-                    ? AppColors.textPrimaryDark.withValues(alpha: 0.8)
-                    : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                color: secondaryTextColor,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
               floatingLabelStyle: TextStyle(
-                color: isDark
-                    ? AppColors.textPrimaryDark.withValues(alpha: 0.8)
-                    : AppColors.textPrimaryLight.withValues(alpha: 0.6),
+                color: secondaryTextColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -100,6 +113,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
                           _obscureText
                               ? Icons.visibility_off
                               : Icons.visibility,
+                          color: secondaryTextColor,
                         ),
                         onPressed: () {
                           setState(() {
