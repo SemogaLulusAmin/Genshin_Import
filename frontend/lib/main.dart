@@ -76,9 +76,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ];
 
     return Scaffold(
-      // Use IndexedStack to preserve page state when switching tabs
       body: IndexedStack(index: _selectedIndex, children: pages),
-      // Use the separate navbar component
       bottomNavigationBar: MainNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {

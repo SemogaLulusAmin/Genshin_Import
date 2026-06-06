@@ -55,13 +55,6 @@ class MainNavigationBar extends StatelessWidget {
               filledIcon: AppIcons.cartActive,
               label: "Shop",
             ),
-            // _buildNavItem(
-            //   context,
-            //   1,
-            //   AppIcons.cart,
-            //   AppIcons.cartActive,
-            //   "Orders",
-            // ),
             if (UserViewModel.instance.isAdmin == false)
               _buildNavItem(
                 context: context,
@@ -105,7 +98,6 @@ class MainNavigationBar extends StatelessWidget {
 
     final navTheme = Theme.of(context).bottomNavigationBarTheme;
 
-    // --- COLORS ---
     final Color activeIconColor =
         navTheme.selectedItemColor ?? AppColors.primary;
 
@@ -133,7 +125,6 @@ class MainNavigationBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (outlineIcon != null && filledIcon != null)
-            /// ICON
             AnimatedScale(
               duration: const Duration(milliseconds: 200),
               scale: isSelected ? 1.7 : 1.4,
@@ -165,15 +156,10 @@ class MainNavigationBar extends StatelessWidget {
                     color: isSelected ? AppColors.textPrimaryDark : iconColor,
                   ),
                 ),
-                //   child: isSelected
-                //       ? Icon(filledIconData, size: 25, color: iconColor)
-                //       : Icon(outlineIconData, size: 25, color: iconColor),
-                // ),
               ),
             ),
           const SizedBox(height: 8),
 
-          /// LABEL
           AnimatedScale(
             duration: const Duration(milliseconds: 200),
             scale: isSelected ? 1.2 : 1.1,

@@ -20,7 +20,6 @@ class ScreenHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          /// 🔹 TITLE
           Text(
             title,
             style: TextStyle(
@@ -32,7 +31,6 @@ class ScreenHeader extends StatelessWidget {
             ),
           ),
 
-          // Money Badge
           if (!UserViewModel.instance.isAdmin) const MoneyBadge(),
         ],
       ),

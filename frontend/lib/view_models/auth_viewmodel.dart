@@ -20,7 +20,6 @@ class AuthViewModel extends ChangeNotifier {
   String? _passwordError;
   UserModel? _currentUser;
 
-  // Getters
   bool get isLoading => _isLoading;
   bool get isBootstrapping => _isBootstrapping;
   String? get errorMessage => _errorMessage;
@@ -30,7 +29,6 @@ class AuthViewModel extends ChangeNotifier {
   UserModel? get currentUser => _currentUser;
   bool get isLoggedIn => _currentUser != null;
 
-  // --- UI State Management Methods ---
   void clearNameError() {
     if (_nameError != null) {
       _nameError = null;
@@ -59,7 +57,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // --- Session Management ---
   Future<void> bootstrapSession() async {
     _isBootstrapping = true;
     _errorMessage = null;
@@ -89,7 +86,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  // --- Login & Registration ---
   Future<bool> login(String email, String password) async {
     _clearAuthErrors();
     final trimmedEmail = email.trim();
@@ -149,7 +145,6 @@ class AuthViewModel extends ChangeNotifier {
       return false;
     }
 
-    // Auto-login after registration
     final loginResult = await _authService.login(trimmedEmail, password);
     _isLoading = false;
     if (loginResult['success'] == true) {
@@ -163,7 +158,6 @@ class AuthViewModel extends ChangeNotifier {
     return false;
   }
 
-  // --- RESTORED: Google Login ---
   Future<bool> loginWithGoogle() async {
     _isLoading = true;
     _errorMessage = null;
@@ -200,9 +194,6 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Internal Helpers ---
-
-  /// Helper to push user role and money into the UserViewModel
   void _syncUserDataToView() {
     if (_currentUser == null) return;
     UserViewModel.instance.setMoney(_currentUser!.money);

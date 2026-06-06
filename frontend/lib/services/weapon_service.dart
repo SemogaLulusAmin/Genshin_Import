@@ -3,14 +3,13 @@ import 'dart:typed_data' as typed_data;
 import 'package:frontend/core/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart'; // Use XFile for cross-platform support
+import 'package:image_picker/image_picker.dart';
 import '../models/weapon_model.dart';
 
 class WeaponService {
   static String get serverUrl => ApiConfig.baseUrl;
   static String get apiBaseUrl => '$serverUrl/weapon';
 
-  // Helper to get the token without repeating code
   Future<String> _getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
@@ -18,7 +17,6 @@ class WeaponService {
     return token;
   }
 
-  /// --- GET ALL WEAPONS ---
   Future<List<Weapon>> getWeapons() async {
     try {
       final token = await _getToken();
@@ -34,7 +32,6 @@ class WeaponService {
         final List<dynamic> jsonResponse = json.decode(response.body);
         
         return jsonResponse.map((data) {
-          // Fix the image URL before converting it to the model
           if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
             data['image_url'] = '$serverUrl${data['image_url']}';
           }
@@ -48,7 +45,6 @@ class WeaponService {
     }
   }
 
-  /// --- GET WEAPON BY ID ---
   Future<Weapon?> getWeaponById(String weaponId) async {
     try {
       final token = await _getToken();
@@ -59,7 +55,6 @@ class WeaponService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // FIX IMAGE URL
         if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
           data['image_url'] = '$serverUrl${data['image_url']}';
         }
@@ -74,8 +69,6 @@ class WeaponService {
     }
   }
 
-  /// --- CREATE A NEW WEAPON (ADMIN ONLY) ---
-  /// Use XFile and fromBytes to support web and mobile
   Future<bool> createWeapon(Map<String, String> fields, XFile imageFile) async {
     try {
       final token = await _getToken();
@@ -83,10 +76,8 @@ class WeaponService {
       var request = http.MultipartRequest('POST', Uri.parse(apiBaseUrl));
       request.headers['Authorization'] = 'Bearer $token';
 
-      // Add text fields such as name, type, rarity, and others
       request.fields.addAll(fields);
 
-      // Read the image as bytes for Flutter web support
       final typed_data.Uint8List bytes = await imageFile.readAsBytes();
       
       request.files.add(
@@ -111,13 +102,12 @@ class WeaponService {
     }
   }
 
-  /// --- PURCHASE WEAPON ---
   Future<bool> purchaseWeapon(String weaponId, int quantity) async {
     try {
       final token = await _getToken();
 
       final response = await http.post(
-        Uri.parse('$serverUrl/userWeapon/buy/$weaponId'), // Make sure this endpoint matches the backend
+        Uri.parse('$serverUrl/userWeapon/buy/$weaponId'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -137,21 +127,17 @@ class WeaponService {
 
   Future<bool> updateWeapon(String id, Map<String, String> fields, XFile? imageFile) async {
     try {
-      final token = await _getToken(); // Use the existing helper
+      final token = await _getToken();
 
-      // Use apiBaseUrl instead of baseUrl for consistency with the code above
       var request = http.MultipartRequest(
         'PUT', 
         Uri.parse('$apiBaseUrl/$id'), 
       );
 
-      // Header Authorization
       request.headers['Authorization'] = 'Bearer $token';
 
-      // Add text fields such as name, rarity, price, stock, and others
       request.fields.addAll(fields);
 
-      // If a new image is selected, send it as bytes for web support
       if (imageFile != null) {
         final typed_data.Uint8List bytes = await imageFile.readAsBytes();
         request.files.add(
@@ -179,11 +165,9 @@ class WeaponService {
     }
   }
 
-  // DELETE WEAPON
   Future<bool> deleteWeapon(String weaponID) async {
     try {
       final token = await _getToken();
-      // Make sure apiBaseUrl in WeaponService is '$serverUrl/weapon'
       final response = await http.delete(
         Uri.parse('$apiBaseUrl/$weaponID'), 
         headers: {

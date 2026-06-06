@@ -57,9 +57,6 @@ class _RegisterFormState extends State<RegisterForm> {
       confirmText: 'OK',
       type: type,
     );
-    // ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
   }
 
   @override

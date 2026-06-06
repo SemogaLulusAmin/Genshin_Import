@@ -76,7 +76,6 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// QUANTITY BADGE
                   Positioned(
                     top: 8,
                     left: 8,
@@ -101,7 +100,6 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// ITEM TYPE BADGE
                   Positioned(
                     top: 8,
                     right: 8,
@@ -127,7 +125,6 @@ class InventoryCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// RARITY STARS
                   Positioned(
                     bottom: -10,
                     child: Row(
@@ -158,7 +155,6 @@ class InventoryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// NAME
                   Text(
                     item.formattedName,
                     maxLines: 1,
@@ -175,7 +171,6 @@ class InventoryCard extends StatelessWidget {
 
                   const SizedBox(height: 2),
 
-                  /// SUBTITLE
                   Text(
                     item.subtitle,
                     maxLines: 1,

@@ -39,7 +39,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
           child: Column(
             children: [
-              // Logo SVG
               SvgPicture.asset(
                 'assets/images/Genshin_Import_logo.svg',
                 height: 48,
@@ -53,7 +52,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 32),
 
-              /// 🔄 TAB SWITCHER
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -75,7 +73,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 32),
 
-              /// 🧾 TITLE
               Text(
                 isLogin ? "Welcome Back" : "Create Account",
                 style: TextStyle(
@@ -88,7 +85,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 6),
 
-              /// 🧾 SUBTITLE
               Text(
                 isLogin
                     ? "Sign-in to your account to continue"
@@ -98,7 +94,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 24),
 
-              /// 🔥 FORM (flexible + scrollable)
               Expanded(
                 child: SingleChildScrollView(
                   child: AnimatedSwitcher(
@@ -118,7 +113,6 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  /// 🔥 CUSTOM TAB
   Widget _buildUnderlineTab({
     required IconData icon,
     required String text,
@@ -141,7 +135,6 @@ class _AuthScreenState extends State<AuthScreen> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// ICON (shown when active)
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: isActive
@@ -155,7 +148,6 @@ class _AuthScreenState extends State<AuthScreen> {
                     : const SizedBox(key: ValueKey("no-icon")),
               ),
 
-              /// TEXT
               Text(
                 text,
                 style: TextStyle(
@@ -169,7 +161,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
           const SizedBox(height: 6),
 
-          /// UNDERLINE
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             height: 2,

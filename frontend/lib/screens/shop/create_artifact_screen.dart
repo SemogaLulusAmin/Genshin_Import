@@ -16,12 +16,10 @@ class CreateArtifactScreen extends StatefulWidget {
 class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Use Uint8List for the UI preview and XFile for the Service upload
   typed_data.Uint8List? _imageBytes;
   XFile? _pickedFile;
   bool _isSubmitting = false;
 
-  // Controllers matching your Backend req.body
   final _nameController = TextEditingController();
   final _setController = TextEditingController();
   final _rarityController = TextEditingController(text: "5");
@@ -33,17 +31,14 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
 
-    // 1. Pick the image from gallery
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 70,
     );
 
     if (image != null) {
-      // 2. Read as bytes (Corrected variable name)
       final typed_data.Uint8List bytes = await image.readAsBytes();
 
-      // 3. Update state
       setState(() {
         _imageBytes = bytes;
         _pickedFile = image;
@@ -52,10 +47,8 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
   }
 
   Future<void> _submitData() async {
-    // 1. Validate Form fields
     if (!_formKey.currentState!.validate()) return;
 
-    // 2. Check if an image has been picked
     if (_pickedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select an artifact image")),
@@ -66,7 +59,6 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      // 3. Map fields
       final Map<String, String> fields = {
         'name': _nameController.text.trim(),
         'set_name': _setController.text.trim(),
@@ -77,7 +69,6 @@ class _CreateArtifactScreenState extends State<CreateArtifactScreen> {
         'piece_bonus_4': _bonus4Controller.text.trim(),
       };
 
-      // 4. Call the Service
       final success = await ArtifactService().createArtifact(
         fields,
         _pickedFile!,

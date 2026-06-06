@@ -61,24 +61,6 @@ class _LoginFormState extends State<LoginForm> {
       confirmText: 'OK',
       type: AppMessageType.error,
     );
-    // return showDialog<void>(
-    //   context: context,
-    //   builder: (context) {
-    //     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    //     return AlertDialog(
-    //       backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-    //       title: const Text("Login Failed"),
-    //       content: Text(message),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () => Navigator.of(context).pop(),
-    //           child: const Text("OK"),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 
   @override

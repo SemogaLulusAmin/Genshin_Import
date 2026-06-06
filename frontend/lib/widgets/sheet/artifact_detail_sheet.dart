@@ -116,7 +116,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
             children: [
               const SizedBox(height: 10),
 
-              /// HANDLE
               Container(
                 width: 40,
                 height: 4,
@@ -128,14 +127,12 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
 
               const SizedBox(height: 10),
 
-              /// CONTENT
               Expanded(
                 child: SingleChildScrollView(
                   controller: controller,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// HEADER
                       Container(
                         height: 200,
                         width: double.infinity,
@@ -148,7 +145,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         ),
                         child: Stack(
                           children: [
-                            /// IMAGE
                             Positioned(
                               top: 0,
                               bottom: 0,
@@ -166,7 +162,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               ),
                             ),
 
-                            /// OVERLAY
                             Positioned.fill(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -182,7 +177,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               ),
                             ),
 
-                            /// LEFT INFO
                             Positioned(
                               left: 16,
                               bottom: 16,
@@ -225,7 +219,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                         ),
                       ),
 
-                      /// INFO SECTION
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -257,7 +250,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                             ),
                             const SizedBox(height: 20),
 
-                            /// 2-PC BONUS
                             if (artifact.pieceBonus2 != null &&
                                 artifact.pieceBonus2!.isNotEmpty) ...[
                               Text(
@@ -286,7 +278,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               const SizedBox(height: 16),
                             ],
 
-                            /// 4-PC BONUS
                             if (artifact.pieceBonus4 != null &&
                                 artifact.pieceBonus4!.isNotEmpty) ...[
                               Text(
@@ -315,7 +306,6 @@ class _ArtifactDetailSheetState extends State<ArtifactDetailSheet> {
                               const SizedBox(height: 20),
                             ],
 
-                            /// STOCK & EDIT BUTTON (ADMIN ONLY)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

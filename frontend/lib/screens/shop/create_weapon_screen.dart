@@ -20,7 +20,6 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   XFile? _pickedFile;
   bool _isSubmitting = false;
 
-  // Controllers matching your Backend req.body exactly
   final _nameController = TextEditingController();
   final _typeController = TextEditingController(text: "Sword");
   final _rarityController = TextEditingController(text: "5");
@@ -34,17 +33,14 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
 
-    // 1. Pick the image from gallery
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 70,
     );
 
     if (image != null) {
-      // 2. Read as bytes (Corrected variable name)
       final typed_data.Uint8List bytes = await image.readAsBytes();
 
-      // 3. Update state
       setState(() {
         _imageBytes = bytes;
         _pickedFile = image;
@@ -55,7 +51,6 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
   Future<void> _submitData() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // 2. Check if an image has been picked
     if (_pickedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select an artifact image")),
@@ -66,7 +61,6 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      // 1. Map fields EXACTLY to your Backend's req.body keys
       final Map<String, String> fields = {
         'name': _nameController.text.trim(),
         'type': _typeController.text.trim(),
@@ -79,7 +73,6 @@ class _CreateWeaponScreenState extends State<CreateWeaponScreen> {
         'stock': _stockController.text.trim(),
       };
 
-      // 2. Call the WeaponService (Connected to Backend)
       final success = await WeaponService().createWeapon(fields, _pickedFile!);
 
       if (success) {

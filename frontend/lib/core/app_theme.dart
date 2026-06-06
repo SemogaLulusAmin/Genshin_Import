@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 class AppTheme {
-  // --- LIGHT THEME ---
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -16,13 +15,11 @@ class AppTheme {
         onSurface: AppColors.textPrimaryLight,
       ),
 
-      // Core colors
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.bgLight,
       canvasColor: AppColors.surfaceLight,
       dividerColor: AppColors.border,
 
-      // Typography
       fontFamily: 'Rubik',
       textTheme: const TextTheme(
         titleLarge: TextStyle(
@@ -99,7 +96,6 @@ class AppTheme {
     );
   }
 
-  // --- DARK THEME ---
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -113,13 +109,11 @@ class AppTheme {
         onSurface: AppColors.textPrimaryDark,
       ),
 
-      // Core colors
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.bgDark,
       canvasColor: AppColors.surfaceDark,
       dividerColor: Colors.white12,
 
-      // Typography
       fontFamily: 'Rubik',
       textTheme: const TextTheme(
         titleLarge: TextStyle(

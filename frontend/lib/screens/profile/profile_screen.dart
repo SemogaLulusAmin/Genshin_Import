@@ -42,7 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.only(bottom: bottomPadding),
             child: Column(
               children: [
-                /// HEADER
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -119,7 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 16),
 
-                      /// EDIT BUTTON
                       ValueListenableBuilder<bool>(
                         valueListenable: ThemeManager(),
                         builder: (context, isDark, child) {
@@ -267,7 +265,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 10),
 
-                      /// APP INFO
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
@@ -373,7 +370,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       const SizedBox(height: 10),
 
-                      /// LOGOUT
                       GestureDetector(
                         onTap: () async {
                           await AuthViewModel.instance.logout();

@@ -49,7 +49,6 @@ class ArtifactCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Panel
             Expanded(
               flex: 5,
               child: Stack(
@@ -82,7 +81,6 @@ class ArtifactCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Stock Indicator
                   Positioned(
                     top: 8,
                     left: 8,
@@ -107,7 +105,6 @@ class ArtifactCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Rarity Stars
                   Positioned(
                     bottom: -10,
                     child: Row(
@@ -133,7 +130,6 @@ class ArtifactCard extends StatelessWidget {
               ),
             ),
 
-            // Mid Content
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
               child: Column(
@@ -167,7 +163,6 @@ class ArtifactCard extends StatelessWidget {
               ),
             ),
 
-            /// PRICE PANEL
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 6),

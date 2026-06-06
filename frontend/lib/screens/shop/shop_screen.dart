@@ -23,11 +23,8 @@ class _ShopScreenState extends State<ShopScreen>
   @override
   void initState() {
     super.initState();
-    // DefaultTabController is removed in favor of this managed controller
-    // so the FloatingActionButton can listen to index changes.
     _tabController = TabController(length: 2, vsync: this);
 
-    // This ensures the FAB updates its text/icon when you swipe tabs
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         setState(() {});
@@ -75,7 +72,6 @@ class _ShopScreenState extends State<ShopScreen>
                       fontSize: 15,
                     ),
                     tabs: const [
-                      // WEAPON TAB WITH ICON
                       Tab(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +82,6 @@ class _ShopScreenState extends State<ShopScreen>
                           ],
                         ),
                       ),
-                      // ARTIFACT TAB WITH ICON
                       Tab(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -103,7 +98,6 @@ class _ShopScreenState extends State<ShopScreen>
 
                 const SizedBox(height: 8),
 
-                /// TAB CONTENT
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -122,7 +116,6 @@ class _ShopScreenState extends State<ShopScreen>
     final bottomPadding = MediaQuery.of(context).padding.bottom + 96;
 
     return FutureBuilder<List<Weapon>>(
-      // Using UserViewModel.instance.inventoryRefreshKey as a trigger to reload
       key: ValueKey(UserViewModel.instance.inventoryRefreshKey),
       future: WeaponService().getWeapons(),
       builder: (context, snapshot) {

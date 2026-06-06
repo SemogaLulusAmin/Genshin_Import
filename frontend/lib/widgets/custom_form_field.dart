@@ -68,7 +68,6 @@ class _CustomFormFieldState extends State<CustomFormField> {
             onChanged: widget.onChanged,
             style: TextStyle(fontSize: 14, color: textColor),
             decoration: InputDecoration(
-              // labelText: widget.label,
               hintText: widget.hintText,
               hintStyle: TextStyle(
                 color: secondaryTextColor.withValues(alpha: 0.7),

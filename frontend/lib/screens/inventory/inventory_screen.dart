@@ -58,10 +58,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
         )
         .toList();
 
-    /// MERGE ALL
     final allItems = [...weaponItems, ...artifactItems];
 
-    /// SORT BY RARITY
     allItems.sort((a, b) {
       return int.parse(b.rarity).compareTo(int.parse(a.rarity));
     });
@@ -82,7 +80,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
           children: [
             const ScreenHeader(title: "Inventory"),
 
-            /// FILTER CHIPS
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
@@ -114,7 +111,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
             const SizedBox(height: 12),
 
-            /// INVENTORY GRID
             Expanded(
               child: ListenableBuilder(
                 listenable: _userViewModel,
@@ -158,14 +154,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
                       final allItems = snapshot.data!;
 
-                      /// FILTER LOGIC
                       final filteredItems = selectedFilter == "All"
                           ? allItems
                           : allItems.where((item) {
                               return item.itemType == selectedFilter;
                             }).toList();
 
-                      /// EMPTY FILTER RESULT
                       if (filteredItems.isEmpty) {
                         return Center(
                           child: Text(

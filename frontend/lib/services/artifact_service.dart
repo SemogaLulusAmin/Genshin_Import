@@ -10,7 +10,6 @@ class ArtifactService {
   static String get serverUrl => ApiConfig.baseUrl;
   static String get apiBaseUrl => '$serverUrl/artifact';
 
-  // Helper to get the token
   Future<String> _getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
@@ -18,7 +17,6 @@ class ArtifactService {
     return token;
   }
 
-  // 1. GET ALL ARTIFACTS
   Future<List<Artifact>> getArtifacts() async {
     try {
       final token = await _getToken();
@@ -34,7 +32,6 @@ class ArtifactService {
         final List<dynamic> jsonResponse = json.decode(response.body);
         
         return jsonResponse.map((data) {
-          // Fix the image path before converting it to the model
           if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
             data['image_url'] = '$serverUrl${data['image_url']}';
           }
@@ -48,7 +45,6 @@ class ArtifactService {
     }
   }
 
-  // 2. GET ARTIFACT BY ID
   Future<Artifact?> getArtifactById(String artifactId) async {
     try {
       final token = await _getToken();
@@ -59,7 +55,6 @@ class ArtifactService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // Fix the image path
         if (data['image_url'] != null && !data['image_url'].startsWith('http')) {
           data['image_url'] = '$serverUrl${data['image_url']}';
         }
@@ -74,7 +69,6 @@ class ArtifactService {
     }
   }
 
-  // 3. CREATE ARTIFACT (POST)
   Future<bool> createArtifact(Map<String, String> fields, XFile imageFile) async {
     try {
       final token = await _getToken();
@@ -106,7 +100,6 @@ class ArtifactService {
     }
   }
 
-  // 4. PURCHASE ARTIFACT
   Future<bool> purchaseArtifact(String artifactId, int quantity) async {
       try {
         final token = await _getToken();
@@ -132,7 +125,6 @@ class ArtifactService {
 
     Future<bool> updateArtifact(String artifactID, Map<String, String> fields, {XFile? imageFile}) async {
     final token = await _getToken();
-    // URL matches the backend: /artifact/:artifactID
     var request = http.MultipartRequest('PUT', Uri.parse('$apiBaseUrl/$artifactID'));
     request.headers['Authorization'] = 'Bearer $token';
     
@@ -147,12 +139,10 @@ class ArtifactService {
     return response.statusCode == 200;
   }
 
-  // 6. DELETE ARTIFACT
   Future<bool> deleteArtifact(String artifactID) async {
     try {
       final token = await _getToken();
       
-      // Uses the DELETE method at /artifact/:artifactID
       final response = await http.delete(
         Uri.parse('$apiBaseUrl/$artifactID'),
         headers: {
